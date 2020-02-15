@@ -9,16 +9,20 @@ A library to learn and test reinforcement learning algorithms
 Contributing pipeline (dev branch, feature branches, ...)
 
 ### Environements
-Include Gym environements
+Include Gym environements composed of:
+- action_space, state_space
+- step(action) -> observation, reward, done, info
+- reset() -> first_observation
+- render() -> None;
 Build standard for multi-agents environements
 Build "evaluation" methode to evaluate multiple agents on a number of games.
 
 ### Agents
 Agents must have :
 - A policy
-- A generalised value fuction (May be split on state and action values only)
-- a "play" method taking an observation and giving an action (How can we have an agent that adapt to multiple and unkowned env?)
-- a "render" method specified for evey type of agent
+- A generalised value fuction (May be split on state (V) and action (Q) values only)
+- play(observation) -> action; (How can we have an agent that adapt to multiple and unkowned env?)
+- render() -> None; method specified for evey type of agent
 
 Agents types in mind :
 #### Standard RL agents (If discreet envs)
