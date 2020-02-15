@@ -14,6 +14,7 @@ Include Gym environements composed of:
 - step(action) -> observation, reward, done, info
 - reset() -> first_observation
 - render() -> None;
+
 Build standard for multi-agents environements
 Build "evaluation" methode to evaluate multiple agents on a number of games.
 
@@ -28,11 +29,11 @@ Agents types in mind :
 #### Standard RL agents (If discreet envs)
 ##### Evaluation
 - Monte-Carlo
-- TD($\lambda$)
+- TD($$\lambda$$)
 
 ##### Control
 - greedy
-- $\epsilon$-greedy
+- $$\epsilon$$-greedy
 - UCB
 - Puck
 - Puck/UCB
