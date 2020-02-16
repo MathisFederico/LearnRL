@@ -57,5 +57,3 @@ class Agent():
     
     def render(self):
         raise NotImplementedError
-
-print(Agent().memory)
