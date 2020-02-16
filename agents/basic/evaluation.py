@@ -8,13 +8,14 @@ import numpy as np
 class MonteCarlo():
     
     def learn(self, action_visits, action_values, memory, learning_rate):
+        datas = memory.datas
 
-        if np.any(memory['done']):
+        if np.any(datas['done']):
 
-            total_return = np.sum(memory['reward'])
+            total_return = np.sum(datas['reward'])
 
             # Have to be optimized
-            for state_id, action in zip(memory['state'], memory['action']):
+            for state_id, action in zip(datas['state'], datas['action']):
                 try:
                     # Modify the action_visits N(s, a)
                     action_visits[(state_id, action)] += 1
