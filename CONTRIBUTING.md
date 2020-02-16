@@ -11,7 +11,7 @@ git flow feature start MYFEATURE
 If you need another feature : git flow feature pull origin OTHERFEATURE 
 
 ## 4 : When your feature is done, finish it (This will do a merge request to dev)
-git flow feature finish MYFEATURE
+git flow feature finish MYFEATURE*
 
 ## 5 : If you want to share your feature publish it (This will push to dev)
 git flow feature publish MYFEATURE 
