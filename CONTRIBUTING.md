@@ -10,10 +10,9 @@ git flow feature start MYFEATURE
 ## 3 : Work on this branch as you wish
 If you need another feature : git flow feature pull origin OTHERFEATURE 
 
-## 4 : When your feature is done, finish it (This will do a merge request to dev)
-git flow feature finish MYFEATURE*
+## 4 : When your feature is done, DO A MERGE REQUEST TO DEV
 
-## 5 : If you want to share your feature publish it (This will push to dev)
-git flow feature publish MYFEATURE 
+## 5 : When it has been merged you can finish it locally
+git flow feature finish MYFEATURE
 
 ## 5 : After testing and buf-fixing, maybe your fix/add will end up on master !
