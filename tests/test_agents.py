@@ -26,44 +26,36 @@ class MemoryTest(TestCase):
         As a reminder, we ought to remember at least those MEMORY_KEYS : (state, action, reward, done, next_state, info)
         For state, action, next_state :
             Test that we can remember int, floats, lists, or numpy.ndarrays as numpy.ndarrays
-            Other types should raise an error
         For reward :
             Test that we can remember int, floats as numpy.ndarrays
-            Other types should raise an error
         For done :
             Test that we can remember bool as numpy.ndarrays
-            Other types should raise an error
         For info :
             Test that we can remember dict as a 2D numpy.ndarrays
-            Other types should raise an error
         Test that for a same key in MEMORY_KEYS, datas have consitant shapes to create a numpy.ndarrays (except info)
         """
 
-        # Test int behavior
-        self.memory.remember(state=0, action=0, reward=0, done=False, next_state=0, info={'param':0})
-        self.memory.remember(state=1, action=1, reward=1, done=True, next_state=1, info={'param':1})
+        # Test int and float behavior
+        self.memory.remember(state=0, action=1.0, reward=2, done=False, next_state=3, info={'param':4})
+        self.memory.remember(state=5, action=6.0, reward=7, done=True, next_state=8, info={'param':9})
+        expected = {'state':np.array([0, 5]), 'action':np.array([1.0, 6.0]), 'reward':np.array([2, 7]),
+                    'done':np.array([0, 1]), 'next_state':np.array([3, 8]), 'info':np.array([{'param':4}, {'param':9}])}
         for key in self.memory.MEMORY_KEYS:
-            if key in ('state', 'action', 'reward', 'done', 'next_state'):
-                expected = np.array([0, 1])
-                self.assertTrue(np.all(self.memory.datas[key]==expected),
-                                'Couldn\'t remember the int dummy exemple !\
-                                \n Key : {}, Got {} instead of {}'.format(key, self.memory.datas[key], expected))
+            self.assertTrue(np.all(self.memory.datas[key]==expected[key]),
+                            'Couldn\'t remember the int&float dummy exemple !\
+                            \nKey : {}\nGot \n{}\ninstead of\n{}'.format(key, self.memory.datas[key], expected[key]))
         self.memory.forget()
 
         # Test list behavior
-        self.memory.remember(state=[0, 1], action=[0, 1], reward=0, done=False, next_state=[0, 1], info={'param':1})
-        self.memory.remember(state=[2, 3], action=[2, 3], reward=1, done=True, next_state=[2, 3], info={'param':1})
+        self.memory.remember(state=[0, 1], action=[2, 3], reward=4, done=False, next_state=[5, 6], info={'param':7})
+        self.memory.remember(state=[8, 9], action=[10, 11], reward=12, done=True, next_state=[13, 14], info={'param':15})
+        expected = {'state':np.array([[0, 1], [8, 9]]), 'action':np.array([[2, 3], [10, 11]]), 'reward':np.array([4, 12]),
+                    'done':np.array([0, 1]), 'next_state':np.array([[5, 6], [13, 14]]), 'info':np.array([{'param':7}, {'param':15}])}
         for key in self.memory.MEMORY_KEYS:
-            if key in ('state', 'action', 'next_state'):
-                expected = np.array([[0, 1],[2, 3]])
-                self.assertTrue(np.all(self.memory.datas[key]==expected),
-                                'Couldn\'t remember the list dummy exemple !\
-                                \n Key : {}, Got {} instead of {}'.format(key, self.memory.datas[key], expected))
-            elif key in ('reward', 'done'):
-                expected = np.array([0, 1])
-                self.assertTrue(np.all(self.memory.datas[key]==expected),
-                                'Couldn\'t remember the list dummy exemple !\
-                                \n Key : {}, Got {} instead of {}'.format(key, self.memory.datas[key], expected))
+            self.assertTrue(np.all(self.memory.datas[key]==expected[key]),
+                            'Couldn\'t remember the list dummy exemple !\
+                            \n Key : {}, Got {} instead of {}'.format(key, self.memory.datas[key], expected[key]))
         self.memory.forget()
 
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()
