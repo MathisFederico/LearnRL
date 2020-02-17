@@ -1,11 +1,10 @@
 import unittest
 import numpy as np
 
-from unittest import TestCase
 from copy import deepcopy
 from agents import Agent, Memory
 
-class MemoryTest(TestCase):
+class MemoryTest(unittest.TestCase):
 
     """Test the behavior of the general memory for agents"""
     
@@ -56,6 +55,11 @@ class MemoryTest(TestCase):
                             'Couldn\'t remember the list dummy exemple !\
                             \n Key : {}, Got {} instead of {}'.format(key, self.memory.datas[key], expected[key]))
         self.memory.forget()
+
+        # Test shape consistensy forced by numpy.ndarrays
+        with self.assertRaises(ValueError):
+            self.memory.remember(state=0, action=1.0, reward=2, done=False, next_state=3, info={'param':4})
+            self.memory.remember(state=[0, 1], action=[2, 3], reward=4, done=False, next_state=[5, 6], info={'param':7})
 
 if __name__ == "__main__":
     unittest.main()
