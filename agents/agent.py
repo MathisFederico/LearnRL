@@ -43,10 +43,10 @@ class Agent():
     
     memory = Memory()
 
-    def policy(self, observation):
+    def policy(self, observation, legal_actions):
         raise NotImplementedError
 
-    def play(self, observation):
+    def act(self, observation, legal_actions):
         raise NotImplementedError
     
     def remember(self, state, action, reward, done, next_state=None, info={}):
