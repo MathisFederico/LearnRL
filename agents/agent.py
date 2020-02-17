@@ -4,7 +4,6 @@ import collections
 class Memory():
 
     MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
-    datas = {key:None for key in MEMORY_KEYS}
     max_memory_len = 1e5
 
     def __init__(self):
