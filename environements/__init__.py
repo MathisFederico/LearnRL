@@ -1,1 +1,0 @@
-from environements.nim.game import NimEnv
