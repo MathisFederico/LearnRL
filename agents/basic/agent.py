@@ -1,5 +1,5 @@
 from agents.basic.evaluation import MonteCarlo, TemporalDifference
-from agents.basic.control import UCB 
+from agents.basic.control import Greedy 
 from agents.agent import Agent
 
 import numpy as np
@@ -7,20 +7,18 @@ import collections
 
 class BasicAgent(Agent):
 
-    """ A general structure for table-based RL agents
-    You can use different evaluation and control methods
+    """ 
+    A general structure for table-based RL agents.
+    You can use different evaluation and control methods.
     
-    
-    evaluations : agents.basic.evaluation
+    Evaluations : agents.basic.evaluation
         'mc','montecarlo' -> Monte-Carlo evaluation
-        'td','temp*dif*' -> Offline Temporal Difference
-        'ontd','on*temp*dif' -> Online Temporal Difference
-        'sarsa' -> SARSA with specified target policy
-            You have to specify the target policy with #.target_policy = target_policy
-        'q*' -> QLearning (SARSA with greedy target policy)
-    
-
-    control : agents.basic.control
+        X'td','temp*dif*' -> Offline Temporal Difference
+        X'ontd','on*temp*dif' -> Online Temporal Difference
+        X'sarsa' -> SARSA with specified target policy
+        X'q*' -> QLearning (SARSA with greedy target policy)
+        
+    Control : agents.basic.control
         '*greedy' -> epsilon_greedy with epsilon=exploration
         'ucb' -> ucb with c=exploration
         'puct' -> puct with c=exploration
@@ -31,7 +29,7 @@ class BasicAgent(Agent):
     action_values = {}
     action_visits = {}
 
-    def __init__(self, evaluation=MonteCarlo(), control=UCB(), learning_rate=0.1, exploration=0.1):
+    def __init__(self, evaluation=MonteCarlo(), control=Greedy(initial_exploration=1.0, decay=0.999), learning_rate=0.1, exploration=0):
         self.evaluation = evaluation
         self.control = control
         self.name = self.name + '_{}'.format(self.evaluation.name) + '_{}'.format(self.control.name)
@@ -55,4 +53,5 @@ class BasicAgent(Agent):
         return action_id
     
     def learn(self):
+        self.control.updateExploration()
         self.evaluation.learn(self.action_visits, self.action_values, self.memory, learning_rate=self.learning_rate)
