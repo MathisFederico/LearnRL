@@ -7,12 +7,15 @@ import collections
 
 class BasicAgent(Agent):
 
+    name = 'BasicAgent'
+
     action_values = {}
     action_visits = {}
 
     def __init__(self, evaluation=MonteCarlo(), control=UCB(), learning_rate=0.1, exploration_coef=1):
         self.evaluation = evaluation
         self.control = control
+        self.name = self.name + '_{}'.format(self.evaluation.name) + '_{}'.format(self.control.name)
         self.exploration_coef = exploration_coef
         self.learning_rate = learning_rate
 

@@ -6,6 +6,8 @@ import numpy as np
 
 
 class Control():
+
+    name = 'defaultcontrol'
     
     def checkPolicy(self, policy):
         if policy is None:
@@ -23,6 +25,8 @@ class Control():
 
 class Greedy(Control):
 
+    name ='greedy'
+
     def getPolicy(self, **params):
         action_values = params.get('action_values')
         exploration_coef = params.get('exploration_coef')
@@ -37,6 +41,8 @@ class Greedy(Control):
 
 
 class UCB(Control):
+
+    name ='ucb'
 
     def getPolicy(self, **params):
         action_visits = params.get('action_visits')

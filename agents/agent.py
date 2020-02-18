@@ -32,6 +32,8 @@ class Memory():
 
 class Agent():
 
+    name = 'DefaultAgent'
+
     state_values = None
     state_visits = None
 
