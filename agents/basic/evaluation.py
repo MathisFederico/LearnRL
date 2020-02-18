@@ -4,8 +4,17 @@ Evaluation methodes to modify the value fonctions from experiences
 
 import numpy as np
 
+class Evaluation():
 
-class MonteCarlo():
+    name = 'defaulteval'
+
+    def learn(self, action_visits, action_values, memory, learning_rate):
+        raise NotImplementedError
+
+
+class MonteCarlo(Evaluation):
+
+    name = 'mc'
     
     def learn(self, action_visits, action_values, memory, learning_rate):
         datas = memory.datas
@@ -28,11 +37,12 @@ class MonteCarlo():
                     # Define the action_visits N(s, a)
                     action_visits[(state_id, action)] = 1
                     # Define the action_values Q(s, a)
-                    action_values[(state_id, action)] = total_return
+                    action_values[(state_id, action)] = learning_rate * total_return
             
             memory.forget()
 
 
 
-class TemporalDifference():
-    pass
+class TemporalDifference(Evaluation):
+
+    name = 'td'

@@ -16,11 +16,17 @@ class MemoryTest(unittest.TestCase):
 
     def test_forget(self):
         """Test that we do reset memory"""
-        initial_datas = deepcopy(self.memory.datas)
+        initial_datas = {key:None for key in self.memory.MEMORY_KEYS}
         self.memory.remember(0, 0, 0, False, 0, info={'parameter':0})
-        self.assertNotEqual(self.memory.datas, initial_datas, 'We are suppose to remember a dummy experience')
+        self.assertNotEqual(self.memory.datas, initial_datas,
+            'We are suppose to remember a dummy experience')
         self.memory.forget()
-        self.assertEqual(self.memory.datas, initial_datas, 'We are suppose to have forgotten the dummy experience')
+        for key in initial_datas:
+            self.assertTrue(self.memory.datas[key] is None,
+                'We are suppose to have forgotten the dummy experience \
+                    \nBut in key {}\
+                    \nWe still remember {}\
+                    \nInstead of {}'.format(key, self.memory.datas[key], initial_datas[key]))
 
     def test_remember(self):
         """

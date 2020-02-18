@@ -4,7 +4,7 @@ import collections
 class Memory():
 
     MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
-    max_memory_len = 1e5
+    max_memory_len = 1e4
 
     def __init__(self):
         self.datas = {key:None for key in self.MEMORY_KEYS}
@@ -22,8 +22,8 @@ class Memory():
             if self.datas[key] is None:
                 self.datas[key] = value
             else:
-                if len(self.datas[key]) <= self.max_memory_len:
-                    self.datas[key] = np.concatenate((self.datas[key], value))
+                if len(self.datas[key]) < self.max_memory_len:
+                    self.datas[key] = np.concatenate((self.datas[key], value), axis=0)
                 else:
                     self.datas[key] = np.roll(self.datas[key], shift=-1, axis=0)
                     self.datas[key][-1] = np.array(value)
@@ -33,6 +33,8 @@ class Memory():
 
 
 class Agent():
+
+    name = 'DefaultAgent'
 
     state_values = None
     state_visits = None
