@@ -6,17 +6,20 @@ import numpy as np
 
 class Control():
 
-    """ Base control object
-    The getPolicy(self, **params) method must be specified
-        **params is a dictionary containing value fonctions and visit counts
-        typical uses are :
-            action_visits = params.get('action_visits') to get Q(s,a)
-            action_values = params.get('action_values') to get N(s,a)
-    It is adviced to call self.checkPolicy(policy) before returning it
+    """ 
+    Base control object\n
+    This method must be specified :
+    getPolicy(self, **params).
+
+    You can get agent knowledge with **param.
+    Exploration constants are an argument of the control object.
+    You can see the Greedy object below for exemple.
+
+    It is adviced to call self.checkPolicy(policy) before returning it.
     """
     
     name = 'defaultcontrol'
-    
+
     def __init__(self, initial_exploration=0):
         self.exploration = initial_exploration
 
@@ -48,12 +51,10 @@ class Greedy(Control):
 
     def getPolicy(self, **params):
         action_values = params.get('action_values')
-        exploration = params.get('exploration', 0)
-
         best_action_id = np.argmax(action_values)
 
-        policy = np.ones(action_values.shape) * exploration / action_values.shape[-1]
-        policy[best_action_id] += 1 - exploration
+        policy = np.ones(action_values.shape) * self.exploration / action_values.shape[-1]
+        policy[best_action_id] += 1 - self.exploration
 
         self.checkPolicy(policy)
         return policy
@@ -69,10 +70,10 @@ class UCB(Control):
     def getPolicy(self, **params):
         action_visits = params.get('action_visits')
         action_values = params.get('action_values')
-        exploration = params.get('exploration', 1)
 
         best_action_id = np.argmax(action_values + \
-                              exploration * np.sqrt(np.log(1+np.sum(action_visits))/(1.0+action_visits)))
+                              self.exploration * np.sqrt(np.log(1+np.sum(action_visits))/(1.0+action_visits)))
+
         policy = np.zeros(action_values.shape)
         policy[best_action_id] = 1.0
 
@@ -90,7 +91,6 @@ class Puct(Control):
     def getPolicy(self, **params):
         action_visits = params.get('action_visits')
         action_values = params.get('action_values')
-        exploration = params.get('exploration', 0)
 
         best_action_id = np.argmax(action_values + \
                               self.exploration * np.sqrt(np.sum(action_visits)/(1.0+action_visits)))
