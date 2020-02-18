@@ -1,4 +1,4 @@
-from envs.multi_agents_envs.nim.game import NimEnv
+from envs.single_agents_envs.basenim.game import NimEnv
 
 # Import basic gym envs
 from gym.envs.algorithmic import *
