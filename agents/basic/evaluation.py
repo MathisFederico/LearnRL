@@ -37,7 +37,7 @@ class MonteCarlo(Evaluation):
                     # Define the action_visits N(s, a)
                     action_visits[(state_id, action)] = 1
                     # Define the action_values Q(s, a)
-                    action_values[(state_id, action)] = total_return
+                    action_values[(state_id, action)] = learning_rate * total_return
             
             memory.forget()
 
