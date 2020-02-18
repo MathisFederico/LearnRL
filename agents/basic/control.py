@@ -52,7 +52,7 @@ class UCB(Control):
     def getPolicy(self, **params):
         action_visits = params.get('action_visits')
         action_values = params.get('action_values')
-        exploration = params.get('exploration', 0)
+        exploration = params.get('exploration', 1)
 
         best_action_id = np.argmax(action_values + \
                               exploration * np.sqrt(np.log(1+np.sum(action_visits))/(1.0+action_visits)))
