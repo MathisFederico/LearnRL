@@ -17,6 +17,13 @@ class Control():
     
     name = 'defaultcontrol'
     
+    def __init__(self, initial_exploration=0):
+        self.exploration = initial_exploration
+
+    def updateExploration(self, exploration=None):
+        if exploration is not None:
+            self.exploration = exploration
+    
     def checkPolicy(self, policy):
         try: 
             assert np.all(policy >= 0), "Policy have probabilities < 0"
@@ -31,6 +38,13 @@ class Control():
 class Greedy(Control):
 
     name ='greedy'
+
+    def __init__(self, initial_exploration=0, decay=1):
+        self.exploration = initial_exploration
+        self.decay = decay
+
+    def updateExploration(self, exploration=None):
+        self.exploration *= self.decay
 
     def getPolicy(self, **params):
         action_values = params.get('action_values')
@@ -49,6 +63,9 @@ class UCB(Control):
 
     name ='ucb'
 
+    def __init__(self, initial_exploration=1):
+        self.exploration = initial_exploration
+
     def getPolicy(self, **params):
         action_visits = params.get('action_visits')
         action_values = params.get('action_values')
@@ -65,13 +82,18 @@ class UCB(Control):
 
 class Puct(Control):
 
+    name = 'puct'
+
+    def __init__(self, initial_exploration=1):
+        self.exploration = initial_exploration
+
     def getPolicy(self, **params):
         action_visits = params.get('action_visits')
         action_values = params.get('action_values')
         exploration = params.get('exploration', 0)
 
         best_action_id = np.argmax(action_values + \
-                              exploration * np.sqrt(np.sum(action_visits)/(1.0+action_visits)))
+                              self.exploration * np.sqrt(np.sum(action_visits)/(1.0+action_visits)))
         
         policy = np.zeros(action_values.shape)
         policy[best_action_id] = 1.0
