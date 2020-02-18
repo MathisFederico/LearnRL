@@ -1,4 +1,12 @@
-from envs import NimEnv
-from envs import MountainCarEnv
+from envs import FrozenLakeEnv
+from agents import BasicAgent
 
-print(NimEnv)
+if __name__ == "__main__":
+    env = FrozenLakeEnv()
+    agent = BasicAgent()
+
+    done = False
+    state = env.reset()
+
+    while not done:
+        action = agent.act()
