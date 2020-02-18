@@ -4,15 +4,17 @@ import collections
 class Memory():
 
     MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
-    datas = {key:None for key in MEMORY_KEYS}
     max_memory_len = 1e5
 
+    def __init__(self):
+        self.datas = {key:None for key in self.MEMORY_KEYS}
+
     def remember(self, state, action, reward, done, next_state=None, info={}):
-        for key, value in zip(self.MEMORY_KEYS, (state, action, reward, next_state, done, info)):
+        for key, value in zip(self.MEMORY_KEYS, (state, action, reward, done, next_state, info)):
 
             # Check that value is an instance of numpy.ndarray or transform the value
             if isinstance(value, collections.Sequence):
-                value = np.array(value)
+                value = np.array([value])
             elif type(value) != np.ndarray:
                 value = np.array([value])
 
@@ -42,10 +44,10 @@ class Agent():
     
     memory = Memory()
 
-    def policy(self, observation):
+    def policy(self, observation, legal_actions):
         raise NotImplementedError
 
-    def play(self, observation):
+    def act(self, observation, legal_actions):
         raise NotImplementedError
     
     def remember(self, state, action, reward, done, next_state=None, info={}):

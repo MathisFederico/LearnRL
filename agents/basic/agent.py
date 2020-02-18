@@ -38,22 +38,20 @@ class BasicAgent(Agent):
         self.exploration_coef = exploration_coef
         self.learning_rate = learning_rate
 
-    def policy(self, observation):
+    def policy(self, observation, legal_actions):
         state_id = hash(observation)
-        legal_action = np.array([]) # We need them from the environement
-
         try:
-            N = np.array([self.action_visits[(state_id, action)] for action in legal_action])
-            Q = np.array([self.action_values[(state_id, action)] for action in legal_action])
+            N = np.array([self.action_visits[(state_id, action)] for action in legal_actions])
+            Q = np.array([self.action_values[(state_id, action)] for action in legal_actions])
             policy = self.control.getPolicy(action_visits=N, action_values=Q, exploration_coef=self.exploration_coef)
         except KeyError:
-            policy = np.ones(legal_action.shape)/legal_action.shape[-1] # pylint: disable=E1136  # pylint/issues/3139
+            policy = np.ones(legal_actions.shape)/legal_actions.shape[-1]
         
         return policy
     
-    def act(self, observation):
-        policy = self.policy(observation)
-        action_id = np.random.choice(range(policy.shape[-1]), policy) # pylint: disable=E1136  # pylint/issues/3139
+    def act(self, observation, legal_actions):
+        policy = self.policy(observation, legal_actions)
+        action_id = np.random.choice(legal_actions, policy) # pylint: disable=E1136  # pylint/issues/3139
         return action_id
     
     def learn(self):
