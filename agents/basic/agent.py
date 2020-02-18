@@ -7,6 +7,25 @@ import collections
 
 class BasicAgent(Agent):
 
+    """ A general structure for table-based RL agents
+    You can use different evaluation and control methods
+    
+    
+    evaluations : agents.basic.evaluation
+        'mc','montecarlo' -> Monte-Carlo evaluation
+        'td','temp*dif*' -> Offline Temporal Difference
+        'ontd','on*temp*dif' -> Online Temporal Difference
+        'sarsa' -> SARSA with specified target policy
+            You have to specify the target policy with #.target_policy = target_policy
+        'q*' -> QLearning (SARSA with greedy target policy)
+    
+
+    control : agents.basic.control
+        '*greedy' -> epsilon_greedy with epsilon=exploration
+        'ucb' -> ucb with c=exploration
+        'puct' -> puct with c=exploration
+    """
+
     name = 'BasicAgent'
 
     action_values = {}
@@ -32,7 +51,7 @@ class BasicAgent(Agent):
         
         return policy
     
-    def play(self, observation):
+    def act(self, observation):
         policy = self.policy(observation)
         action_id = np.random.choice(range(policy.shape[-1]), policy) # pylint: disable=E1136  # pylint/issues/3139
         return action_id
