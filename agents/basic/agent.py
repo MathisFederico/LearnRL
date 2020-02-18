@@ -42,6 +42,7 @@ class BasicAgent(Agent):
             N = np.array([self.action_visits[(state_id, action)] for action in legal_actions])
             Q = np.array([self.action_values[(state_id, action)] for action in legal_actions])
             policy = self.control.getPolicy(action_visits=N, action_values=Q, exploration=self.exploration)
+
         except KeyError:
             policy = np.ones(legal_actions.shape)/legal_actions.shape[-1]
         

@@ -26,7 +26,7 @@ class Control():
     def updateExploration(self, exploration=None):
         if exploration is not None:
             self.exploration = exploration
-    
+
     def checkPolicy(self, policy):
         try: 
             assert np.all(policy >= 0), "Policy have probabilities < 0"
@@ -91,7 +91,7 @@ class Puct(Control):
     def getPolicy(self, **params):
         action_visits = params.get('action_visits')
         action_values = params.get('action_values')
-
+        
         best_action_id = np.argmax(action_values + \
                               self.exploration * np.sqrt(np.sum(action_visits)/(1.0+action_visits)))
         
