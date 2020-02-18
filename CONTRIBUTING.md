@@ -1,4 +1,7 @@
 # We are using git flow !
+Download:
+https://github.com/petervanderdoes/gitflow-avh/wiki/Installation
+
 See this cheatsheet for fast info:
 https://danielkummer.github.io/git-flow-cheatsheet/index.fr_FR.html
 
