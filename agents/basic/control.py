@@ -17,11 +17,14 @@ class Control():
 
     It is adviced to call self.checkPolicy(policy) before returning it.
     """
-    
-    name = 'defaultcontrol'
 
-    def __init__(self, initial_exploration=0):
+    def __init__(self, initial_exploration=0, name=None):
         self.exploration = initial_exploration
+
+        if name is None:
+            raise ValueError("The Control Object must have a name")
+
+        self.name = name
 
     def updateExploration(self, exploration=None):
         if exploration is not None:
@@ -35,22 +38,20 @@ class Control():
         except AssertionError as error:
             print("Policy is not valid :\n\t{}".format(error))
 
-    def getPolicy(self, **params):
+    def getPolicy(self, action_values, action_visits=None):
         raise NotImplementedError
 
 class Greedy(Control):
 
-    name ='greedy'
-
     def __init__(self, initial_exploration=0, decay=1):
-        self.exploration = initial_exploration
+        super().__init__(initial_exploration=initial_exploration, name="greedy")
+
         self.decay = decay
 
     def updateExploration(self, exploration=None):
         self.exploration *= self.decay
 
-    def getPolicy(self, **params):
-        action_values = params.get('action_values')
+    def getPolicy(self, action_values, action_visits=None):
         best_action_id = np.argmax(action_values)
 
         policy = np.ones(action_values.shape) * self.exploration / action_values.shape[-1]
@@ -62,14 +63,12 @@ class Greedy(Control):
 
 class UCB(Control):
 
-    name ='ucb'
-
     def __init__(self, initial_exploration=1):
-        self.exploration = initial_exploration
+        super().__init__(initial_exploration=initial_exploration, name="ucb")
 
-    def getPolicy(self, **params):
-        action_visits = params.get('action_visits')
-        action_values = params.get('action_values')
+    def getPolicy(self, action_values, action_visits=None):
+        if action_visits is None:
+            raise ValueError("action_visits must be specified")
 
         best_action_id = np.argmax(action_values + \
                               self.exploration * np.sqrt(np.log(1+np.sum(action_visits))/(1.0+action_visits)))
@@ -83,14 +82,12 @@ class UCB(Control):
 
 class Puct(Control):
 
-    name = 'puct'
-
     def __init__(self, initial_exploration=1):
-        self.exploration = initial_exploration
+        super().__init__(initial_exploration=initial_exploration, name="puct")
 
-    def getPolicy(self, **params):
-        action_visits = params.get('action_visits')
-        action_values = params.get('action_values')
+    def getPolicy(self, action_values, action_visits=None):
+        if action_visits is None:
+            raise ValueError("action_visits must be specified")
         
         best_action_id = np.argmax(action_values + \
                               self.exploration * np.sqrt(np.sum(action_visits)/(1.0+action_visits)))
