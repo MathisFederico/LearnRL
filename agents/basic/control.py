@@ -49,8 +49,7 @@ class UCB(Control):
         exploration = params.get('exploration', 0)
 
         best_action_id = np.argmax(action_values + \
-                              exploration * np.power(np.log(1+np.sum(action_visits))/(1+action_visits), 1/2))
-        
+                              exploration * np.sqrt(np.log(1+np.sum(action_visits))/(1.0+action_visits)))
         policy = np.zeros(action_values.shape)
         policy[best_action_id] = 1.0
 
@@ -66,7 +65,7 @@ class Puct(Control):
         exploration = params.get('exploration', 0)
 
         best_action_id = np.argmax(action_values + \
-                              exploration * np.power(np.sum(action_visits)/(1+action_visits), 1/2))
+                              exploration * np.sqrt(np.sum(action_visits)/(1.0+action_visits)))
         
         policy = np.zeros(action_values.shape)
         policy[best_action_id] = 1.0

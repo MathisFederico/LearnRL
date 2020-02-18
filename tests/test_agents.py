@@ -2,7 +2,8 @@ import unittest
 import numpy as np
 
 from copy import deepcopy
-from agents import Agent, Memory
+
+# General agent testing
 
 class MemoryTest(unittest.TestCase):
 
@@ -10,6 +11,7 @@ class MemoryTest(unittest.TestCase):
     
     def setUp(self):
         """Create a memory instance"""
+        from agents import Memory
         self.memory = Memory()
 
     def test_forget(self):
@@ -60,6 +62,80 @@ class MemoryTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.memory.remember(state=0, action=1.0, reward=2, done=False, next_state=3, info={'param':4})
             self.memory.remember(state=[0, 1], action=[2, 3], reward=4, done=False, next_state=[5, 6], info={'param':7})
+
+# Basic agents testing
+
+class ControlTest(unittest.TestCase):
+
+    def setUp(self):
+        self.action_values = np.array(range(10)[::-1])
+        self.action_visits = np.array(range(10)[::-1])
+
+    def test_getPolicy(self):
+        from agents.basic.control import Control
+        control = Control()
+        with self.assertRaises(NotImplementedError):
+            control.getPolicy()
+
+    def test_Greedy(self):
+        from agents.basic.control import Greedy
+        greedy = Greedy()
+        policy = greedy.getPolicy(action_values=self.action_values)
+        expected_policy = np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for greedy\nExpected {}\nGot {}'.format(expected_policy, policy))
+
+        exploration = .5
+        policy = greedy.getPolicy(action_values=self.action_values, exploration=exploration)
+        expected_policy = np.array([0.55, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for eps-greedy with eps={}\nExpected {}\nGot {}'.format(exploration, expected_policy, policy))
+
+        exploration = 1
+        policy = greedy.getPolicy(action_values=self.action_values, exploration=exploration)
+        expected_policy = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for eps-greedy with eps={}\nExpected {}\nGot {}'.format(exploration, expected_policy, policy))
+
+    def test_UCB(self):
+        from agents.basic.control import UCB
+        ucb = UCB()
+        policy = ucb.getPolicy(action_values=self.action_values, action_visits=self.action_visits)
+        expected_policy = np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for UCB greedy\nExpected {}\nGot {}'.format(expected_policy, policy))
+
+        exploration = 2
+        policy = ucb.getPolicy(action_values=self.action_values, action_visits=self.action_visits, exploration=exploration)
+        expected_policy = np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for UCB c={}\nExpected {}\nGot {}'.format(exploration, expected_policy, policy))
+        
+        exploration = 10
+        policy = ucb.getPolicy(action_values=self.action_values, action_visits=self.action_visits, exploration=exploration)
+        expected_policy = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for UCB c={}\nExpected {}\nGot {}'.format(exploration, expected_policy, policy))
+
+    def test_Puct(self):
+        from agents.basic.control import Puct
+        puct = Puct()
+        policy = puct.getPolicy(action_values=self.action_values, action_visits=self.action_visits)
+        expected_policy = np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for puct greedy\nExpected {}\nGot {}'.format(expected_policy, policy))
+
+        exploration = 2
+        policy = puct.getPolicy(action_values=self.action_values, action_visits=self.action_visits, exploration=exploration)
+        expected_policy = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for puct c={}\nExpected {}\nGot {}'.format(exploration, expected_policy, policy))
+        
+        exploration = 10
+        policy = puct.getPolicy(action_values=self.action_values, action_visits=self.action_visits, exploration=exploration)
+        expected_policy = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+        self.assertTrue(np.all(policy==expected_policy),
+                        'Wrong policy for puct c={}\nExpected {}\nGot {}'.format(exploration, expected_policy, policy))
 
 if __name__ == "__main__":
     unittest.main()
