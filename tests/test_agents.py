@@ -151,5 +151,20 @@ class ControlTest(unittest.TestCase):
         self.assertTrue(np.all(policy==expected_policy),
                         'Wrong policy for puct c=10\nExpected {}\nGot {}'.format(expected_policy, policy))
 
+
+class EvaluationTest(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_in_dict(self):
+        from agents.basic.evaluation import Evaluation
+
+        evaluation = Evaluation(name='default')
+        action_values = {(0, 0):1, (0, 1):2, (1, 0):3, (1, 1):4}
+        state = np.array([0, 1, 2, 0, 1 ,2])
+        action = np.array([0, 1, 0, 1, 0 ,2])
+        evaluation.in_dict(action_values, state, action)
+
 if __name__ == "__main__":
     unittest.main()
