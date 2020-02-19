@@ -162,9 +162,12 @@ class EvaluationTest(unittest.TestCase):
 
         evaluation = Evaluation(name='default')
         action_values = {(0, 0):1, (0, 1):2, (1, 0):3, (1, 1):4}
-        state = np.array([0, 1, 2, 0, 1 ,2])
-        action = np.array([0, 1, 0, 1, 0 ,2])
-        evaluation.in_dict(action_values, state, action)
+        state = np.array([0, 1, 2, 0, 1, 0])
+        action = np.array([0, 1, 0, 1, 0, 2])
+        key_in_dict = evaluation.in_dict(action_values, state, action)
+        expected_key_in_dict = np.array([True, True, False, True, True , False])
+        self.assertTrue(np.all(key_in_dict==expected_key_in_dict),
+                        f"\nGot {key_in_dict}\nInstead of {expected_key_in_dict}")
 
 if __name__ == "__main__":
     unittest.main()
