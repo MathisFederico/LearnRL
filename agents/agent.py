@@ -50,8 +50,16 @@ class Agent():
     def act(self, observation, legal_actions):
         raise NotImplementedError
     
+    @staticmethod
+    def _hash_state(state):
+        return state
+
+    @staticmethod
+    def _hash_action(action):
+        return action
+
     def remember(self, state, action, reward, done, next_state=None, info={}):
-        self.memory.remember(state, action, reward, done, next_state, info)
+        self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
     
     def forget(self):
         self.memory.forget()

@@ -35,11 +35,28 @@ class BasicAgent(Agent):
         self.exploration = exploration
         self.learning_rate = learning_rate
 
-    def policy(self, observation, legal_actions):
-        state_id = hash(observation)
+    @staticmethod
+    def _hash_state(state):
         try:
-            N = np.array([self.action_visits[(state_id, action)] for action in legal_actions])
-            Q = np.array([self.action_values[(state_id, action)] for action in legal_actions])
+            state_id = hash(state)
+        except TypeError:
+            state_id = hash(state.tostring())
+        return state_id
+
+    @staticmethod
+    def _hash_action(action):
+        try:
+            action_id = hash(action)
+        except TypeError:
+            action_id = hash(action.tostring())
+        return action_id
+
+    def policy(self, state, legal_actions):
+        state_id = self._hash_state(state)
+        legal_actions_id = [self._hash_action(action) for action in legal_actions]
+        try:
+            N = np.array([self.action_visits[(state_id, action_id)] for action_id in legal_actions_id])
+            Q = np.array([self.action_values[(state_id, action_id)] for action_id in legal_actions_id])
             policy = self.control.getPolicy(action_visits=N, action_values=Q, exploration=self.exploration)
 
         except KeyError:
