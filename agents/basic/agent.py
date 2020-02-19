@@ -70,8 +70,8 @@ class BasicAgent(Agent):
         return action_id
     
     def learn(self):
-        self.control.updateExploration()
         self.evaluation.learn(action_visits=self.action_visits,
                               action_values=self.action_values,
                               memory=self.memory)
+        self.control.updateExploration()
         self.evaluation.update_learning_rate()
