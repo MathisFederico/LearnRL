@@ -4,7 +4,7 @@ Evaluation methodes to modify the value fonctions from experiences
 
 import numpy as np
 
-class Evaluation(object):
+class Evaluation():
 
     """
     Basic evaluation object\n
@@ -38,7 +38,7 @@ class Evaluation(object):
 class MonteCarlo(Evaluation):
 
     def __init__(self, initial_learning_rate=0.1):
-        super(MonteCarlo, self).__init__(initial_learning_rate=initial_learning_rate, name="mc")
+        super().__init__(initial_learning_rate=initial_learning_rate, name="mc")
 
     def learn(self, action_values, memory, learning_rate, action_visits=None):
         datas = memory.datas
