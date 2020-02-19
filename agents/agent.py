@@ -1,5 +1,5 @@
 import numpy as np
-import collections
+import collections.abc as collections
 
 class Memory():
 

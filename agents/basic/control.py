@@ -4,7 +4,7 @@ Control methodes to improve the policy based on value fonctions
 
 import numpy as np
 
-class Control(object):
+class Control():
 
     """ 
     Base control object\n
@@ -44,7 +44,7 @@ class Control(object):
 class Greedy(Control):
 
     def __init__(self, initial_exploration=0, decay=1):
-        super(Greedy, self).__init__(initial_exploration=initial_exploration, name="greedy")
+        super().__init__(initial_exploration=initial_exploration, name="greedy")
 
         self.decay = decay
 
@@ -64,7 +64,7 @@ class Greedy(Control):
 class UCB(Control):
 
     def __init__(self, initial_exploration=1):
-        super(UCB, self).__init__(initial_exploration=initial_exploration, name="ucb")
+        super().__init__(initial_exploration=initial_exploration, name="ucb")
 
     def getPolicy(self, action_values, action_visits=None):
         if action_visits is None:
@@ -83,7 +83,7 @@ class UCB(Control):
 class Puct(Control):
 
     def __init__(self, initial_exploration=1):
-        super(Puct, self).__init__(initial_exploration=initial_exploration, name="puct")
+        super().__init__(initial_exploration=initial_exploration, name="puct")
 
     def getPolicy(self, action_values, action_visits=None):
         if action_visits is None:
