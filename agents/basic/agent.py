@@ -3,7 +3,6 @@ from agents.basic.control import Greedy
 from agents.agent import Agent
 
 import numpy as np
-import collections
 
 class BasicAgent(Agent):
 
