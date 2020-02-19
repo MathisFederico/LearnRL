@@ -55,4 +55,7 @@ class BasicAgent(Agent):
     
     def learn(self):
         self.control.updateExploration()
-        self.evaluation.learn(self.action_visits, self.action_values, self.memory, learning_rate=self.learning_rate)
+        self.evaluation.learn(action_visits=self.action_visits,
+                              action_values=self.action_values,
+                              memory=self.memory)
+        self.evaluation.update_learning_rate()
