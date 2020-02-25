@@ -79,7 +79,7 @@ class TemporalDifference(Evaluation):
 
         datas = memory.datas
         # If Online learning, learns every step
-        if online/
+        if online:
             last_datas = {key:datas[key][-1] for key in datas}
             expected_futur_reward = get_expected_futur_reward(action_values, last_datas['action'], last_datas['reward'], last_datas['done'],
                                                                              last_datas['next_state'], target_policy)
