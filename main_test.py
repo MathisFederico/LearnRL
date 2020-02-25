@@ -3,13 +3,16 @@ from copy import deepcopy
 
 from envs import NimEnv
 from agents import BasicAgent
+from agents.basic.evaluation import TemporalDifference
+
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=2, suppress=True)
+    np.set_printoptions(precision=3)
     env = NimEnv(is_optimal=True)
-    agent = BasicAgent()
+    agent = BasicAgent(evaluation=TemporalDifference())
 
-    n_games = 1000
+    n_games = 2000
 
     for game in range(n_games):
         done = False
@@ -30,4 +33,10 @@ if __name__ == "__main__":
             # print(state, action, reward, done, next_state)
 
         print('Game {}/{}, Return:{}'.format(game,n_games,G))
-    print(agent.action_values)
+    action_values = np.array([[agent.action_values[(state,action)] for (state,action) in agent.action_values if action==i] for i in range(3)])
+    X = np.array([[state for (state,action) in agent.action_values if action==i] for i in range(3)])
+    print(action_values)
+    print(1+np.argmax(action_values, axis=0))
+    for action in range(3):
+        plt.plot(X[action, :], action_values[action, :], label=1+action, linestyle='', marker='+')
+    plt.show()

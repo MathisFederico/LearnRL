@@ -28,12 +28,10 @@ class BasicAgent(Agent):
     action_values = {}
     action_visits = {}
 
-    def __init__(self, evaluation=MonteCarlo(), control=Greedy(initial_exploration=1.0, decay=0.999), learning_rate=0.1, exploration=0):
+    def __init__(self, evaluation=MonteCarlo(initial_learning_rate=0.1), control=Greedy(initial_exploration=1.0, decay=0.999)):
         self.evaluation = evaluation
         self.control = control
         self.name = self.name + '_{}'.format(self.evaluation.name) + '_{}'.format(self.control.name)
-        self.exploration = exploration
-        self.learning_rate = learning_rate
 
     @staticmethod
     def _hash_state(state):
@@ -57,7 +55,7 @@ class BasicAgent(Agent):
         try:
             N = np.array([self.action_visits[(state_id, action_id)] for action_id in legal_actions_id])
             Q = np.array([self.action_values[(state_id, action_id)] for action_id in legal_actions_id])
-            policy = self.control.getPolicy(action_visits=N, action_values=Q, exploration=self.exploration)
+            policy = self.control.getPolicy(action_visits=N, action_values=Q)
 
         except KeyError:
             policy = np.ones(legal_actions.shape)/legal_actions.shape[-1]
@@ -69,9 +67,10 @@ class BasicAgent(Agent):
         action_id = np.random.choice(range(len(legal_actions)), p=policy) # pylint: disable=E1136  # pylint/issues/3139
         return action_id
     
+    def remember(self, state, action, reward, done, next_state=None, info={}):
+        self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
+
     def learn(self):
-        self.evaluation.learn(action_visits=self.action_visits,
-                              action_values=self.action_values,
-                              memory=self.memory)
+        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits, memory=self.memory)
         self.control.updateExploration()
         self.evaluation.update_learning_rate()
