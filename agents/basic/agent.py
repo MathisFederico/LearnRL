@@ -29,9 +29,11 @@ class BasicAgent(Agent):
     action_visits = {}
 
     def __init__(self, evaluation=MonteCarlo(initial_learning_rate=0.1), control=Greedy(initial_exploration=1.0, decay=0.999)):
+        super().__init__()
         self.evaluation = evaluation
         self.control = control
         self.name = self.name + '_{}'.format(self.evaluation.name) + '_{}'.format(self.control.name)
+        self.memory.legal_actions = {}
 
     @staticmethod
     def _hash_state(state):
@@ -49,28 +51,28 @@ class BasicAgent(Agent):
             action_id = hash(action.tostring())
         return action_id
 
-    def policy(self, state, legal_actions):
-        state_id = self._hash_state(state)
-        legal_actions_id = [self._hash_action(action) for action in legal_actions]
+    def policy(self, state, legal_actions):     
         try:
-            N = np.array([self.action_visits[(state_id, action_id)] for action_id in legal_actions_id])
-            Q = np.array([self.action_values[(state_id, action_id)] for action_id in legal_actions_id])
+            N = np.array([self.action_visits[(state, action)] for action in legal_actions])
+            Q = np.array([self.action_values[(state, action)] for action in legal_actions])
             policy = self.control.getPolicy(action_visits=N, action_values=Q)
-
         except KeyError:
             policy = np.ones(legal_actions.shape)/legal_actions.shape[-1]
-        
         return policy
     
-    def act(self, observation, legal_actions):
-        policy = self.policy(observation, legal_actions)
+    def act(self, state, legal_actions):
+        state_id = self._hash_state(state)
+        legal_actions_id = np.array([self._hash_action(action) for action in legal_actions])
+        self.memory.legal_actions[state_id] = legal_actions_id
+
+        policy = self.policy(state_id, legal_actions_id)
         action_id = np.random.choice(range(len(legal_actions)), p=policy) # pylint: disable=E1136  # pylint/issues/3139
         return action_id
     
     def remember(self, state, action, reward, done, next_state=None, info={}):
         self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
 
-    def learn(self):
-        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits, memory=self.memory)
+    def learn(self, **kwargs):
+        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits, memory=self.memory, policy=self.policy, **kwargs)
         self.control.updateExploration()
         self.evaluation.update_learning_rate()
