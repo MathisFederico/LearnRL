@@ -33,8 +33,8 @@ class Control():
     def checkPolicy(self, policy):
         try: 
             assert np.all(policy >= 0), "Policy have probabilities < 0"
-            prob_sum = np.sum(policy, axis=-1)
-            assert np.abs(prob_sum-1) <= 1e-9, "Policy probabilities sum to {} and not 1".format(prob_sum)
+            prob_sum = np.sum(policy)
+            assert np.abs(prob_sum-1) <= 1e-10, "Policy probabilities sum to {} and not 1".format(prob_sum)
         except AssertionError as error:
             print("Policy is not valid :\n\t{}".format(error))
 
