@@ -32,11 +32,19 @@ if __name__ == "__main__":
             state = deepcopy(next_state)
             # print(state, action, reward, done, next_state)
 
-        print('Game {}/{}, Return:{}'.format(game,n_games,G))
-    action_values = np.array([[agent.action_values[(state,action)] for (state,action) in agent.action_values if action==i] for i in range(3)])
-    X = np.array([[state for (state,action) in agent.action_values if action==i] for i in range(3)])
+        print('Game {}/{}, Return:{}'.format(game, n_games, G))
+    
+    action_size, state_size = env.action_space.n, env.observation_space.n
+    action_values = np.zeros((action_size,state_size))
+    for action in range(action_size):
+        for state in range(state_size):
+            try:
+                action_values[action, state] = agent.action_values[(state, action)]
+            except KeyError:
+                print(f'Unseen couple (state,action) : {(state, action)}')
+    X = range(state_size)
     print(action_values)
     print(1+np.argmax(action_values, axis=0))
-    for action in range(3):
-        plt.plot(X[action, :], action_values[action, :], label=1+action, linestyle='', marker='+')
+    for action in range(action_size):
+        plt.plot(X, action_values[action, :], label=1+action, linestyle='-', marker='+')
     plt.show()
