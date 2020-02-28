@@ -80,3 +80,4 @@ def test_Puct(action_values, action_visits):
             raise ControlError(f'Wrong policy for UCB with c={c}\
                                 \nExpected {expected_policy}\
                                 \nGot {policy}')
+
