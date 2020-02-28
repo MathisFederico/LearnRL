@@ -1,5 +1,44 @@
 import unittest
 import numpy as np
+from copy import deepcopy
+
+class MonteCarloTest(unittest.TestCase):
+
+    def test_nim_optimal_policy(self):
+        from envs import NimEnv
+        from agents import BasicAgent
+        from agents.basic.evaluation import MonteCarlo
+
+        env = NimEnv(is_optimal=True)
+        agent = BasicAgent(evaluation=MonteCarlo())
+
+        n_games = 2000
+        legal_actions = np.array(range(3))
+
+        for _ in range(n_games):
+            done = False
+            state = env.reset()
+            while not done:
+                action = agent.act(state, legal_actions)
+                next_state, reward, done , info = env.step(action)
+                agent.remember(state, action, reward, done, next_state, info)
+                agent.learn()
+                state = deepcopy(next_state)
+        
+        action_size, state_size = env.action_space.n, env.observation_space.n
+        action_values = np.zeros((action_size,state_size))
+        for action in range(action_size):
+            for state in range(state_size):
+                try:
+                    action_values[action, state] = agent.action_values[(state, action)]
+                except KeyError:
+                    pass
+        
+        greedy_actions = 1+np.argmax(action_values, axis=0)
+        pertinent_states = np.concatenate([[2+k+4*i for k in range(3)] for i in range(4)])
+        pertinent_actions = greedy_actions[pertinent_states]
+        expected_actions = np.array([1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3])
+        self.assertTrue(np.all(pertinent_actions==expected_actions))
 
 
 class TemporalDifferenceTest(unittest.TestCase):
@@ -37,3 +76,39 @@ class TemporalDifferenceTest(unittest.TestCase):
                         f"An error occured in memory\n \
                         Expected {expected_memory}\n \
                         Got {agent.memory.datas}")
+    
+    def test_nim_optimal_policy(self):
+        from envs import NimEnv
+        from agents import BasicAgent
+        from agents.basic.evaluation import TemporalDifference
+
+        env = NimEnv(is_optimal=True)
+        agent = BasicAgent(evaluation=TemporalDifference())
+
+        n_games = 2000
+        legal_actions = np.array(range(3))
+
+        for _ in range(n_games):
+            done = False
+            state = env.reset()
+            while not done:
+                action = agent.act(state, legal_actions)
+                next_state, reward, done , info = env.step(action)
+                agent.remember(state, action, reward, done, next_state, info)
+                agent.learn()
+                state = deepcopy(next_state)
+        
+        action_size, state_size = env.action_space.n, env.observation_space.n
+        action_values = np.zeros((action_size,state_size))
+        for action in range(action_size):
+            for state in range(state_size):
+                try:
+                    action_values[action, state] = agent.action_values[(state, action)]
+                except KeyError:
+                    pass
+        
+        greedy_actions = 1+np.argmax(action_values, axis=0)
+        pertinent_states = np.concatenate([[2+k+4*i for k in range(3)] for i in range(4)])
+        pertinent_actions = greedy_actions[pertinent_states]
+        expected_actions = np.array([1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3])
+        self.assertTrue(np.all(pertinent_actions==expected_actions))
