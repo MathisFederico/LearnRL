@@ -42,9 +42,12 @@ if __name__ == "__main__":
                 action_values[action, state] = agent.action_values[(state, action)]
             except KeyError:
                 print(f'Unseen couple (state,action) : {(state, action)}')
-    X = range(state_size)
+
     print(action_values)
     print(1+np.argmax(action_values, axis=0))
+    
+    X = range(state_size)
     for action in range(action_size):
         plt.plot(X, action_values[action, :], label=1+action, linestyle='-', marker='+')
+    plt.legend()
     plt.show()
