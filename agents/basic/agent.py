@@ -13,13 +13,11 @@ class BasicAgent(Agent):
     
     Evaluations : agents.basic.evaluation
         'mc','montecarlo' -> Monte-Carlo evaluation
-        X'td','temp*dif*' -> Offline Temporal Difference
-        X'ontd','on*temp*dif' -> Online Temporal Difference
         X'sarsa' -> SARSA with specified target policy
         X'q*' -> QLearning (SARSA with greedy target policy)
         
     Control : agents.basic.control
-        '*greedy' -> epsilon_greedy with epsilon=exploration
+        'greedy' -> epsilon_greedy with epsilon=exploration
         'ucb' -> ucb with c=exploration
         'puct' -> puct with c=exploration
     """
