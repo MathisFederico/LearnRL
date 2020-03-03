@@ -27,9 +27,9 @@ def test_nim_optimal_policy():
     from agents.basic.evaluation import MonteCarlo
 
     env = NimEnv(is_optimal=True)
-    agent = BasicAgent(evaluation=MonteCarlo())
+    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n, evaluation=MonteCarlo())
 
-    n_games = 2000
+    n_games = 600
     legal_actions = np.array(range(3))
 
     for _ in range(n_games):
@@ -59,7 +59,7 @@ def test_nim_optimal_policy():
         raise ValueError(f'MonteCarlo agent got policy {pertinent_actions} instead of {expected_actions}')
 
 
-# TemporalDifference
+# TemporalDifference - online
 @pytest.mark.slow
 def test_td_onl_onp_nim_optimal_policy():
     from envs import NimEnv
@@ -67,9 +67,9 @@ def test_td_onl_onp_nim_optimal_policy():
     from agents.basic.evaluation import TemporalDifference
 
     env = NimEnv(is_optimal=True)
-    agent = BasicAgent(evaluation=TemporalDifference())
+    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n, evaluation=TemporalDifference())
 
-    n_games = 2000
+    n_games = 400
     legal_actions = np.array(range(3))
 
     for _ in range(n_games):
@@ -80,6 +80,46 @@ def test_td_onl_onp_nim_optimal_policy():
             next_state, reward, done , info = env.step(action)
             agent.remember(state, action, reward, done, next_state, info)
             agent.learn()
+            state = deepcopy(next_state)
+    
+    action_size, state_size = env.action_space.n, env.observation_space.n
+    action_values = np.zeros((action_size,state_size))
+    for action in range(action_size):
+        for state in range(state_size):
+            try:
+                action_values[action, state] = agent.action_values[(state, action)]
+            except KeyError:
+                pass
+    
+    greedy_actions = 1+np.argmax(action_values, axis=0)
+    pertinent_states = np.concatenate([[2+k+4*i for k in range(3)] for i in range(4)])
+    pertinent_actions = greedy_actions[pertinent_states]
+    expected_actions = np.array([1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3])
+    if not np.all(pertinent_actions==expected_actions):
+        raise ValueError(f'TD-Onl-Onp agent got policy {pertinent_actions} instead of {expected_actions}')
+
+
+# TemporalDifference - offline
+@pytest.mark.slow
+def test_td_offl_onp_nim_optimal_policy():
+    from envs import NimEnv
+    from agents import BasicAgent
+    from agents.basic.evaluation import TemporalDifference
+
+    env = NimEnv(is_optimal=True)
+    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n, evaluation=TemporalDifference())
+
+    n_games = 400
+    legal_actions = np.array(range(3))
+
+    for _ in range(n_games):
+        done = False
+        state = env.reset()
+        while not done:
+            action = agent.act(state, legal_actions)
+            next_state, reward, done , info = env.step(action)
+            agent.remember(state, action, reward, done, next_state, info)
+            agent.learn(online=False)
             state = deepcopy(next_state)
     
     action_size, state_size = env.action_space.n, env.observation_space.n

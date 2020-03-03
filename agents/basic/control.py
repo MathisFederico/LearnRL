@@ -33,10 +33,11 @@ class Control():
     def checkPolicy(self, policy):
         try: 
             assert np.all(policy >= 0), "Policy have probabilities < 0"
-            prob_sum = np.sum(policy)
-            assert np.abs(prob_sum-1) <= 1e-10, "Policy probabilities sum to {} and not 1".format(prob_sum)
+            prob_sums = np.sum(policy, axis=-1)
+            valid_policy = np.abs(np.sum(prob_sums - 1)) <= 1e-8
+            assert np.all(valid_policy), f"Policy probabilities sum to {prob_sums[not valid_policy]} and not 1"
         except AssertionError as error:
-            print("Policy is not valid :\n\t{}".format(error))
+            print(f"Policy is not valid : {error}")
 
     def getPolicy(self, action_values, action_visits=None):
         raise NotImplementedError
@@ -45,17 +46,20 @@ class Greedy(Control):
 
     def __init__(self, initial_exploration=0, decay=1):
         super().__init__(initial_exploration=initial_exploration, name="greedy")
-
         self.decay = decay
 
     def updateExploration(self, exploration=None):
         self.exploration *= self.decay
 
     def getPolicy(self, action_values, action_visits=None):
-        best_action_id = np.argmax(action_values)
+        best_action_id = np.argmax(action_values, axis=-1)
 
         policy = np.ones(action_values.shape) * self.exploration / action_values.shape[-1]
-        policy[best_action_id] += 1 - self.exploration
+        if policy.ndim > 1:
+            i = np.arange(policy.shape[0])
+            policy[i, best_action_id] += 1 - self.exploration
+        else:
+            policy[best_action_id] += 1 - self.exploration
 
         self.checkPolicy(policy)
         return policy
@@ -71,7 +75,7 @@ class UCB(Control):
             raise ValueError("action_visits must be specified")
 
         best_action_id = np.argmax(action_values + \
-                              self.exploration * np.sqrt(np.log(1+np.sum(action_visits))/(1.0+action_visits)))
+                              self.exploration * np.sqrt(np.log(1+np.sum(action_visits, axis=-1))/(1.0+action_visits)), axis=-1)
 
         policy = np.zeros(action_values.shape)
         policy[best_action_id] = 1.0
@@ -90,7 +94,7 @@ class Puct(Control):
             raise ValueError("action_visits must be specified")
         
         best_action_id = np.argmax(action_values + \
-                              self.exploration * np.sqrt(np.sum(action_visits)/(1.0+action_visits)))
+                              self.exploration * np.sqrt(np.sum(action_visits, axis=-1)/(1.0+action_visits)), axis=-1)
         
         policy = np.zeros(action_values.shape)
         policy[best_action_id] = 1.0
