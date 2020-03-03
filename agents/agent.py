@@ -13,9 +13,7 @@ class Memory():
         for key, value in zip(self.MEMORY_KEYS, (state, action, reward, done, next_state, info)):
 
             # Check that value is an instance of numpy.ndarray or transform the value
-            if isinstance(value, collections.Sequence):
-                value = np.array([value])
-            elif type(value) != np.ndarray:
+            if isinstance(value, collections.Sequence) or type(value) != np.ndarray or value.ndim < 1:
                 value = np.array([value])
 
             # Add the new experience into the memory forgetting long past experience if neccesary
