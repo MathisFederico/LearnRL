@@ -3,7 +3,6 @@ from agents.basic.control import Greedy
 from agents.agent import Agent
 
 import numpy as np
-import collections
 
 class BasicAgent(Agent):
 
@@ -27,30 +26,51 @@ class BasicAgent(Agent):
     action_values = {}
     action_visits = {}
 
-    def __init__(self, evaluation=MonteCarlo(), control=Greedy(initial_exploration=1.0, decay=0.999), learning_rate=0.1, exploration=0):
+    def __init__(self, evaluation=MonteCarlo(initial_learning_rate=0.1), control=Greedy(initial_exploration=1.0, decay=0.999)):
+        super().__init__()
         self.evaluation = evaluation
         self.control = control
         self.name = self.name + '_{}'.format(self.evaluation.name) + '_{}'.format(self.control.name)
-        self.exploration = exploration
-        self.learning_rate = learning_rate
+        self.memory.legal_actions = {}
 
-    def policy(self, observation, legal_actions):
-        state_id = hash(observation)
+    @staticmethod
+    def _hash_state(state):
         try:
-            N = np.array([self.action_visits[(state_id, action)] for action in legal_actions])
-            Q = np.array([self.action_values[(state_id, action)] for action in legal_actions])
-            policy = self.control.getPolicy(action_visits=N, action_values=Q, exploration=self.exploration)
+            state_id = hash(state)
+        except TypeError:
+            state_id = hash(state.tostring())
+        return state_id
 
+    @staticmethod
+    def _hash_action(action):
+        try:
+            action_id = hash(action)
+        except TypeError:
+            action_id = hash(action.tostring())
+        return action_id
+
+    def policy(self, state, legal_actions):     
+        try:
+            N = np.array([self.action_visits[(state, action)] for action in legal_actions])
+            Q = np.array([self.action_values[(state, action)] for action in legal_actions])
+            policy = self.control.getPolicy(action_visits=N, action_values=Q)
         except KeyError:
             policy = np.ones(legal_actions.shape)/legal_actions.shape[-1]
-        
         return policy
     
-    def act(self, observation, legal_actions):
-        policy = self.policy(observation, legal_actions)
+    def act(self, state, legal_actions):
+        state_id = self._hash_state(state)
+        legal_actions_id = np.array([self._hash_action(action) for action in legal_actions])
+        self.memory.legal_actions[state_id] = legal_actions_id
+
+        policy = self.policy(state_id, legal_actions_id)
         action_id = np.random.choice(range(len(legal_actions)), p=policy) # pylint: disable=E1136  # pylint/issues/3139
         return action_id
     
-    def learn(self):
+    def remember(self, state, action, reward, done, next_state=None, info={}):
+        self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
+
+    def learn(self, **kwargs):
+        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits, memory=self.memory, policy=self.policy, **kwargs)
         self.control.updateExploration()
-        self.evaluation.learn(self.action_visits, self.action_values, self.memory, learning_rate=self.learning_rate)
+        self.evaluation.update_learning_rate()

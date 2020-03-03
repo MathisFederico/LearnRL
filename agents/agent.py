@@ -1,5 +1,5 @@
 import numpy as np
-import collections
+import collections.abc as collections
 
 class Memory():
 
@@ -9,7 +9,7 @@ class Memory():
     def __init__(self):
         self.datas = {key:None for key in self.MEMORY_KEYS}
 
-    def remember(self, state, action, reward, done, next_state=None, info={}):
+    def remember(self, state, action, reward, done, next_state=None, info={}, **param):
         for key, value in zip(self.MEMORY_KEYS, (state, action, reward, done, next_state, info)):
 
             # Check that value is an instance of numpy.ndarray or transform the value
@@ -27,6 +27,18 @@ class Memory():
                 else:
                     self.datas[key] = np.roll(self.datas[key], shift=-1, axis=0)
                     self.datas[key][-1] = np.array(value)
+        
+        # Same for suplementary parameters
+        for key in param:
+            if self.datas[key] is None:
+                self.datas[key] = param[key]
+            else:
+                if len(self.datas[key]) < self.max_memory_len:
+                    self.datas[key] = np.concatenate((self.datas[key], param[key]), axis=0)
+                else:
+                    self.datas[key] = np.roll(self.datas[key], shift=-1, axis=0)
+                    self.datas[key][-1] = np.array(param[key])
+
     
     def forget(self):
         self.datas = {key:None for key in self.MEMORY_KEYS}
@@ -50,8 +62,16 @@ class Agent():
     def act(self, observation, legal_actions):
         raise NotImplementedError
     
-    def remember(self, state, action, reward, done, next_state=None, info={}):
-        self.memory.remember(state, action, reward, done, next_state, info)
+    @staticmethod
+    def _hash_state(state):
+        return state
+
+    @staticmethod
+    def _hash_action(action):
+        return action
+
+    def remember(self, state, action, reward, done, next_state=None, info={}, **param):
+        self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info, **param)
     
     def forget(self):
         self.memory.forget()
