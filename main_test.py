@@ -4,15 +4,18 @@ from copy import deepcopy
 from envs import NimEnv
 from agents import BasicAgent
 from agents.basic.evaluation import TemporalDifference, MonteCarlo
+from agents.basic.control import Greedy
 
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     np.set_printoptions(precision=3)
     env = NimEnv(is_optimal=True)
-    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n, evaluation=MonteCarlo())
+    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n,
+                        control=Greedy(env.action_space.n, initial_exploration=0),
+                        evaluation=TemporalDifference(initial_learning_rate=1, online=False))
 
-    n_games = 600
+    n_games = 100 
 
     for game in range(n_games):
         done = False
