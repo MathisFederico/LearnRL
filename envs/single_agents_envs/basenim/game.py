@@ -1,5 +1,5 @@
 from gym import Env, spaces
-import random as rd
+import numpy.random as rd
 
 class NimGame():
     def __init__(self, players=("Player 1", "Player 2"), actions=(1,2,3), nb_sticks=10):
