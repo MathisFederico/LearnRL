@@ -4,100 +4,103 @@ Control methodes to improve the policy based on value fonctions
 
 import numpy as np
 
+
 class Control():
 
     """ 
     Base control object\n
     This method must be specified :
-    getPolicy(self, **params).
-
-    You can get agent knowledge with **param.
+    policy(self, action_values, action_visits=None).
+    
     Exploration constants are an argument of the control object.
-    You can see the Greedy object below for exemple.
-
-    It is adviced to call self.checkPolicy(policy) before returning it.
+    You can see the Greedy(Control) object for exemple.
     """
 
-    def __init__(self, initial_exploration=0, name=None):
+    def __init__(self, action_size, initial_exploration=0, name=None, **kwargs):
         self.exploration = initial_exploration
-
+        self.action_size = action_size
         if name is None:
             raise ValueError("The Control Object must have a name")
-
         self.name = name
+        self.decay = kwargs.get('exploration_decay', 1)
 
-    def updateExploration(self, exploration=None):
+    def policy(self, state, action_values, action_visits=None):
+        raise NotImplementedError
+
+    def get_policy(self, state, action_values, action_visits=None):
+
+        if type(state) != np.ndarray or state.ndim < 1:
+            policy = self.policy(state, action_values, action_visits)
+            self.check_policy(policy)
+            return policy
+
+        if state.ndim == 1:
+            state = state[:, np.newaxis]
+        policies = np.apply_along_axis(self.policy, axis=1, arr=state, action_values=action_values, action_visits=action_visits)
+        self.check_policy(policies)
+        return policies
+    
+    def check_policy(self, policy):
+        if not np.all(policy >= 0):
+            raise ValueError("Policy have probabilities < 0")
+        prob_sums = np.sum(policy, axis=-1)
+        valid_policy = np.abs(np.sum(prob_sums - 1)) <= 1e-8
+        if not np.all(valid_policy):
+            raise ValueError(f"Policy {policy} probabilities sum to {prob_sums[np.logical_not(valid_policy)]} and not 1")
+
+    def update_exploration(self, exploration=None):
         if exploration is not None:
             self.exploration = exploration
+        else:
+            self.exploration *= self.decay
 
-    def checkPolicy(self, policy):
-        try: 
-            assert np.all(policy >= 0), "Policy have probabilities < 0"
-            prob_sums = np.sum(policy, axis=-1)
-            valid_policy = np.abs(np.sum(prob_sums - 1)) <= 1e-8
-            assert np.all(valid_policy), f"Policy probabilities sum to {prob_sums[not valid_policy]} and not 1"
-        except AssertionError as error:
-            print(f"Policy is not valid : {error}")
-
-    def getPolicy(self, action_values, action_visits=None):
-        raise NotImplementedError
+    def __str__(self):
+        return self.name
 
 class Greedy(Control):
 
-    def __init__(self, initial_exploration=0, decay=1):
-        super().__init__(initial_exploration=initial_exploration, name="greedy")
-        self.decay = decay
+    def __init__(self, action_size, initial_exploration=0, **kwargs):
+        super().__init__(action_size, initial_exploration=initial_exploration, name="greedy", **kwargs)
 
-    def updateExploration(self, exploration=None):
-        self.exploration *= self.decay
-
-    def getPolicy(self, action_values, action_visits=None):
-        best_action_id = np.argmax(action_values, axis=-1)
-
-        policy = np.ones(action_values.shape) * self.exploration / action_values.shape[-1]
-        if policy.ndim > 1:
-            i = np.arange(policy.shape[0])
-            policy[i, best_action_id] += 1 - self.exploration
-        else:
-            policy[best_action_id] += 1 - self.exploration
-
-        self.checkPolicy(policy)
+    def policy(self, state, action_values, action_visits=None):
+        best_action_id = np.argmax(action_values[state])
+        policy = np.ones(self.action_size) * self.exploration / self.action_size
+        policy[best_action_id] += 1 - self.exploration
         return policy
 
 
 class UCB(Control):
 
-    def __init__(self, initial_exploration=1):
-        super().__init__(initial_exploration=initial_exploration, name="ucb")
+    def __init__(self, action_size, initial_exploration=1, **kwargs):
+        super().__init__(action_size, initial_exploration=initial_exploration, name="ucb", **kwargs)
 
-    def getPolicy(self, action_values, action_visits=None):
+    def policy(self, state, action_values, action_visits=None):
         if action_visits is None:
-            raise ValueError("action_visits must be specified")
+            raise ValueError("action_visits must be specified for UCB")
 
-        best_action_id = np.argmax(action_values + \
-                              self.exploration * np.sqrt(np.log(1+np.sum(action_visits, axis=-1))/(1.0+action_visits)), axis=-1)
+        N = action_visits[state]
+        Q = action_values[state]
+        best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.log(1 + np.sum(N)) / (1.0 + N)))
 
-        policy = np.zeros(action_values.shape)
+        policy = np.zeros(self.action_size)
         policy[best_action_id] = 1.0
-
-        self.checkPolicy(policy)
         return policy
 
 
 class Puct(Control):
 
-    def __init__(self, initial_exploration=1):
-        super().__init__(initial_exploration=initial_exploration, name="puct")
+    def __init__(self, action_size, initial_exploration=1, **kwargs):
+        super().__init__(action_size, initial_exploration=initial_exploration, name="puct", **kwargs)
+        self.decay = kwargs.get('decay', 1)
 
-    def getPolicy(self, action_values, action_visits=None):
+    def policy(self, state, action_values, action_visits=None):
         if action_visits is None:
-            raise ValueError("action_visits must be specified")
+            raise ValueError("action_visits must be specified for Puct")
         
-        best_action_id = np.argmax(action_values + \
-                              self.exploration * np.sqrt(np.sum(action_visits, axis=-1)/(1.0+action_visits)), axis=-1)
+        N = action_visits[state]
+        Q = action_values[state]
+        best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.sum(N) / (1.0 + N)))
         
-        policy = np.zeros(action_values.shape)
+        policy = np.zeros(self.action_size)
         policy[best_action_id] = 1.0
-
-        self.checkPolicy(policy)
         return policy
