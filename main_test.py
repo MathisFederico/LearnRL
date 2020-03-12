@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
 
-from envs import NimEnv
+from envs import NimEnv, CrossesAndNoughtsEnv
 from agents import BasicAgent
 from agents.basic.evaluation import TemporalDifference
 
@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     np.set_printoptions(precision=3)
-    env = NimEnv(is_optimal=True)
+    env = CrossesAndNoughtsEnv()
     agent = BasicAgent(evaluation=TemporalDifference())
 
     n_games = 2000
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
         print('Game {}/{}, Return:{}'.format(game, n_games, G))
     
-    action_size, state_size = env.action_space.n, env.observation_space.n
+    action_size, state_size = np.prod(env.action_space.nvec), np.prod(env.observation_space.nvec)
     action_values = np.zeros((action_size,state_size))
     for action in range(action_size):
         for state in range(state_size):
