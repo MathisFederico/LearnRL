@@ -9,23 +9,26 @@ from agents.basic.control import Greedy
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3)
-    env = CrossesAndNoughtsEnv()
-    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n,
-                        control=Greedy(env.action_space.n, initial_exploration=0),
-                        evaluation=TemporalDifference(initial_learning_rate=1, online=False))
+    env = CrossesAndNoughtsEnv(vs_random=True)
+    state_size = np.prod(env.observation_space.nvec)
+    action_size = np.prod(env.action_space.nvec)
+    action_list = [(0, 0), (0, 1), (0, 2), 
+                   (1, 0), (1, 1), (1, 2),
+                   (2, 0), (2, 1), (2, 2)]
+    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
+                        control=Greedy(action_size, initial_exploration=0.5, exploration_decay=0.999),
+                        evaluation=TemporalDifference(initial_learning_rate=0.1, online=False))
 
-    n_games = 100 
-
+    n_games = 10000
+    G = 0.0
     for game in range(n_games):
         done = False
         state = env.reset()
-        G = 0
         while not done:
-            # env.render()
-            legal_actions = np.array(range(3))
+            env.render()
+            legal_actions = [action for action in action_list if env.game.is_valid(action)]
             action = agent.act(state, legal_actions)
-            next_state, reward, done , info = env.step(action)
+            next_state, reward, done, info = env.step(action)
             G += reward
 
             agent.remember(state, action, reward, done, next_state, info)
@@ -35,9 +38,10 @@ if __name__ == "__main__":
             state = deepcopy(next_state)
             # print(state, action, reward, done, next_state)
 
-        if game%100==0: print('Game {}/{}, Return:{}'.format(game, n_games, G))
+        if game%100==0: 
+            print(f'Game {game}/{n_games}, Average Return:{G/100:.3f}')
+            G = 0.0
     
-    action_size, state_size = env.action_space.n, env.observation_space.n
     action_values = agent.action_values
 
     print(action_values)
