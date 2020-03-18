@@ -2,6 +2,7 @@
 Evaluation methodes to modify the value fonctions from experiences
 """
 from agents.agent import Memory
+from agents.basic.control import Control
 import numpy as np
 
 class Evaluation():
@@ -54,7 +55,8 @@ class TemporalDifference(Evaluation):
 
     def __init__(self, initial_learning_rate=0.1, **kwargs):
         super().__init__(initial_learning_rate=initial_learning_rate, name="td", **kwargs)
-        self.target_policy = kwargs.get('target_policy', None)
+        target_control = kwargs.get('target_control')
+        self.target_policy = target_control.policy if target_control else None
         self.online = kwargs.get('online', False)
 
     @staticmethod
@@ -64,7 +66,8 @@ class TemporalDifference(Evaluation):
         else:
             raise KeyError(f'Couldn\'t find state {next_state} legal_action\'s in agent memory')
 
-    def get_expected_futur_reward(self, action_visits, action_values, action, reward, done, policy, next_state=None, target_policy=None):
+    @staticmethod
+    def get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None, target_policy=None):
         expected_futur_reward = reward.astype(np.float64)
         not_done = np.logical_not(done)
         if target_policy is None:
@@ -80,11 +83,10 @@ class TemporalDifference(Evaluation):
         delta = expected_futur_reward - action_values[state, action]
         action_values[state, action] += self.learning_rate * delta
 
-
-    def learn(self, action_visits, action_values, memory:Memory, **kwargs):
+    def learn(self, action_visits, action_values, memory:Memory, control:Control, **kwargs):
 
         # Get specific parameters for TD
-        policy = kwargs.get('policy', None)
+        policy = control.policy
         if policy is None:
             raise ValueError('You must specify a policy for TD evaluation')
         datas = memory.datas
@@ -92,6 +94,7 @@ class TemporalDifference(Evaluation):
         # If Online learning, learns every step
         state, action, reward, done, next_state, _ = [datas[key] for key in memory.MEMORY_KEYS]
         if self.online:
+            # If done, we update value fonctions toward real reward
             if np.any(done):
                 self.learn_trajectory(action_visits, action_values, state, action, reward)
             # If not done, we estimate futur rewards based on memory and value fonctions

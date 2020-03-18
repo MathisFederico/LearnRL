@@ -50,7 +50,8 @@ class BasicAgent(Agent):
         self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
 
     def learn(self, **kwargs):
-        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits, memory=self.memory, policy=self.control.get_policy, **kwargs)
+        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits,
+                              memory=self.memory, control=self.control, **kwargs)
         self.control.update_exploration()
         self.evaluation.update_learning_rate()
 
@@ -82,10 +83,12 @@ class QLearningAgent(BasicAgent):
 
     def __init__(self, state_space, action_space, control=None, evaluation=None, **kwargs):
 
-        evaluation = TemporalDifference
-        target_control = kwargs.get('target_control', None)
-        if target_control is not None:
-            raise warn(r"'target_control' kwarg shouldn't be specified for QLearningAgent")
-        target_control = Greedy
+        target_control = kwargs.get('target_control')
+        if target_control:
+            raise ValueError(f"'target_control' kwarg shouldn't be specified for QLearningAgent but was set to {target_control}")
+
+        
         
         super().__init__(state_space, action_space, control=None, evaluation=None, target_control=target_control, **kwargs)
+        
+        self.evaluation = TemporalDifference(target_control=Greedy(action_size, initial_exploration=0) , **kwargs)
