@@ -36,8 +36,9 @@ class CrossesAndNoughtsGame():
         return actions[self.is_valid(actions)]
         
     def play(self, player, position):
-        if self.is_valid(position):
-            self.grid[position] = player
+        move = tuple(position)
+        if self.is_valid(move):
+            self.grid[move] = player
 
     def wincheck(self):
         x = np.array([1, 1, 1], dtype=np.uint8)
@@ -105,7 +106,7 @@ class CrossesAndNoughtsGame():
         self.window.blit(self.empty_grid_img, (0,0))
         pygame.display.flip()
     
-    def render(self):
+    def render(self, frame_limit):
 
         def getPosition(i, j):
             pos = np.array((34*self.scale_factor*i, 34*self.scale_factor*j), dtype=int)
@@ -150,7 +151,8 @@ class CrossesAndNoughtsGame():
         self.window.blit(text, text_pos)
 
         pygame.display.flip()
-        # pygame.time.wait(0)
+        if frame_limit != 0:
+            pygame.time.wait(1000//frame_limit)
         
     def getStateHash(self, grid):
 
@@ -224,6 +226,7 @@ class CrossesAndNoughtsEnv(Env):
                 winner = self.game.wincheck()
                 if winner == player:
                     reward = 1
+                    done = True
                 elif winner == other_player:
                     reward = -1
                     done = True
@@ -266,8 +269,8 @@ class CrossesAndNoughtsEnv(Env):
 
         return observation, reward, done, {'pass_turn':pass_turn}
     
-    def render(self):
-        self.game.render()
+    def render(self, frame_limit=0):
+        self.game.render(frame_limit=frame_limit)
 
     def reset(self):
         self.game = CrossesAndNoughtsGame()
