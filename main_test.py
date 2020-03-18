@@ -2,7 +2,7 @@ import numpy as np
 from copy import deepcopy
 
 from envs import NimEnv, CrossesAndNoughtsEnv
-from agents import BasicAgent
+from agents import BasicAgent, QLearningAgent
 from agents.basic.evaluation import TemporalDifference, MonteCarlo
 from agents.basic.control import Greedy
 
@@ -12,9 +12,11 @@ if __name__ == "__main__":
     env = CrossesAndNoughtsEnv(vs_random=True)
     state_size = np.prod(env.observation_space.nvec)
     action_size = np.prod(env.action_space.nvec)
-    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
-                        control=Greedy(action_size, initial_exploration=0.5, exploration_decay=0.99),
-                        evaluation=TemporalDifference(initial_learning_rate=0.2, online=False))
+    # agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
+    #                     control=Greedy(action_size, initial_exploration=0.5, exploration_decay=0.99),
+    #                     evaluation=TemporalDifference(initial_learning_rate=0.2, online=False))
+    agent = QLearningAgent(state_space=env.observation_space, action_space=env.action_space,
+                           control=Greedy(action_size, initial_exploration=0.5, exploration_decay=0.99))
 
     n_games = 10000
     G = 0.0
