@@ -56,7 +56,7 @@ class TemporalDifference(Evaluation):
     def __init__(self, initial_learning_rate=0.1, **kwargs):
         super().__init__(initial_learning_rate=initial_learning_rate, name="td", **kwargs)
         target_control = kwargs.get('target_control')
-        self.target_policy = target_control.policy if target_control else None
+        self.target_policy = target_control.get_policy if target_control else None
         self.online = kwargs.get('online', False)
 
     @staticmethod
@@ -86,7 +86,7 @@ class TemporalDifference(Evaluation):
     def learn(self, action_visits, action_values, memory:Memory, control:Control, **kwargs):
 
         # Get specific parameters for TD
-        policy = control.policy
+        policy = control.get_policy
         if policy is None:
             raise ValueError('You must specify a policy for TD evaluation')
         datas = memory.datas

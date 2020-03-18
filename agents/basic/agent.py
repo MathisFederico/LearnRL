@@ -13,9 +13,8 @@ class BasicAgent(Agent):
     You can use different evaluation and control methods.
     
     Evaluations : agents.basic.evaluation
-        'mc','montecarlo' -> Monte-Carlo evaluation
-        X'sarsa' -> SARSA with specified target policy
-        X'q*' -> QLearning (SARSA with greedy target policy)
+        'mc', 'montecarlo' -> Monte-Carlo evaluation
+        'td', 'tempdiff' -> TemporalDifference evaluation
         
     Control : agents.basic.control
         'greedy' -> epsilon_greedy with epsilon=exploration
@@ -117,8 +116,8 @@ class QLearningAgent(BasicAgent):
         if evaluation:
             raise ValueError(f"'evaluation' argument shouldn't be specified for QLearningAgent (Forced TemporalDifference) but was set to {evaluation}")
         
-        super().__init__(state_space, action_space, control=control, evaluation=None, **kwargs)
+        super().__init__(state_space, action_space, control=control, **kwargs)
 
-        self.evaluation = TemporalDifference(target_control=Greedy(self.action_size, initial_exploration=0) , **kwargs)
+        self.evaluation = TemporalDifference(target_control=Greedy(self.action_size, initial_exploration=0), **kwargs)
         self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
 
