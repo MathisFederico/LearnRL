@@ -2,6 +2,8 @@ from agents.basic.evaluation import MonteCarlo, TemporalDifference
 from agents.basic.control import Greedy 
 from agents.agent import Agent
 
+from warnings import warn
+
 import numpy as np
 
 class BasicAgent(Agent):
@@ -73,3 +75,17 @@ class BasicAgent(Agent):
         else:
             action_id = hash(action)
         return action_id
+
+class QLearningAgent(BasicAgent):
+
+    name = 'qlearning'
+
+    def __init__(self, state_space, action_space, control=None, evaluation=None, **kwargs):
+
+        evaluation = TemporalDifference
+        target_control = kwargs.get('target_control', None)
+        if target_control is not None:
+            raise warn(r"'target_control' kwarg shouldn't be specified for QLearningAgent")
+        target_control = Greedy
+        
+        super().__init__(state_space, action_space, control=None, evaluation=None, target_control=target_control, **kwargs)
