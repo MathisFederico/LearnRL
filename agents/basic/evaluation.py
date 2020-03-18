@@ -55,8 +55,8 @@ class TemporalDifference(Evaluation):
 
     def __init__(self, initial_learning_rate=0.1, **kwargs):
         super().__init__(initial_learning_rate=initial_learning_rate, name="td", **kwargs)
-        target_control = kwargs.get('target_control')
-        self.target_policy = target_control.get_policy if target_control else None
+        self.target_control = kwargs.get('target_control')
+        self.target_policy = self.target_control.get_policy if self.target_control else None
         self.online = kwargs.get('online', False)
 
     @staticmethod
