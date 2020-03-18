@@ -7,12 +7,6 @@ def test_name():
     with pytest.raises(ValueError):
         Control(4)
 
-def test_str():
-    name = 'default'
-    control = Control(4, name=name)
-    if str(control) != name:
-        raise ValueError(f"str(Evaluation) should return {name} and not {str(control)}")
-
 def test_update_exploration():
     initial_exploration = 0.378
     exploration_decay = 0.9
