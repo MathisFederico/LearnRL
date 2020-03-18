@@ -106,18 +106,21 @@ class BasicAgent(Agent):
 
 class QLearningAgent(BasicAgent):
 
-    name = 'qlearning'
-
     def __init__(self, state_space, action_space, control=None, evaluation=None, **kwargs):
 
+        if evaluation:
+            raise ValueError(f"'evaluation' argument shouldn't be specified for QLearningAgent (Forced TemporalDifference) but was set to {evaluation}")
         target_control = kwargs.get('target_control')
         if target_control:
             raise ValueError(f"'target_control' keyword argument shouldn't be specified for QLearningAgent (Forced Greedy) but was set to {target_control}")
-        if evaluation:
-            raise ValueError(f"'evaluation' argument shouldn't be specified for QLearningAgent (Forced TemporalDifference) but was set to {evaluation}")
+        online = kwargs.get('online')
+        if online is not None:
+            if online != True:
+                raise ValueError(f"'online' argument shouldn't be specified for QLearningAgent (Forced online=True) but was set to {online}")
         
         super().__init__(state_space, action_space, control=control, **kwargs)
 
+        kwargs['online'] = True
         self.evaluation = TemporalDifference(target_control=Greedy(self.action_size, initial_exploration=0), **kwargs)
-        self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
+        self.name = f'qlearning_{self.control.name}_{kwargs}'
 
