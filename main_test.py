@@ -1,10 +1,11 @@
 import numpy as np
 from copy import deepcopy
 
-from envs import NimEnv, CrossesAndNoughtsEnv
+
+from envs import NimEnv, CrossesAndNoughtsEnv, FrozenLakeEnv
 from agents import BasicAgent
 from agents.basic.evaluation import TemporalDifference, MonteCarlo
-from agents.basic.control import Greedy
+from agents.basic.control import Greedy, UCB, Puct
 
 import matplotlib.pyplot as plt
 
@@ -20,6 +21,7 @@ if __name__ == "__main__":
 
     n_games = 10000
     G = 0.0
+
     for game in range(n_games):
         done = False
         state = env.reset()
@@ -30,6 +32,7 @@ if __name__ == "__main__":
             next_state, reward, done, info = env.step(action)
             # print(reward)
             # if done: print('----------\n')
+
             G += reward
 
             agent.remember(state, action, reward, done, next_state, info)

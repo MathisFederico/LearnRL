@@ -5,6 +5,7 @@ from agents.basic.control import Greedy
 import numpy as np
 from gym.spaces import Discrete, MultiDiscrete
 
+
 @pytest.fixture
 def agent():
     return BasicAgent(Discrete(3), Discrete(4))

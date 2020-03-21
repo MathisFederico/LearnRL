@@ -28,6 +28,7 @@ class BasicAgent(Agent):
         
         super().__init__()
 
+
         self.state_size, self._hash_state = self.get_size_and_hash(state_space)
         self.action_size, self._hash_action = self.get_size_and_hash(action_space)
 
