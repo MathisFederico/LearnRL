@@ -35,6 +35,8 @@ class Evaluation():
 
 class MonteCarlo(Evaluation):
 
+    """ MonteCarlo methods uses experimental mean to approximate theorical mean """
+
     def __init__(self, initial_learning_rate=0.1, **kwargs):
         super().__init__(initial_learning_rate=initial_learning_rate, name="mc", **kwargs)
 
@@ -53,6 +55,8 @@ class MonteCarlo(Evaluation):
 
 class TemporalDifference(Evaluation):
 
+    """ TemporalDifference uses previously computed action_values to approximate the expected return at each step """
+
     def __init__(self, initial_learning_rate=0.1, **kwargs):
         super().__init__(initial_learning_rate=initial_learning_rate, name="td", **kwargs)
         self.target_control = kwargs.get('target_control')
@@ -60,14 +64,7 @@ class TemporalDifference(Evaluation):
         self.online = kwargs.get('online', False)
 
     @staticmethod
-    def get_next_legal_actions(next_state, memory):
-        if next_state in memory.legal_actions:
-            return memory.legal_actions[next_state]
-        else:
-            raise KeyError(f'Couldn\'t find state {next_state} legal_action\'s in agent memory')
-
-    @staticmethod
-    def get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None, target_policy=None):
+    def _get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None, target_policy=None):
         expected_futur_reward = reward.astype(np.float64)
         not_done = np.logical_not(done)
         if target_policy is None:
@@ -78,7 +75,7 @@ class TemporalDifference(Evaluation):
         expected_futur_reward[not_done] += np.sum(action_impact * action_values[next_state[not_done], :], axis=-1)
         return expected_futur_reward
     
-    def learn_trajectory(self, action_visits, action_values, state, action, expected_futur_reward):
+    def _learn_trajectory(self, action_visits, action_values, state, action, expected_futur_reward):
         action_visits[state, action] += 1
         delta = expected_futur_reward - action_values[state, action]
         action_values[state, action] += self.learning_rate * delta
@@ -93,21 +90,48 @@ class TemporalDifference(Evaluation):
 
         # If Online learning, learns every step
         state, action, reward, done, next_state, _ = [datas[key] for key in memory.MEMORY_KEYS]
-        if self.online:
-            # If done, we update value fonctions toward real reward
-            if np.any(done):
-                self.learn_trajectory(action_visits, action_values, state, action, reward)
-            # If not done, we estimate futur rewards based on memory and value fonctions
-            else:
-                expected_futur_reward = self.get_expected_futur_reward(action_visits, action_values, action, reward, done, policy,
-                                                                        next_state, self.target_policy)
-                self.learn_trajectory(action_visits, action_values, state, action, expected_futur_reward)
+        if np.any(done) or self.online:
+            expected_futur_reward = self._get_expected_futur_reward(action_visits, action_values, action, reward, done,
+                                                                    policy, next_state, self.target_policy)
+            self._learn_trajectory(action_visits, action_values, state, action, expected_futur_reward)
             memory.forget()
-        
-        # If Offline learning, learns in a batch at the end of the episode
-        else:
-            if np.any(done):
-                expected_futur_reward = self.get_expected_futur_reward(action_visits, action_values, action, reward, done,
-                                                                        policy, next_state, self.target_policy)
-                self.learn_trajectory(action_visits, action_values, state, action, expected_futur_reward)
-                memory.forget()
+
+class QLearning(Evaluation):
+
+    """
+    QLearning is just TemporalDifference with Greedy target_control
+
+    This object is just optimized for computation speed
+    """
+
+    def __init__(self, initial_learning_rate=0.1, **kwargs):
+        super().__init__(initial_learning_rate=initial_learning_rate, name="qlearning", **kwargs)
+        self.online = kwargs.get('online', False)
+
+    @staticmethod
+    def _get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None):
+        expected_futur_reward = reward.astype(np.float64)
+        not_done = np.logical_not(done)
+        expected_futur_reward[not_done] += np.amax(action_values[next_state[not_done], :], axis=-1)
+        return expected_futur_reward
+    
+    def _learn_trajectory(self, action_visits, action_values, state, action, expected_futur_reward):
+        action_visits[state, action] += 1
+        delta = expected_futur_reward - action_values[state, action]
+        action_values[state, action] += self.learning_rate * delta
+    
+    def learn(self, action_visits, action_values, memory:Memory, control:Control, **kwargs):
+
+        # Get specific parameters for TD
+        policy = control.get_policy
+        if policy is None:
+            raise ValueError('You must specify a policy for TD evaluation')
+        datas = memory.datas
+
+        state, action, reward, done, next_state, _ = [datas[key] for key in memory.MEMORY_KEYS]
+        if np.any(done) or self.online: # If Online learning, learns every step
+            expected_futur_reward = self._get_expected_futur_reward(action_visits, action_values, action, reward, done,
+                                                                    policy, next_state)
+            self._learn_trajectory(action_visits, action_values, state, action, expected_futur_reward)
+            memory.forget()
+

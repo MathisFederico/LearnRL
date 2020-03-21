@@ -1,15 +1,15 @@
 import numpy as np
 from copy import deepcopy
 
-from envs import NimEnv, CrossesAndNoughtsEnv
-from agents import BasicAgent, QLearningAgent
+from envs import RdNimEnv, CrossesAndNoughtsEnv, RdCrossesAndNoughtsEnv
+from agents import BasicAgent
 from agents.basic.evaluation import TemporalDifference, MonteCarlo
 from agents.basic.control import Greedy, UCB, Puct
 
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
-    env = CrossesAndNoughtsEnv(vs_random=True, play_first=True)
+    env = RdCrossesAndNoughtsEnv(vs_random=True, play_first=True)
     state_size = np.prod(env.observation_space.nvec)
     action_size = np.prod(env.action_space.nvec)
     agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,

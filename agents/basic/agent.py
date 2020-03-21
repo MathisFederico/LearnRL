@@ -1,5 +1,5 @@
-from agents.basic.evaluation import MonteCarlo, TemporalDifference
-from agents.basic.control import Greedy 
+from agents.basic.evaluation import MonteCarlo, TemporalDifference, QLearning
+from agents.basic.control import Greedy
 from agents.agent import Agent
 
 from gym import spaces
@@ -32,7 +32,7 @@ class BasicAgent(Agent):
         self.action_size, self._hash_action, self._invert_hash_action = self.get_size_and_hash(action_space)
 
         self.control = control if control is not None else Greedy(self.action_size, **kwargs)
-        self.evaluation = evaluation if evaluation is not None else MonteCarlo(**kwargs)
+        self.evaluation = evaluation if evaluation is not None else QLearning(**kwargs)
 
         self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
     
