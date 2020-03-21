@@ -10,48 +10,67 @@ from gym import Env
 
 class Memory():
 
-    MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
-    max_memory_len = 1e4
+    """
+    A general memory for reinforcement learning agents
 
-    def __init__(self):
+    Contains the methods:
+        remember: Stock an experience
+        forget: Delete all experiences
+    
+    And the attributes:
+        max_memory_len: Max number of experiences stocked by the memory
+        datas: The dictionary of experiences following MEMORY_KEYS
+               Each datas[key] is a numpy.ndarray tensor for computation speed optimisation
+    """
+
+    MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
+
+    def __init__(self, max_memory_len=1e4):
         self.datas = {key:None for key in self.MEMORY_KEYS}
+        self.max_memory_len = max_memory_len
 
     def remember(self, state, action, reward, done, next_state=None, info={}, **param):
-        for key, value in zip(self.MEMORY_KEYS, (state, action, reward, done, next_state, info)):
+        """ Add the new experience into the memory forgetting long past experience if neccesary """
 
+        def remember_key(datas, key, value, max_memory_len=self.max_memory_len):
+            """ Add the new experience key into the memory forgetting long past experience if neccesary """
+            if datas[key] is None:
+                datas[key] = value
+            else:
+                if len(datas[key]) < max_memory_len:
+                    datas[key] = np.concatenate((datas[key], value), axis=0)
+                else:
+                    datas[key] = np.roll(datas[key], shift=-1, axis=0)
+                    datas[key][-1] = np.array(value)
+
+        for key, value in zip(self.MEMORY_KEYS, (state, action, reward, done, next_state, info)):
             # Check that value is an instance of numpy.ndarray or transform the value
             if isinstance(value, collections.Sequence) or type(value) != np.ndarray or value.ndim < 1:
                 value = np.array([value])
-
-            # Add the new experience into the memory forgetting long past experience if neccesary
-            if self.datas[key] is None:
-                self.datas[key] = value
-            else:
-                if len(self.datas[key]) < self.max_memory_len:
-                    self.datas[key] = np.concatenate((self.datas[key], value), axis=0)
-                else:
-                    self.datas[key] = np.roll(self.datas[key], shift=-1, axis=0)
-                    self.datas[key][-1] = np.array(value)
+            remember_key(self.datas, key, value)
         
-        # Same for suplementary parameters
+        # Add optional suplementary parameters
         for key in param:
-            if self.datas[key] is None:
-                self.datas[key] = param[key]
-            else:
-                if len(self.datas[key]) < self.max_memory_len:
-                    self.datas[key] = np.concatenate((self.datas[key], param[key]), axis=0)
-                else:
-                    self.datas[key] = np.roll(self.datas[key], shift=-1, axis=0)
-                    self.datas[key][-1] = np.array(param[key])
+            remember_key(self.datas, key, param[key])
 
-    
     def forget(self):
         self.datas = {key:None for key in self.MEMORY_KEYS}
 
 
 class Agent():
 
-    name = 'DefaultAgent'
+    """
+    A general structure for reinforcement learning agents
+
+    The main API methods that users of this class need to know are:
+        act
+        learn
+        remember
+        forget
+    
+    """
+
+    name = None
 
     state_values = None
     state_visits = None
@@ -61,31 +80,23 @@ class Agent():
     
     memory = Memory()
 
-    def policy(self, observation, legal_actions):
+    def act(self, observation):
+        """ How the agent act given an observation """
         raise NotImplementedError
 
-    def act(self, observation, legal_actions):
+    def learn(self):
+        """ How the learns from his experiences """
         raise NotImplementedError
-    
-    @staticmethod
-    def _hash_state(state):
-        return state
-
-    @staticmethod
-    def _hash_action(action):
-        return action
 
     def remember(self, state, action, reward, done, next_state=None, info={}, **param):
-        self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info, **param)
+        """ How the agent uses his memory to remember experiences """
+        # self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info, **param)
+        raise NotImplementedError
     
     def forget(self):
+        """ Make the agent forget his memory """
         self.memory.forget()
     
-    def learn(self):
-        raise NotImplementedError
-    
-    def render(self):
-        raise NotImplementedError
 
 
 class MultiEnv(Env):
