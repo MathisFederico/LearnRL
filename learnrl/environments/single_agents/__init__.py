@@ -1,0 +1,2 @@
+from learnrl.environments.single_agents.random_crosses_and_noughts import RdCrossesAndNoughtsEnv
+from learnrl.environments.single_agents.random_nim import RdNimEnv

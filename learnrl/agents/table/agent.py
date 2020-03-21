@@ -1,29 +1,29 @@
-from agents.basic.evaluation import QLearning
-from agents.basic.control import Greedy, UCB
-from agents.agent import Agent
+from learnrl.agents.table.evaluation import QLearning
+from learnrl.agents.table.control import Greedy
+from learnrl.core import Agent
 
 from gym import spaces
 from warnings import warn
 import numpy as np
 
-class BasicAgent(Agent):
+class TableAgent(Agent):
 
     """ 
     A general structure for table-based RL agents.
     You can use different evaluation and control methods.
     
-    Evaluations : agents.basic.evaluation
+    Evaluations : agents.table.evaluation
         'mc', 'montecarlo' -> MonteCarlo evaluation
         'td', 'tempdiff' -> TemporalDifference evaluation
         'q', 'qlearning' -> QLearning evaluation
         
-    Control : agents.basic.control
+    Control : agents.table.control
         'greedy' -> epsilon_greedy with epsilon=exploration
         'ucb' -> ucb with c=exploration
         'puct' -> puct with c=exploration
     """
 
-    name = 'basic'
+    name = 'table'
     
     def __init__(self, state_space, action_space, control=None, evaluation=None, **kwargs):
         

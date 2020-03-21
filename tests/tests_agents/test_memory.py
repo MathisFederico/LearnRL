@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 
 from copy import deepcopy
+from learnrl.core import Memory
 
 
 class AgentMemoryError(Exception):
@@ -11,7 +12,6 @@ class AgentMemoryError(Exception):
 @pytest.fixture
 def memory():
     """Create a memory instance"""
-    from agents import Memory
     return Memory()
 
 def test_forget(memory):

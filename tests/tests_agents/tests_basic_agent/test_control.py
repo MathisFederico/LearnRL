@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from agents.basic.control import Control, Greedy, UCB, Puct
+from learnrl.agents.table.control import Control, Greedy, UCB, Puct
 
 # Test basic control features
 def test_name():

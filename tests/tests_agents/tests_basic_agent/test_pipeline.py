@@ -4,10 +4,11 @@ np.random.seed(42)
 
 from copy import deepcopy
 
-from envs import RdNimEnv
-from agents import BasicAgent, Memory
-from agents.basic.evaluation import MonteCarlo, TemporalDifference, QLearning
-from agents.basic.control import Greedy
+from learnrl.environments import RdNimEnv
+from learnrl.agents import BasicAgent
+from learnrl.core import Memory
+from learnrl.agents.table.evaluation import MonteCarlo, TemporalDifference, QLearning
+from learnrl.agents.table.control import Greedy
 
 @pytest.fixture
 def memory():

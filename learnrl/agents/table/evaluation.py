@@ -1,8 +1,8 @@
 """
 Evaluation methodes to modify the value fonctions from experiences
 """
-from agents.agent import Memory
-from agents.basic.control import Control
+from learnrl.core import Memory
+from learnrl.agents.table.control import Control
 import numpy as np
 
 class Evaluation():
@@ -16,7 +16,7 @@ class Evaluation():
         self.learning_rate = initial_learning_rate
         
         if name is None:
-            raise ValueError("The Control Object must have a name")
+            raise ValueError("The Evaluation Object must have a name")
         self.name = name
         self.decay = kwargs.get('learning_rate_decay', 1)
 

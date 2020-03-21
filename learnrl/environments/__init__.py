@@ -1,5 +1,5 @@
-from envs.single_agents_envs import RdNimEnv, RdCrossesAndNoughtsEnv
-from envs.multi_agents_envs import CrossesAndNoughtsEnv
+from learnrl.environments.single_agents import RdNimEnv, RdCrossesAndNoughtsEnv
+from learnrl.environments.multi_agents import CrossesAndNoughtsEnv
 
 # Import basic gym envs
 from gym.envs.algorithmic import *

@@ -1,7 +1,7 @@
 import pytest
 
-from agents import BasicAgent
-from agents.basic.control import Greedy
+from learnrl.agents import BasicAgent
+from learnrl.agents.table.control import Greedy
 import numpy as np
 from gym.spaces import Discrete, MultiDiscrete
 

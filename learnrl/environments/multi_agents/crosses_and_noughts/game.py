@@ -1,6 +1,5 @@
 from gym import spaces
-from core import MultiEnv
-from agents import Agent
+from learnrl.core import MultiEnv, Agent
 import numpy as np
 from copy import deepcopy
 import pygame
