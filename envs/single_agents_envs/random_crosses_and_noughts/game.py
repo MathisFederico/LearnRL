@@ -212,11 +212,16 @@ class CrossesAndNoughtsGame():
 
 class CrossesAndNoughtsEnv(Env):
     
-    def __init__(self, vs_random=False):
+    def __init__(self, vs_random=False, play_first=True):
         self.game = CrossesAndNoughtsGame()
         self.action_space = spaces.MultiDiscrete((3, 3))
         self.observation_space = spaces.MultiDiscrete(3 * np.ones((3, 3), dtype=np.int64))
         self.vs_random = vs_random
+        if not play_first:
+            legal_actions = self.game.getLegalActions()
+            if len(legal_actions) > 0:
+                rd_action = legal_actions[np.random.choice(range(len(legal_actions)))]
+                self.game.play(1, rd_action)
 
     def step(self, action):
 
@@ -263,7 +268,7 @@ class CrossesAndNoughtsEnv(Env):
                 if len(legal_actions) > 0:
                     rd_action = legal_actions[np.random.choice(range(len(legal_actions)))]
                     self.game.play(other_player, rd_action)
-                reward, done = checkStep(other_player, player)
+                reward, done = checkStep(player, other_player)
 
         observation = self.game.getObservation()
 
