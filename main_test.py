@@ -1,8 +1,8 @@
 import numpy as np
 from copy import deepcopy
 
-from envs import NimEnv, CrossesAndNoughtsEnv, FrozenLakeEnv
-from agents import BasicAgent
+from envs import NimEnv, CrossesAndNoughtsEnv
+from agents import BasicAgent, QLearningAgent
 from agents.basic.evaluation import TemporalDifference, MonteCarlo
 from agents.basic.control import Greedy, UCB, Puct
 

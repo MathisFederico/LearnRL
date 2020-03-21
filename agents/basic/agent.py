@@ -13,9 +13,8 @@ class BasicAgent(Agent):
     You can use different evaluation and control methods.
     
     Evaluations : agents.basic.evaluation
-        'mc','montecarlo' -> Monte-Carlo evaluation
-        X'sarsa' -> SARSA with specified target policy
-        X'q*' -> QLearning (SARSA with greedy target policy)
+        'mc', 'montecarlo' -> Monte-Carlo evaluation
+        'td', 'tempdiff' -> TemporalDifference evaluation
         
     Control : agents.basic.control
         'greedy' -> epsilon_greedy with epsilon=exploration
@@ -29,16 +28,16 @@ class BasicAgent(Agent):
         
         super().__init__()
 
-        state_size, self._hash_state = self.get_size_and_hash(state_space)
-        action_size, self._hash_action = self.get_size_and_hash(action_space)
+        self.state_size, self._hash_state = self.get_size_and_hash(state_space)
+        self.action_size, self._hash_action = self.get_size_and_hash(action_space)
 
-        self.control = control if control is not None else Greedy(action_size, **kwargs)
+        self.control = control if control is not None else Greedy(self.action_size, **kwargs)
         self.evaluation = evaluation if evaluation is not None else MonteCarlo(**kwargs)
 
         self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
     
-        self.action_values = np.zeros((state_size, action_size))
-        self.action_visits = np.zeros((state_size, action_size))
+        self.action_values = np.zeros((self.state_size, self.action_size))
+        self.action_visits = np.zeros((self.state_size, self.action_size))
 
         self.action_space = action_space
     
@@ -62,7 +61,8 @@ class BasicAgent(Agent):
         self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
 
     def learn(self, **kwargs):
-        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits, memory=self.memory, policy=self.control.get_policy, **kwargs)
+        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits,
+                              memory=self.memory, control=self.control, **kwargs)
         self.control.update_exploration()
         self.evaluation.update_learning_rate()
 
@@ -102,3 +102,25 @@ class BasicAgent(Agent):
     
     def __call__(self, state, legal_actions, greedy=False):
         return self.act(state, legal_actions, greedy=False)
+
+
+class QLearningAgent(BasicAgent):
+
+    def __init__(self, state_space, action_space, control=None, evaluation=None, **kwargs):
+
+        if evaluation:
+            raise ValueError(f"'evaluation' argument shouldn't be specified for QLearningAgent (Forced TemporalDifference) but was set to {evaluation}")
+        target_control = kwargs.get('target_control')
+        if target_control:
+            raise ValueError(f"'target_control' keyword argument shouldn't be specified for QLearningAgent (Forced Greedy) but was set to {target_control}")
+        online = kwargs.get('online')
+        if online is not None:
+            if online != True:
+                raise ValueError(f"'online' argument shouldn't be specified for QLearningAgent (Forced online=True) but was set to {online}")
+        
+        super().__init__(state_space, action_space, control=control, **kwargs)
+
+        kwargs['online'] = True
+        self.evaluation = TemporalDifference(target_control=Greedy(self.action_size, initial_exploration=0), **kwargs)
+        self.name = f'qlearning_{self.control.name}_{kwargs}'
+
