@@ -1,4 +1,5 @@
 from envs.single_agents_envs.basenim.game import NimEnv
+from envs.single_agents_envs.random_crosses_and_noughts.game import CrossesAndNoughtsEnv
 
 # Import basic gym envs
 from gym.envs.algorithmic import *

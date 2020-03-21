@@ -32,7 +32,7 @@ def test_nim_optimal_policy():
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
     env = NimEnv(initial_state=n_sticks, is_optimal=True)
-    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n,
+    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=MonteCarlo(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
 
@@ -77,7 +77,7 @@ def test_td_onl_onp_nim_optimal_policy():
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
     env = NimEnv(initial_state=n_sticks, is_optimal=True)
-    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n,
+    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=TemporalDifference(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
 
@@ -122,7 +122,7 @@ def test_td_offl_onp_nim_optimal_policy():
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
     env = NimEnv(initial_state=n_sticks, is_optimal=True)
-    agent = BasicAgent(state_size=env.observation_space.n, action_size=env.action_space.n,
+    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=TemporalDifference(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
 
