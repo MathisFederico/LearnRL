@@ -1,5 +1,5 @@
-from agents.basic.evaluation import MonteCarlo, TemporalDifference
-from agents.basic.control import Greedy 
+from agents.basic.evaluation import MonteCarlo, TemporalDifference, QLearning
+from agents.basic.control import Greedy
 from agents.agent import Agent
 
 from gym import spaces
@@ -13,9 +13,8 @@ class BasicAgent(Agent):
     You can use different evaluation and control methods.
     
     Evaluations : agents.basic.evaluation
-        'mc','montecarlo' -> Monte-Carlo evaluation
-        X'sarsa' -> SARSA with specified target policy
-        X'q*' -> QLearning (SARSA with greedy target policy)
+        'mc', 'montecarlo' -> Monte-Carlo evaluation
+        'td', 'tempdiff' -> TemporalDifference evaluation
         
     Control : agents.basic.control
         'greedy' -> epsilon_greedy with epsilon=exploration
@@ -29,16 +28,17 @@ class BasicAgent(Agent):
         
         super().__init__()
 
-        state_size, self._hash_state = self.get_size_and_hash(state_space)
-        action_size, self._hash_action = self.get_size_and_hash(action_space)
 
-        self.control = control if control is not None else Greedy(action_size, **kwargs)
-        self.evaluation = evaluation if evaluation is not None else MonteCarlo(**kwargs)
+        self.state_size, self._hash_state = self.get_size_and_hash(state_space)
+        self.action_size, self._hash_action = self.get_size_and_hash(action_space)
+
+        self.control = control if control is not None else Greedy(self.action_size, **kwargs)
+        self.evaluation = evaluation if evaluation is not None else QLearning(**kwargs)
 
         self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
     
-        self.action_values = np.zeros((state_size, action_size))
-        self.action_visits = np.zeros((state_size, action_size))
+        self.action_values = np.zeros((self.state_size, self.action_size))
+        self.action_visits = np.zeros((self.state_size, self.action_size))
 
         self.action_space = action_space
     
@@ -62,7 +62,8 @@ class BasicAgent(Agent):
         self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
 
     def learn(self, **kwargs):
-        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits, memory=self.memory, policy=self.control.get_policy, **kwargs)
+        self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits,
+                              memory=self.memory, control=self.control, **kwargs)
         self.control.update_exploration()
         self.evaluation.update_learning_rate()
 

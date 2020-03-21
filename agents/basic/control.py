@@ -55,7 +55,13 @@ class Control():
             self.exploration *= self.decay
 
     def __str__(self):
-        return self.name
+        return f'{self.name}_exp({self.exploration:.2f}_decay({self.decay}))'
+    
+    def __eq__(self, other):
+        same_name = self.name == other.name
+        same_exploration = self.exploration == other.exploration
+        same_decay = self.decay == other.decay
+        return same_name and same_exploration and same_decay
 
 class Greedy(Control):
 
