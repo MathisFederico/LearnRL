@@ -1,5 +1,5 @@
-from agents.basic.evaluation import MonteCarlo, TemporalDifference, QLearning
-from agents.basic.control import Greedy
+from agents.basic.evaluation import QLearning
+from agents.basic.control import Greedy, UCB
 from agents.agent import Agent
 
 from gym import spaces
@@ -13,8 +13,9 @@ class BasicAgent(Agent):
     You can use different evaluation and control methods.
     
     Evaluations : agents.basic.evaluation
-        'mc', 'montecarlo' -> Monte-Carlo evaluation
+        'mc', 'montecarlo' -> MonteCarlo evaluation
         'td', 'tempdiff' -> TemporalDifference evaluation
+        'q', 'qlearning' -> QLearning evaluation
         
     Control : agents.basic.control
         'greedy' -> epsilon_greedy with epsilon=exploration
@@ -108,25 +109,3 @@ class BasicAgent(Agent):
     
     def __call__(self, state, greedy=False):
         return self.act(state, greedy=False)
-
-
-class QLearningAgent(BasicAgent):
-
-    def __init__(self, state_space, action_space, control=None, evaluation=None, **kwargs):
-
-        if evaluation:
-            raise ValueError(f"'evaluation' argument shouldn't be specified for QLearningAgent (Forced TemporalDifference) but was set to {evaluation}")
-        target_control = kwargs.get('target_control')
-        if target_control:
-            raise ValueError(f"'target_control' keyword argument shouldn't be specified for QLearningAgent (Forced Greedy) but was set to {target_control}")
-        online = kwargs.get('online')
-        if online is not None:
-            if online != True:
-                raise ValueError(f"'online' argument shouldn't be specified for QLearningAgent (Forced online=True) but was set to {online}")
-        
-        super().__init__(state_space, action_space, control=control, **kwargs)
-
-        kwargs['online'] = True
-        self.evaluation = TemporalDifference(target_control=Greedy(self.action_size, initial_exploration=0), **kwargs)
-        self.name = f'qlearning_{self.control.name}_{kwargs}'
-
