@@ -28,8 +28,8 @@ class BasicAgent(Agent):
         
         super().__init__()
 
-        self.state_size, self._hash_state = self.get_size_and_hash(state_space)
-        self.action_size, self._hash_action = self.get_size_and_hash(action_space)
+        self.state_size, self._hash_state, self._invert_hash_state = self.get_size_and_hash(state_space)
+        self.action_size, self._hash_action, self._invert_hash_action = self.get_size_and_hash(action_space)
 
         self.control = control if control is not None else Greedy(self.action_size, **kwargs)
         self.evaluation = evaluation if evaluation is not None else MonteCarlo(**kwargs)
@@ -41,20 +41,15 @@ class BasicAgent(Agent):
 
         self.action_space = action_space
     
-    def act(self, state, legal_actions, greedy=False):
+    def act(self, state, greedy=False):
         state_id = self._hash_state(state)
+
         policy = self.control.get_policy(state_id, self.action_values, self.action_visits)
+        action_id = np.random.choice(range(self.action_size), p=policy)
 
-        if len(legal_actions) == 0:
-            action_taken = self.action_space.sample()
-            warn('No legal action left !\nTook random sample from action space hoping for the environement to handle it !')
-            return action_taken
+        action_taken = self._invert_hash_action(action_id)
+        assert action_taken in self.action_space
 
-        legal_actions_id = np.array([self._hash_action(action) for action in legal_actions])
-        legal_policy = policy[legal_actions_id]
-        legal_policy += (1 - np.sum(legal_policy))/len(legal_policy) # TO CHANGE TO SOFTMAX
-        action_id = np.random.choice(range(len(legal_actions)), p=legal_policy)
-        action_taken = legal_actions[action_id]
         return action_taken
     
     def remember(self, state, action, reward, done, next_state=None, info={}):
@@ -67,14 +62,17 @@ class BasicAgent(Agent):
         self.evaluation.update_learning_rate()
 
     def get_size_and_hash(self, space):
+
+        int_id = lambda x: int(x)
+
         if isinstance(space, spaces.Discrete):
-            return space.n, lambda space_sample: int(space_sample)
+            return space.n, int_id, int_id
         elif isinstance(space, spaces.MultiDiscrete):
             base_mat = np.ones_like(space.nvec, dtype=np.uint32)
             rank = base_mat.ndim
             p = 1
             if rank == 0:
-                return space.nvec, lambda space_sample: int(space_sample)
+                return space.nvec, int_id, int_id
             elif rank == 1:
                 for i in range(len(base_mat)):
                     base_mat[i] = p
@@ -85,12 +83,20 @@ class BasicAgent(Agent):
                         base_mat[i, j] = p
                         p *= int(space.nvec[i, j])
             else:
-                raise ValueError(f'Arrays of rank {rank} are not supported')
+                raise ValueError(f'Arrays of rank {rank} are not supported yet ... open an issue if needed')
             
             def hash_multidiscrete(space_sample, base_mat=base_mat):
                 return np.sum(space_sample*base_mat)
+            
+            def invert_hash_multidiscrete(hashed_space_sample, base_mat=base_mat):
+                flat_mat = base_mat.flatten()
+                space_sample = np.zeros_like(flat_mat)
+                for i in range(len(space_sample))[::-1]:
+                    space_sample[i] = hashed_space_sample // flat_mat[i]
+                    hashed_space_sample -= space_sample[i] * flat_mat[i]
+                return space_sample.reshape(base_mat.shape)
 
-            return np.prod(space.nvec), hash_multidiscrete
+            return np.prod(space.nvec), hash_multidiscrete, invert_hash_multidiscrete
         else:
             raise TypeError(f'Agent {self.name} cannot handle the space of type {type(space)}')
 
@@ -100,8 +106,8 @@ class BasicAgent(Agent):
     def __str__(self):
         return self.name
     
-    def __call__(self, state, legal_actions, greedy=False):
-        return self.act(state, legal_actions, greedy=False)
+    def __call__(self, state, greedy=False):
+        return self.act(state, greedy=False)
 
 
 class QLearningAgent(BasicAgent):
