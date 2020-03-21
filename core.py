@@ -48,14 +48,14 @@ class Playground():
         self.env = environement
         self.agents = agents
 
-    def fit(self, episodes, render=False, verbose=0):
-        print_cycle = episodes // 100
-
-        state = self.env.reset()
+    def fit(self, episodes, render=False, learn=True, verbose=0):
+        print_cycle = max(1, episodes // 100)
+        avg_gain = 0
         for episode in range(episodes):
 
-            gain = 0
+            state = self.env.reset()
             done = False
+            gain = 0
 
             while not done:
 
@@ -68,14 +68,18 @@ class Playground():
 
                 action = agent.act(state)
                 next_state, reward, done , info = self.env.step(action)
+                gain += reward
                 
                 agent.remember(state, action, reward, done, next_state, info)
                 state = next_state
 
-                agent.learn()
+                if learn: agent.learn()
+            
+            if verbose > 0:
+                avg_gain += gain
+                if episode%print_cycle==0: 
+                    print(f'Episode {episode}/{episodes}, Average return over {print_cycle} eps:{avg_gain/print_cycle}')
+                    avg_gain = 0
 
-                if verbose > 0:
-                    gain += reward
-                    if episode%print_cycle==0: 
-                        print(f'Episode {episode}/{episodes}, Average return over {print_cycle} eps:{gain/print_cycle}')
-                        gain = 0
+    def run(self, episodes, verbose=0):
+        self.fit(episodes, render=True, learn=False, verbose=verbose)
