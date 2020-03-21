@@ -1,4 +1,5 @@
 import numpy as np
+from time import time
 
 from gym import Env
 from agents import Agent
@@ -55,11 +56,15 @@ class Playground():
 
     def run(self, episodes, render=True, learn=True, verbose=0):
         """Let the agent(s) play on the environement for a number of episodes."""
+        np.set_printoptions(precision=3)
         print_cycle = max(1, episodes // 100)
         avg_gain = np.zeros_like(self.agents)
+        steps = 0
+        t0 = time()
         for episode in range(episodes):
 
             state = self.env.reset()
+            previous = np.array([{'state':None, 'action':None, 'reward':None, 'done':None, 'info':None}]*len(self.agents))
             done = False
             gain = np.zeros_like(avg_gain)
             step = 0
@@ -70,27 +75,37 @@ class Playground():
 
                 if isinstance(self.env, MultiEnv):
                     agent_id = self.env.turn(state)
-                else:
-                    agent_id = 0
+                else: agent_id = 0
+
+                prev = previous[agent_id]
+                if learn and prev['state'] is not None:
+                    agent.remember(prev['state'], prev['action'], prev['reward'], prev['done'], state, prev['info'])
+                    agent.learn()
                 
                 agent = self.agents[agent_id]
                 action = agent.act(state)
                 next_state, reward, done , info = self.env.step(action)
                 gain[agent_id] += reward
                 step += 1
-                
-                agent.remember(state, action, reward, done, next_state, info)
-                if learn: agent.learn()
+
+                if learn:
+                    for key, value in zip(prev, [state, action, reward, done, info]):
+                        prev[key] = value
 
                 if verbose > 1:
                     print(f"------ Step {step} ------ Player is {agent_id}\nobservation:\n{state}\naction:\n{action}\nreward:{reward}\ndone:{done}\nnext_observation:\n{next_state}\ninfo:{info}")
                 state = next_state
             
             if verbose > 0:
+                steps += step
                 avg_gain += gain
                 if episode%print_cycle==0: 
-                    print(f'Episode {episode}/{episodes}, avg_gain over {print_cycle} episodes:{avg_gain/print_cycle}, explorations:{np.array([agent.control.exploration for agent in self.agents])}')
+                    print(f"Episode {episode}/{episodes}    \t gain({print_cycle}):{avg_gain/print_cycle} \t"
+                          f"explorations:{np.array([agent.control.exploration for agent in self.agents])}\t"
+                          f"steps/s:{steps/(time()-t0):.0f}, episodes/s:{print_cycle/(time()-t0):.0f}")
                     avg_gain = np.zeros_like(self.agents)
+                    steps = 0
+                    t0 = time()
 
     def fit(self, episodes, verbose=0):
         """Train the agent(s) on the environement for a number of episodes."""

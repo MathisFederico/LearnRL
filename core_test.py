@@ -18,4 +18,4 @@ agent2 = BasicAgent(state_space=env.observation_space, action_space=env.action_s
 
 agents = [agent1, agent2]
 pg = Playground(env, agents)
-pg.fit(100000, verbose=1)
+pg.fit(50000, verbose=1)
