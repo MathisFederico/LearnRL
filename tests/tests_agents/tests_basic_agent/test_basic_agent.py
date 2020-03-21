@@ -21,12 +21,3 @@ def test_name(agent):
     if agent.name != default_name:
         raise ValueError(f'Default name should be {default_name} and not {agent.name}')
 
-def test_hash_discrete(agent):
-    raise NotImplementedError
-
-def test_hash_multidiscrete():
-    agent = BasicAgent(MultiDiscrete((2, 3)), MultiDiscrete((4, 2)))
-    raise NotImplementedError
-
-def test_act(agent):
-    raise NotImplementedError
