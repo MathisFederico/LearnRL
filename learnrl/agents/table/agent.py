@@ -6,7 +6,6 @@ from learnrl.agents.table.control import Greedy
 from learnrl.core import Agent
 
 from gym import spaces
-from warnings import warn
 import numpy as np
 
 class TableAgent(Agent):
