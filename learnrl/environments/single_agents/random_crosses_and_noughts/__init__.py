@@ -1,1 +1,5 @@
-from envs.single_agents_envs.random_crosses_and_noughts.game import RdCrossesAndNoughtsEnv
+# LearnRL a python library to learn and use reinforcement learning
+# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+
+from learnrl.environments.single_agents.random_crosses_and_noughts.game import RdCrossesAndNoughtsEnv
+

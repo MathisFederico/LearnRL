@@ -1,3 +1,6 @@
+# LearnRL a python library to learn and use reinforcement learning
+# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -6,7 +9,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="LearnRL",
     version="0.0.1",
-    author="Mathïs Fédérico, Théo Combey",
+    author="Mathïs Fédérico",
     author_email="mathfederico@gmail.com",
     description="A package to learn about Reinforcement Learning",
     long_description=long_description,

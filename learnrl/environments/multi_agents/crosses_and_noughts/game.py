@@ -1,3 +1,6 @@
+# LearnRL a python library to learn and use reinforcement learning
+# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+
 from gym import spaces
 from learnrl.core import MultiEnv, Agent
 import numpy as np
