@@ -16,6 +16,10 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/MathisFederico/LearnRL",
     packages=setuptools.find_packages(),
+    install_requires=[
+        'numpy',
+        'gym'
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: All rights reserved",
