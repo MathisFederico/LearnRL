@@ -4,9 +4,13 @@ np.random.seed(42)
 
 from copy import deepcopy
 
+from envs import RdNimEnv
+from agents import BasicAgent, Memory
+from agents.basic.evaluation import MonteCarlo, TemporalDifference, QLearning
+from agents.basic.control import Greedy
+
 @pytest.fixture
 def memory():
-    from agents import Memory
     memory = Memory()
     memory.remember(0, 0, 0, False, 1)
     memory.remember(1, 0, -1, True, 2)
@@ -24,14 +28,9 @@ def action_visits():
 # Monte Carlo
 @pytest.mark.slow
 def test_nim_optimal_policy():
-    from envs import NimEnv
-    from agents import BasicAgent
-    from agents.basic.evaluation import MonteCarlo
-    from agents.basic.control import Greedy
-
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
-    env = NimEnv(initial_state=n_sticks, is_optimal=True)
+    env = RdNimEnv(initial_state=n_sticks, is_optimal=True)
     agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=MonteCarlo(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
@@ -69,14 +68,9 @@ def test_nim_optimal_policy():
 # TemporalDifference - online
 @pytest.mark.slow
 def test_td_onl_onp_nim_optimal_policy():
-    from envs import NimEnv
-    from agents import BasicAgent
-    from agents.basic.evaluation import TemporalDifference
-    from agents.basic.control import Greedy
-
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
-    env = NimEnv(initial_state=n_sticks, is_optimal=True)
+    env = RdNimEnv(initial_state=n_sticks, is_optimal=True)
     agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=TemporalDifference(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
@@ -114,14 +108,9 @@ def test_td_onl_onp_nim_optimal_policy():
 # TemporalDifference - offline
 @pytest.mark.slow
 def test_td_offl_onp_nim_optimal_policy():
-    from envs import NimEnv
-    from agents import BasicAgent
-    from agents.basic.evaluation import TemporalDifference
-    from agents.basic.control import Greedy
-
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
-    env = NimEnv(initial_state=n_sticks, is_optimal=True)
+    env = RdNimEnv(initial_state=n_sticks, is_optimal=True)
     agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=TemporalDifference(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))

@@ -38,7 +38,7 @@ class MonteCarlo(Evaluation):
     """ MonteCarlo methods uses experimental mean to approximate theorical mean """
 
     def __init__(self, initial_learning_rate=0.1, **kwargs):
-        super().__init__(initial_learning_rate=initial_learning_rate, name="mc", **kwargs)
+        super().__init__(initial_learning_rate=initial_learning_rate, name="montecarlo", **kwargs)
 
     def learn(self, action_visits, action_values, memory:Memory, **kwargs):
         datas = memory.datas
@@ -58,10 +58,10 @@ class TemporalDifference(Evaluation):
     """ TemporalDifference uses previously computed action_values to approximate the expected return at each step """
 
     def __init__(self, initial_learning_rate=0.1, **kwargs):
-        super().__init__(initial_learning_rate=initial_learning_rate, name="td", **kwargs)
+        super().__init__(initial_learning_rate=initial_learning_rate, name="tempdiff", **kwargs)
         self.target_control = kwargs.get('target_control')
         self.target_policy = self.target_control.get_policy if self.target_control else None
-        self.online = kwargs.get('online', False)
+        self.online = kwargs.get('online', True)
 
     @staticmethod
     def _get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None, target_policy=None):
@@ -106,7 +106,7 @@ class QLearning(Evaluation):
 
     def __init__(self, initial_learning_rate=0.1, **kwargs):
         super().__init__(initial_learning_rate=initial_learning_rate, name="qlearning", **kwargs)
-        self.online = kwargs.get('online', False)
+        self.online = kwargs.get('online', True)
 
     @staticmethod
     def _get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None):

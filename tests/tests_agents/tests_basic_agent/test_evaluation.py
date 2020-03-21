@@ -45,18 +45,3 @@ def action_values():
 def action_visits():
     return np.array([[100, 8, 3], [3, 100, 8]], dtype=np.uint16)
 
-def test_monte_carlo(action_values, action_visits, memory):
-    evaluation = MonteCarlo(initial_learning_rate=0.1)
-    raise NotImplementedError
-
-def test_td_0_onl_onp(action_values, action_visits, memory):
-    evaluation = TemporalDifference(initial_learning_rate=0.1, online=True)
-    raise NotImplementedError
-
-def test_td_0_offl_offp(action_values, action_visits, memory):
-    evaluation = TemporalDifference(initial_learning_rate=0.1, online=False, target_policy=None)
-    raise NotImplementedError
-
-def test_td_lamb_offl_offp(action_values, action_visits, memory):
-    evaluation = TemporalDifference(lamb=0.8, initial_learning_rate=0.1, online=False, target_policy=None)
-    raise NotImplementedError
