@@ -255,15 +255,18 @@ class CrossesAndNoughtsEnv(Env):
             else:
                 # Need play random instead
                 legal_actions = self.game.getLegalActions()
-                rd_action = np.random.choice(legal_actions)
-                self.game.play(player, rd_action)
-                print("Invalid action, played at random, reward is -1")
-                pass_turn = True
+                if len(legal_actions) > 0:
+                    rd_action = legal_actions[np.random.choice(range(len(legal_actions)))]
+                    self.game.play(other_player, rd_action)
+                    # print("Invalid action, played at random, reward is -1")
+                    pass_turn = True
+                    reward, done = checkStep(player, other_player)
+                    return observation, -1, done, {'pass_turn':pass_turn}
         
         reward, done = checkStep(player, other_player)
         
         if self.vs_random:
-            if not done:
+            if not done and not pass_turn:
                 legal_actions = self.game.getLegalActions()
                 if len(legal_actions) > 0:
                     rd_action = legal_actions[np.random.choice(range(len(legal_actions)))]
