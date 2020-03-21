@@ -39,7 +39,7 @@ class NimGame():
         print(self.sticks_left)
 
 
-class NimEnv(Env):
+class RdNimEnv(Env):
 
     def __init__(self, initial_state=20, actions=(1,2,3), is_optimal=False):
         self.initial_state = initial_state
