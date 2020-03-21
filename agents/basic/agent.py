@@ -49,7 +49,6 @@ class BasicAgent(Agent):
 
         action_taken = self._invert_hash_action(action_id)
         assert action_taken in self.action_space
-
         return action_taken
     
     def remember(self, state, action, reward, done, next_state=None, info={}):
@@ -64,9 +63,10 @@ class BasicAgent(Agent):
     def get_size_and_hash(self, space):
 
         int_id = lambda x: int(x)
-
+        
         if isinstance(space, spaces.Discrete):
             return space.n, int_id, int_id
+        
         elif isinstance(space, spaces.MultiDiscrete):
             base_mat = np.ones_like(space.nvec, dtype=np.uint32)
             rank = base_mat.ndim

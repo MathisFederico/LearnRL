@@ -1,6 +1,7 @@
 import numpy as np
 from copy import deepcopy
 
+
 from envs import RdNimEnv, CrossesAndNoughtsEnv, RdCrossesAndNoughtsEnv
 from agents import BasicAgent
 from agents.basic.evaluation import TemporalDifference, MonteCarlo
@@ -9,6 +10,7 @@ from agents.basic.control import Greedy, UCB, Puct
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
+
     env = RdCrossesAndNoughtsEnv(vs_random=True, play_first=True)
     state_size = np.prod(env.observation_space.nvec)
     action_size = np.prod(env.action_space.nvec)
@@ -19,10 +21,12 @@ if __name__ == "__main__":
     n_games = 10000
     G = 0.0
     steps_per_ep = 0
+
     for game in range(n_games):
         done = False
         state = env.reset()
         while not done:
+
             steps_per_ep += 1
             # env.render(frame_limit=0)
             legal_actions = env.game.getLegalActions()
@@ -30,6 +34,7 @@ if __name__ == "__main__":
             next_state, reward, done, info = env.step(action)
             # if reward != 0 : print(reward)
             # if done: print(reward)
+
             G += reward
 
             agent.remember(state, action, reward, done, next_state, info)
@@ -40,6 +45,7 @@ if __name__ == "__main__":
         if game%100==0: 
             print(f'Game {game}/{n_games}, Average Return:{G/100:.3f}, Average Steps per episode :{steps_per_ep/100:.1f}, Exploration:{agent.control.exploration:.2f}')
             G, steps_per_ep = 0, 0
+
     
     action_values = agent.action_values
 
