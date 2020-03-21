@@ -65,7 +65,7 @@ class Control():
 
 class Greedy(Control):
 
-    def __init__(self, action_size, initial_exploration=0, **kwargs):
+    def __init__(self, action_size, initial_exploration=0.1, **kwargs):
         super().__init__(action_size, initial_exploration=initial_exploration, name="greedy", **kwargs)
 
     def policy(self, state, action_values, action_visits=None):
