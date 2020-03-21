@@ -69,13 +69,15 @@ class TemporalDifference(Evaluation):
     @staticmethod
     def _get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None, target_policy=None):
         expected_futur_reward = reward.astype(np.float64)
+
         not_done = np.logical_not(done)
-        if target_policy is None:
-            action_impact = policy(next_state[not_done], action_values, action_visits) 
-        else:
-            action_impact = target_policy(next_state[not_done], action_values, action_visits)
+        if len(next_state[not_done]) > 0:
+            if target_policy is None:
+                action_impact = policy(next_state[not_done], action_values, action_visits) 
+            else:
+                action_impact = target_policy(next_state[not_done], action_values, action_visits)
+            expected_futur_reward[not_done] += np.sum(action_impact * action_values[next_state[not_done], :], axis=-1)
         
-        expected_futur_reward[not_done] += np.sum(action_impact * action_values[next_state[not_done], :], axis=-1)
         return expected_futur_reward
     
     def _learn_trajectory(self, action_visits, action_values, state, action, expected_futur_reward):
@@ -115,7 +117,8 @@ class QLearning(Evaluation):
     def _get_expected_futur_reward(action_visits, action_values, action, reward, done, policy, next_state=None):
         expected_futur_reward = reward.astype(np.float64)
         not_done = np.logical_not(done)
-        expected_futur_reward[not_done] += np.amax(action_values[next_state[not_done], :], axis=-1)
+        if len(next_state[not_done]) > 0:
+            expected_futur_reward[not_done] += np.amax(action_values[next_state[not_done], :], axis=-1)
         return expected_futur_reward
     
     def _learn_trajectory(self, action_visits, action_values, state, action, expected_futur_reward):
