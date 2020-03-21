@@ -1,4 +1,6 @@
-from gym import Env, spaces
+from gym import spaces
+from core import MultiEnv
+from agents import Agent
 import numpy as np
 from copy import deepcopy
 import pygame
@@ -46,27 +48,28 @@ class CrossesAndNoughtsGame():
         
         # Check all rows
         for i in range(3):
-            if np.all(self.grid[i] == x): return 1
-            if np.all(self.grid[i] == o): return 2
+            row = self.grid[i, :]
+            if np.all(row == x): return 1
+            if np.all(row == o): return 2
 
         # Check all columns
         for i in range(3):
-            t = [self.grid[j, i] for j in range(3)]
-            if np.all(t == x): return 1
-            if np.all(t == o): return 2
+            col = self.grid[:, i]
+            if np.all(col == x): return 1
+            if np.all(col == o): return 2
 
         # Check diagonal
-        t = [self.grid[i, i] for i in range(3)]
-        if np.all(t == x): return 1
-        if np.all(t == o): return 2
+        diag = np.diag(self.grid)
+        if np.all(diag == x): return 1
+        if np.all(diag == o): return 2
 
         # Check antidiagonal
-        t = [self.grid[2 - i, i] for i in range(3)]
-        if np.all(t == x): return 1
-        if np.all(t == o): return 2
+        anti_diag = np.diag(np.fliplr(self.grid))
+        if np.all(anti_diag == x): return 1
+        if np.all(anti_diag == o): return 2
         
         # If no one can play
-        if not np.any(self.grid == 0): return 3
+        if np.all(self.grid != 0): return 3
         return 0
 
     def initPygame(self, scale_factor=5):
@@ -95,14 +98,6 @@ class CrossesAndNoughtsGame():
         self.images = {1:cross_img, 2:nought_img}
 
         self.states_images = {}
-        # files = os.listdir(os.path.join(path, 'states'))
-        # for filename in files:
-        #     state = int(filename.split('.')[0])
-        #     img = pygame.image.load(os.path.join(path, "states/{}.png".format(state))).convert()
-        #     img = scale(img, (scale_factor*img.get_width(), scale_factor*img.get_height()))
-        #     self.states_images[state] = img
-
-        # Refresh display
         self.window.blit(self.empty_grid_img, (0,0))
         pygame.display.flip()
     
@@ -210,75 +205,51 @@ class CrossesAndNoughtsGame():
         self.__init__()
 
 
-class RdCrossesAndNoughtsEnv(Env):
+class CrossesAndNoughtsEnv(MultiEnv):
     
-    def __init__(self, vs_random=False, play_first=True):
+    def __init__(self, frame_limit=0):
         self.game = CrossesAndNoughtsGame()
         self.action_space = spaces.MultiDiscrete((3, 3))
         self.observation_space = spaces.MultiDiscrete(3 * np.ones((3, 3), dtype=np.int64))
-        self.vs_random = vs_random
-        if not play_first:
-            legal_actions = self.game.getLegalActions()
-            if len(legal_actions) > 0:
-                rd_action = legal_actions[np.random.choice(range(len(legal_actions)))]
-                self.game.play(1, rd_action)
+        self.frame_limit = frame_limit
+
+    def turn(self, observation):
+        nb_X = np.sum(observation==1)
+        nb_O = np.sum(observation==2)
+        if nb_X == nb_O: return 0
+        else: return 1
 
     def step(self, action):
 
-        def checkStep(player, other_player):
-            if not pass_turn:
-                reward, done = 0, False
-                winner = self.game.wincheck()
-                if winner == player:
-                    reward = 1
-                    done = True
-                elif winner == other_player:
-                    reward = -1
-                    done = True
-                elif winner == 3:
-                    done = True
-            else:
-                reward, done = -1, False
-            return reward, done
-
         pass_turn = False
         observation = self.game.getObservation()
-        nb_X = np.sum(observation==1)
-        nb_O = np.sum(observation==2)
-        if nb_X == nb_O: player, other_player = 1, 2
-        else: player, other_player = 2, 1
+        
+        player = 1 + self.turn(observation)
+        other_player = 3 - player
 
         winner = self.game.wincheck()
         if winner == 0:
             if self.game.is_valid(action):
                 self.game.play(player, action)
             else:
-                # Need play random instead
                 legal_actions = self.game.getLegalActions()
                 if len(legal_actions) > 0:
-                    rd_action = legal_actions[np.random.choice(range(len(legal_actions)))]
-                    self.game.play(other_player, rd_action)
-                    # print("Invalid action, played at random, reward is -1")
                     pass_turn = True
-                    reward, done = checkStep(player, other_player)
-                    return observation, -1, done, {'pass_turn':pass_turn}
         
-        reward, done = checkStep(player, other_player)
-        
-        if self.vs_random:
-            if not done and not pass_turn:
-                legal_actions = self.game.getLegalActions()
-                if len(legal_actions) > 0:
-                    rd_action = legal_actions[np.random.choice(range(len(legal_actions)))]
-                    self.game.play(other_player, rd_action)
-                reward, done = checkStep(player, other_player)
+        if not pass_turn:
+            reward, done = 0, False
+            winner = self.game.wincheck()
+            if winner == player: reward, done = 1, False
+            elif winner == other_player: reward, done = -1, True
+            elif winner == 3: done = True
+        else: reward, done = -1, False
 
         observation = self.game.getObservation()
 
         return observation, reward, done, {'pass_turn':pass_turn}
     
-    def render(self, frame_limit=0):
-        self.game.render(frame_limit=frame_limit)
+    def render(self):
+        self.game.render(frame_limit=self.frame_limit)
 
     def reset(self):
         self.game = CrossesAndNoughtsGame()

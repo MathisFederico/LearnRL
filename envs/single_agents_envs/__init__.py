@@ -1,1 +1,2 @@
-from gym.envs import *
+from envs.single_agents_envs.random_crosses_and_noughts import RdCrossesAndNoughtsEnv
+from envs.single_agents_envs.random_nim import RdNimEnv
