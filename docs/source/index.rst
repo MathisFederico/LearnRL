@@ -4,9 +4,7 @@ Welcome to LearnRL's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   learnrl
-   learnrl.agents
-   learnrl.environments
+   modules
 
 | LearnRL is a librairie to use and learn reinforcement learning.
 | Look how easy it is to use:
@@ -58,10 +56,3 @@ License
 
 | The project is licensed under the GNU LGPLv3 license.
 | See LICENCE, COPYING and COPYING.LESSER for more details.
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
