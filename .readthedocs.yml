@@ -17,12 +17,11 @@ sphinx:
 formats: all
 
 # Optionally set the version of Python and requirements required to build your docs
-requirements_file: requirements.txt
 
 build:
   image: latest
 
 python:
   version: 3.7
-
+  requirements_file: requirements.txt
 
