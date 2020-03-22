@@ -18,7 +18,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'numpy',
-        'gym'
+        'gym',
+        'pygame'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
