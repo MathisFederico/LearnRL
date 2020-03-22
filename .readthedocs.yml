@@ -23,5 +23,5 @@ build:
 
 python:
   version: 3.7
-  requirements_file: requirements.txt
-
+  install:
+    - requirements: requirements.txt
