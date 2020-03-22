@@ -4,6 +4,9 @@ Welcome to LearnRL's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   learnrl
+   learnrl.agents
+   learnrl.environments
 
 | LearnRL is a librairie to use and learn reinforcement learning.
 | Look how easy it is to use:
