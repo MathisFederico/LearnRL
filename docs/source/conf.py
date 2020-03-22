@@ -32,6 +32,11 @@ author = 'Mathïs Fédérico'
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
 master_doc = 'index'
 
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None)
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

@@ -17,10 +17,10 @@ class Memory():
         remember: Stock an experience
         forget: Delete all experiences
     
-    And the attributes:
+    Attributes:
         max_memory_len: Max number of experiences stocked by the memory
         datas: The dictionary of experiences following MEMORY_KEYS
-               Each datas[key] is a numpy.ndarray tensor for computation speed optimisation
+        datas[key](|ndarray|): tensor for computation speed
     """
 
     MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
