@@ -1,18 +1,16 @@
-learnrl.agents.table package
+TableAgent
 ============================
 
-Submodules
-----------
-
-learnrl.agents.table.agent module
----------------------------------
+| Table agents are the simplest form of RL Agents.
+| With experience, we build an action_value array (Q in literature).
+| Q(s,a) being the expected futur rewards given that the agent did the action a ins the state s.
 
 .. automodule:: learnrl.agents.table.agent
    :members:
    :undoc-members:
    :show-inheritance:
 
-learnrl.agents.table.control module
+Control
 -----------------------------------
 
 .. automodule:: learnrl.agents.table.control
@@ -20,19 +18,10 @@ learnrl.agents.table.control module
    :undoc-members:
    :show-inheritance:
 
-learnrl.agents.table.evaluation module
+Evaluation
 --------------------------------------
 
 .. automodule:: learnrl.agents.table.evaluation
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: learnrl.agents.table
    :members:
    :undoc-members:
    :show-inheritance:

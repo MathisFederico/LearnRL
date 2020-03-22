@@ -1,18 +1,13 @@
-learnrl.environments package
-============================
+Environments
+============
 
-Subpackages
------------
+In LearnRL, all gym environments are supported ! (And you can import them from :ref:learnrl.environments)
+Moreover, you can even build environments for multiple agent using: :ref:learnrl.core.MultiEnv
 
 .. toctree::
 
-   learnrl.environments.multi_agents
-   learnrl.environments.single_agents
+   crosses_and_noughts
+   nim
 
-Module contents
----------------
-
-.. automodule:: learnrl.environments
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   random_crosses_and_noughts
+   random_nim

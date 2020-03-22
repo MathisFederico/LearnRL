@@ -1,17 +1,9 @@
-learnrl.agents package
-======================
+Agents
+======
 
-Subpackages
------------
+LearnRL gives an API for reinforcement learning agents.
+The core Agent object is :ref:learnrl.core.Agent
 
 .. toctree::
 
    learnrl.agents.table
-
-Module contents
----------------
-
-.. automodule:: learnrl.agents
-   :members:
-   :undoc-members:
-   :show-inheritance:

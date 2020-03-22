@@ -1,10 +1,18 @@
 Welcome to LearnRL's documentation!
 ===================================
 
+Table Of Content
+----------------
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
-   modules
+
+   learnrl.core
+   learnrl.agents
+   learnrl.environments
+
+About LearnRL
+-------------
 
 | LearnRL is a librairie to use and learn reinforcement learning.
 | Look how easy it is to use:
