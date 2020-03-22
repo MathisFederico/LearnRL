@@ -1,5 +1,5 @@
-Core of LearnRL
-===============
+LearnRL's Core
+==============
 
 LearnRL is base on those core objects :
 
@@ -10,7 +10,7 @@ Playground
    :members:
 
 Agent
--------
+-----
 
 .. autoclass:: learnrl.core.Agent
    :members:
