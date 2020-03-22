@@ -5,9 +5,6 @@ Welcome to LearnRL's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-LearnRL
-========
-
 | LearnRL is a librairie to use and learn reinforcement learning.
 | Look how easy it is to use:
 
