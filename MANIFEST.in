@@ -1,1 +1,1 @@
-learnrl/*.png
+recursive-include learnrl *.png
