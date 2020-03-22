@@ -1,21 +1,25 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-import setuptools
+import pathlib
+from setuptools import setup, find_packages
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+# The directory containing this file
+HERE = pathlib.Path(__file__).parent
 
-setuptools.setup(
-    name="LearnRL",
+# The text of the README file
+README = (HERE / "README.md").read_text()
+
+setup(
+    name="learnrl",
     version="0.1.0",
     author="Mathïs Fédérico",
     author_email="mathfederico@gmail.com",
     description="A package to learn about Reinforcement Learning",
-    long_description=long_description,
+    long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/MathisFederico/LearnRL",
-    packages=setuptools.find_packages(exclude=("tests", "docs")),
+    packages=find_packages(exclude=("tests", "docs")),
     include_package_data=True,
     install_requires=[
         'numpy',
@@ -24,7 +28,7 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: GNU LPGLv3",
+        "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
