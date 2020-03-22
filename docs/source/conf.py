@@ -29,8 +29,9 @@ author = 'Mathïs Fédérico'
 # ones.
 
 # Add autodoc and napoleon to the extensions list
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
+extensions = ['autoapi.extension', 'sphinx.ext.autodoc', 'sphinx.ext.napoleon']
 master_doc = 'index'
+autoapi_dirs = ['../learnrl']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
