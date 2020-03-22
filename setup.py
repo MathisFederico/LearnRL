@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LearnRL",
-    version="0.0.1",
+    version="0.1.0",
     author="Mathïs Fédérico",
     author_email="mathfederico@gmail.com",
     description="A package to learn about Reinforcement Learning",
@@ -23,7 +23,7 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: All rights reserved",
+        "License :: GNU LPGLv3",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
