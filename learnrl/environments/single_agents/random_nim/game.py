@@ -23,12 +23,10 @@ class NimGame():
                 opponent_id = 1-player_id
                 opponent = self.players[opponent_id]
                 self.losers[opponent] = 1
-                # print("{} lost !".format(opponent))
             if not any(lost for lost in self.losers.values()):
                 self.sticks_left -= sticks
                 if self.sticks_left < 1:
                     self.losers[player] = 1
-                    # print("{} lost !".format(player))
 
     def won(self, player):
         """ Si l'autre joueur a perdu, c'est que vous avez gagné"""
@@ -59,6 +57,7 @@ class RdNimEnv(Env):
     def step(self, action):
         reward = 0
         done = False
+        pass_turn= False
 
         # Agent turn
         sticks_to_remove_by_agent = self.actions[action]
@@ -70,9 +69,8 @@ class RdNimEnv(Env):
             else:
                 self.game.remove(self.players[0], sticks_to_remove_by_agent)
         else:
-            print("Warning ! {} is an illegal move ! Played random instead ...".format(sticks_to_remove_by_agent))
             reward = -1
-            self.game.remove(self.players[0], rd.choice(self.actions))
+            pass_turn= True
 
         # Environement turn
         def env_policy(state, actions, random=True):
@@ -82,20 +80,18 @@ class RdNimEnv(Env):
               choice = (state - 1)%4
             return choice
         
-        sticks_to_remove_by_env = env_policy(self.game.get_observation(), self.actions, not self.is_optimal)
-        if self.game.won(self.players[1]) and not done:
-            reward = -1
-            done = True
-        else:
-            self.game.remove(self.players[1], sticks_to_remove_by_env)
-        if self.game.won(self.players[0]) and not done:
-            reward = 1
-            done = True
+        if not pass_turn:
+            sticks_to_remove_by_env = env_policy(self.game.get_observation(), self.actions, not self.is_optimal)
+            if self.game.won(self.players[1]) and not done:
+                reward = -1
+                done = True
+            else:
+                self.game.remove(self.players[1], sticks_to_remove_by_env)
+            if self.game.won(self.players[0]) and not done:
+                reward = 1
+                done = True
         
         observation = self.game.get_observation()
-
-        # if done:
-        #     print("Reward : {} !".format(reward))
         return observation, reward, done, {}
 
     def reset(self):
