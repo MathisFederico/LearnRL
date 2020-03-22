@@ -1,7 +1,5 @@
 # LearnRL
-A library to learn and test reinforcement learning algorithms
-
-# Soon Realease 1 will be up !
+A library to use and learn reinforcement learning algorithms
 
 ## General framework for reinforcement learning agents
 

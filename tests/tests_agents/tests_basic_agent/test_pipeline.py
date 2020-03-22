@@ -1,13 +1,17 @@
+# LearnRL a python library to learn and use reinforcement learning
+# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+
 import pytest
 import numpy as np
 np.random.seed(42)
 
 from copy import deepcopy
 
-from envs import RdNimEnv
-from agents import BasicAgent, Memory
-from agents.basic.evaluation import MonteCarlo, TemporalDifference, QLearning
-from agents.basic.control import Greedy
+from learnrl.environments import RdNimEnv
+from learnrl.agents import TableAgent
+from learnrl.core import Memory
+from learnrl.agents.table.evaluation import MonteCarlo, TemporalDifference, QLearning
+from learnrl.agents.table.control import Greedy
 
 @pytest.fixture
 def memory():
@@ -31,7 +35,7 @@ def test_nim_optimal_policy():
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
     env = RdNimEnv(initial_state=n_sticks, is_optimal=True)
-    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
+    agent = TableAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=MonteCarlo(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
 
@@ -71,7 +75,7 @@ def test_td_onl_onp_nim_optimal_policy():
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
     env = RdNimEnv(initial_state=n_sticks, is_optimal=True)
-    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
+    agent = TableAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=TemporalDifference(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
 
@@ -111,7 +115,7 @@ def test_td_offl_onp_nim_optimal_policy():
     n_triplets = 2
     n_sticks = n_triplets*4 + 2
     env = RdNimEnv(initial_state=n_sticks, is_optimal=True)
-    agent = BasicAgent(state_space=env.observation_space, action_space=env.action_space,
+    agent = TableAgent(state_space=env.observation_space, action_space=env.action_space,
                        evaluation=TemporalDifference(initial_learning_rate=0.3),
                        control=Greedy(env.action_space.n, initial_exploration=0))
 

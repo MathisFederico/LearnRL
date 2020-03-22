@@ -1,8 +1,11 @@
+# LearnRL a python library to learn and use reinforcement learning
+# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+
 import pytest
 import numpy as np
 
-from agents.basic.evaluation import Evaluation, MonteCarlo, TemporalDifference
-from agents.agent import Memory
+from learnrl.agents.table.evaluation import Evaluation, MonteCarlo, TemporalDifference
+from learnrl.core import Memory
 
 # Test basic evaluation features
 def test_name():
