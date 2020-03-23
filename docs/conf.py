@@ -32,7 +32,6 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    'plantweb.directive',
     'autoapi.sphinx'
 ]
 master_doc = 'index'
