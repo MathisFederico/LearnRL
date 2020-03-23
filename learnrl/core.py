@@ -13,27 +13,30 @@ class Memory():
     """
     A general memory for reinforcement learning agents
 
-    Contains the methods:
-        remember: Stock an experience
-        forget: Delete all experiences
+    Using the methodes :func:`remember` and :func:`forget`
+    Any Agent can have a standardized memory
     
     Attributes:
-        max_memory_len: Max number of experiences stocked by the memory
-        datas: The :class:python.dict of experiences following MEMORY_KEYS
+        max_memory_len(int): Max number of experiences stocked by the memory
+        datas(dict): The dictionary of experiences following MEMORY_KEYS
         datas[key](|ndarray|): tensor for computation speed
     """
 
-    MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
+    MEMORY_KEYS = ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
 
-    def __init__(self, max_memory_len=1e4):
+    def __init__(self, max_memory_len=10000):
         self.datas = {key:None for key in self.MEMORY_KEYS}
         self.max_memory_len = max_memory_len
 
-    def remember(self, state, action, reward, done, next_state=None, info={}, **param):
-        """ Add the new experience into the memory forgetting long past experience if neccesary """
+    def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
+        """ Add the new experience into the memory forgetting long past experience if neccesary
+        
+        Args:
+            observation:
+            action:
+        """
 
         def remember_key(datas, key, value, max_memory_len=self.max_memory_len):
-            """ Add the new experience key into the memory forgetting long past experience if neccesary """
             if datas[key] is None:
                 datas[key] = value
             else:
@@ -43,7 +46,7 @@ class Memory():
                     datas[key] = np.roll(datas[key], shift=-1, axis=0)
                     datas[key][-1] = np.array(value)
 
-        for key, value in zip(self.MEMORY_KEYS, (state, action, reward, done, next_state, info)):
+        for key, value in zip(self.MEMORY_KEYS, (observation, action, reward, done, next_observation, info)):
             # Check that value is an instance of numpy.ndarray or transform the value
             if isinstance(value, collections.Sequence) or type(value) != np.ndarray or value.ndim < 1:
                 value = np.array([value])
@@ -54,6 +57,7 @@ class Memory():
             remember_key(self.datas, key, param[key])
 
     def forget(self):
+        """ Remove all memory"""
         self.datas = {key:None for key in self.MEMORY_KEYS}
 
 
@@ -72,8 +76,8 @@ class Agent():
 
     name = None
 
-    state_values = None
-    state_visits = None
+    observation_values = None
+    observation_visits = None
 
     action_values = None
     action_visits = None
@@ -88,9 +92,9 @@ class Agent():
         """ How the learns from his experiences """
         raise NotImplementedError
 
-    def remember(self, state, action, reward, done, next_state=None, info={}, **param):
+    def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
         """ How the agent uses his memory to remember experiences """
-        # self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info, **param)
+        # self.memory.remember(self._hash_observation(observation), self._hash_action(action), reward, done, self._hash_observation(next_observation), info, **param)
         raise NotImplementedError
     
     def forget(self):
@@ -105,7 +109,7 @@ class MultiEnv(Env):
     A layer over the Gym Env class able to handle environements with multiple agents.
     
     The main add in MultiEnv is the method:
-        turn: returns the next agent to play given the state
+        turn: returns the next agent to play given the observation
 
     On top of the main API basic methodes:
         step: take a step of the environement given the action of the active player
@@ -123,7 +127,7 @@ class MultiEnv(Env):
     Note: a default reward range set to [-inf,+inf] already exists. Set it if you want a narrower range.
     """
 
-    def turn(self, state):
+    def turn(self, observation):
         raise NotImplementedError 
 
 
@@ -158,8 +162,8 @@ class Playground():
         t0 = time()
         for episode in range(episodes):
 
-            state = self.env.reset()
-            previous = np.array([{'state':None, 'action':None, 'reward':None, 'done':None, 'info':None}]*len(self.agents))
+            observation = self.env.reset()
+            previous = np.array([{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None}]*len(self.agents))
             done = False
             gain = np.zeros_like(avg_gain)
             step = 0
@@ -169,27 +173,27 @@ class Playground():
                 if render: self.env.render()
 
                 if isinstance(self.env, MultiEnv):
-                    agent_id = self.env.turn(state)
+                    agent_id = self.env.turn(observation)
                 else: agent_id = 0
 
                 prev = previous[agent_id]
-                if learn and prev['state'] is not None:
-                    agent.remember(prev['state'], prev['action'], prev['reward'], prev['done'], state, prev['info'])
+                if learn and prev['observation'] is not None:
+                    agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
                     agent.learn()
                 
                 agent = self.agents[agent_id]
-                action = agent.act(state)
-                next_state, reward, done , info = self.env.step(action)
+                action = agent.act(observation)
+                next_observation, reward, done , info = self.env.step(action)
                 gain[agent_id] += reward
                 step += 1
 
                 if learn:
-                    for key, value in zip(prev, [state, action, reward, done, info]):
+                    for key, value in zip(prev, [observation, action, reward, done, info]):
                         prev[key] = value
 
                 if verbose > 1:
-                    print(f"------ Step {step} ------ Player is {agent_id}\nobservation:\n{state}\naction:\n{action}\nreward:{reward}\ndone:{done}\nnext_observation:\n{next_state}\ninfo:{info}")
-                state = next_state
+                    print(f"------ Step {step} ------ Player is {agent_id}\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}\nnext_observation:\n{next_observation}\ninfo:{info}")
+                observation = next_observation
             
             if verbose > 0:
                 steps += step

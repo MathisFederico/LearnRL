@@ -27,11 +27,11 @@ class TableAgent(Agent):
 
     name = 'table'
     
-    def __init__(self, state_space, action_space, control=None, evaluation=None, **kwargs):
+    def __init__(self, observation_space, action_space, control=None, evaluation=None, **kwargs):
         
         super().__init__()
 
-        self.state_size, self._hash_state, self._invert_hash_state = self.get_size_and_hash(state_space)
+        self.observation_size, self._hash_observation, self._invert_hash_observation = self.get_size_and_hash(observation_space)
         self.action_size, self._hash_action, self._invert_hash_action = self.get_size_and_hash(action_space)
 
         self.control = control if control is not None else Greedy(self.action_size, **kwargs)
@@ -39,23 +39,23 @@ class TableAgent(Agent):
 
         self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
     
-        self.action_values = np.zeros((self.state_size, self.action_size))
-        self.action_visits = np.zeros((self.state_size, self.action_size))
+        self.action_values = np.zeros((self.observation_size, self.action_size))
+        self.action_visits = np.zeros((self.observation_size, self.action_size))
 
         self.action_space = action_space
     
-    def act(self, state, greedy=False):
-        state_id = self._hash_state(state)
+    def act(self, observation, greedy=False):
+        observation_id = self._hash_observation(observation)
 
-        policy = self.control.get_policy(state_id, self.action_values, self.action_visits)
+        policy = self.control.get_policy(observation_id, self.action_values, self.action_visits)
         action_id = np.random.choice(range(self.action_size), p=policy)
 
         action_taken = self._invert_hash_action(action_id)
         assert action_taken in self.action_space
         return action_taken
     
-    def remember(self, state, action, reward, done, next_state=None, info={}):
-        self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info)
+    def remember(self, observation, action, reward, done, next_observation=None, info={}):
+        self.memory.remember(self._hash_observation(observation), self._hash_action(action), reward, done, self._hash_observation(next_observation), info)
 
     def learn(self, **kwargs):
         self.evaluation.learn(action_values=self.action_values, action_visits=self.action_visits,
@@ -109,5 +109,5 @@ class TableAgent(Agent):
     def __str__(self):
         return self.name
     
-    def __call__(self, state, greedy=False):
-        return self.act(state, greedy=False)
+    def __call__(self, observation, greedy=False):
+        return self.act(observation, greedy=False)
