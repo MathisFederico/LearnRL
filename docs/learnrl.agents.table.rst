@@ -1,5 +1,3 @@
-.. _TableAgent:
-
 TableAgent
 ==========
 
@@ -9,8 +7,11 @@ TableAgent
 | For that, they are composed of two main objects : Control and Evaluation
 
 | A :ref:`Control` object uses the action_value to determine the probabilities of choosing every action
-| An :ref:`Evaluation` object uses the experience of the :ref:`TableAgent`
+| An :ref:`Evaluation` object uses the experience of the :any:`TableAgent <learnrl.agents.table>`
  present in his :ref:`Memory`.
+
+.. |gym.Space| replace:: `Space <http://gym.openai.com/docs/#spaces>`__
+.. |gym.Env| replace:: `Env <http://gym.openai.com/docs/#environments>`__
 
 .. autoclass:: learnrl.agents.table.agent.TableAgent
    :members:
