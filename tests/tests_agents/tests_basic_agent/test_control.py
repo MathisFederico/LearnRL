@@ -29,10 +29,10 @@ def test_update_exploration():
 def test_get_policy():
     control = Control(3, name="default_policy")
     with pytest.raises(NotImplementedError):
-        control.get_policy(state=0, action_values=None)
+        control.get_policy(observation=0, action_values=None)
     
-def test_check_policy():
-    raise NotImplementedError
+# def test_check_policy():
+#     raise NotImplementedError
 
 # Test classic controls
 @pytest.fixture
@@ -51,7 +51,7 @@ def test_Greedy(action_values, action_visits):
 
     for eps in [0, 0.5, 1]:
         greedy = Greedy(3, eps)
-        policy = greedy.get_policy(state=0, action_values=action_values)
+        policy = greedy.get_policy(observation=0, action_values=action_values)
         expected_policy = expected_policies[eps]
         if not np.all(policy==expected_policy):
             raise ValueError(f'Wrong policy for greedy with eps={eps}\
@@ -63,7 +63,7 @@ def test_vectorized_Greedy(action_values, action_visits):
                                  [0.5/3, 0.5 + 0.5/3, 0.5/3]])
 
     greedy = Greedy(3, 0.5)
-    policy = greedy.get_policy(state=np.array([0, 1]), action_values=action_values)
+    policy = greedy.get_policy(observation=np.array([0, 1]), action_values=action_values)
     expected_policy = expected_policies
     if not np.all(policy==expected_policy):
         raise ValueError(f'Wrong policy for greedy with eps={0.5}\
@@ -73,7 +73,7 @@ def test_vectorized_Greedy(action_values, action_visits):
 def test_UCB(action_values, action_visits):
     ucb = UCB(3)
     with pytest.raises(ValueError):
-        ucb.get_policy(state=0, action_values=None, action_visits=None)
+        ucb.get_policy(observation=0, action_values=None, action_visits=None)
 
     cs = [0, 2, 5]
     expected_policies = {}
@@ -84,7 +84,7 @@ def test_UCB(action_values, action_visits):
 
     for c in cs:
         ucb = UCB(3, initial_exploration=c)
-        policy = ucb.get_policy(state=0, action_values=action_values, action_visits=action_visits)
+        policy = ucb.get_policy(observation=0, action_values=action_values, action_visits=action_visits)
         expected_policy = expected_policies[c]
         if not np.all(policy==expected_policy):
             raise ValueError(f'Wrong policy for UCB with c={c}\
@@ -95,7 +95,7 @@ def test_Puct(action_values, action_visits):
     puct = Puct(10)
 
     with pytest.raises(ValueError):
-        puct.get_policy(state=0, action_values=None, action_visits=None)
+        puct.get_policy(observation=0, action_values=None, action_visits=None)
 
     cs = [0, 0.5, 1]
     expected_policies = {}
@@ -106,7 +106,7 @@ def test_Puct(action_values, action_visits):
 
     for c in cs:
         ucb = Puct(3, initial_exploration=c)
-        policy = ucb.get_policy(state=0, action_values=action_values, action_visits=action_visits)
+        policy = ucb.get_policy(observation=0, action_values=action_values, action_visits=action_visits)
         expected_policy = expected_policies[c]
         if not np.all(policy==expected_policy):
             raise ValueError(f'Wrong policy for UCB with c={c}\
