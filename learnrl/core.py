@@ -19,7 +19,7 @@ class Memory():
     
     Attributes:
         max_memory_len: Max number of experiences stocked by the memory
-        datas: The dictionary of experiences following MEMORY_KEYS
+        datas: The :class:python.dict of experiences following MEMORY_KEYS
         datas[key](|ndarray|): tensor for computation speed
     """
 
