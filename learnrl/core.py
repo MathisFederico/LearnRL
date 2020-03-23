@@ -13,13 +13,13 @@ class Memory():
     """
     A general memory for reinforcement learning agents
 
-    Using the methodes :func:`remember` and :func:`forget`
-    Any Agent can have a standardized memory
+    Using the methods :meth:`remember` and :meth:`forget`
+    any :Class:`Agent` have a standardized :class:`Memory` !
     
     Attributes:
-        max_memory_len(int): Max number of experiences stocked by the memory
-        datas(dict): The dictionary of experiences following MEMORY_KEYS
-        datas[key](|ndarray|): tensor for computation speed
+        max_memory_len(int): Max number of experiences stocked by the :class:`Memory`
+        MEMORY_KEYS: The keys of core parameters to gather from experience
+        datas(dict): The dictionary of experiences as :class:`numpy.ndarray` 
     """
 
     MEMORY_KEYS = ('observation', 'action', 'reward', 'done', 'next_observation', 'info')

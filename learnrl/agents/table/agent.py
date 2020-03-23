@@ -1,5 +1,16 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+"""
+| Table agents are the simplest form of RL Agents.
+| With experience, we build an action_value array (Q in literature).
+| Q(s,a) being the expected futur rewards given that the agent did the action a ins the state s.
+| For that, they are composed of two main objects : :class:`Control` and :class:`Evaluation`
+
+| A :class:`Control` object uses the action_value to determine the probabilities of choosing every action
+| An :class:`Evaluation` object uses the experience of the :ref:`TableAgent`
+  present in his :ref:`Memory`.
+
+"""
 
 from learnrl.agents.table.evaluation import QLearning
 from learnrl.agents.table.control import Greedy
@@ -10,19 +21,31 @@ import numpy as np
 
 class TableAgent(Agent):
 
-    """ 
-    A general structure for table-based RL agents.
-    You can use different evaluation and control methods.
+    """  A general structure for table-based RL agents 
+    using an :class:`~learnrl.agents.table.evaluation.Evaluation` 
+    and a :class:`~learnrl.agents.table.control.Control`.
     
-    Evaluations : agents.table.evaluation
-        'mc', 'montecarlo' -> MonteCarlo evaluation
-        'td', 'tempdiff' -> TemporalDifference evaluation
-        'q', 'qlearning' -> QLearning evaluation
-        
-    Control : agents.table.control
-        'greedy' -> epsilon_greedy with epsilon=exploration
-        'ucb' -> ucb with c=exploration
-        'puct' -> puct with c=exploration
+    Parameters
+    ----------
+        observation_space: |gym.Space| 
+            The observation_space of the environement that the agent will observe
+        action_space: |gym.Space|
+            The action_space of the environement that the agent will act on
+        control: :class:`~learnrl.agents.table.control.Control`
+            Control object to define policy from :attr:`action_value` (default is 0.1-Greedy)
+        evaluation: :class:`~learnrl.agents.table.evaluation.Evaluation`
+            Evaluation object to update :attr:`action_value` from agent :class:`~learnrl.core.Memory` (default is QLearning)
+    
+    Attributes
+    ----------
+        name: str
+            The name of the TableAgent
+        action_values: :class:`numpy.ndarray`
+            Known as Q(s,a), this represent the expected return (futur rewards) given that
+            the agent took the action a in the state s.
+        action_visits: :class:`numpy.ndarray`
+            Known as N(s,a), this represent the number of times that
+            the agent took the action a in the state s.
     """
 
     name = 'table'
@@ -42,16 +65,34 @@ class TableAgent(Agent):
         self.action_values = np.zeros((self.observation_size, self.action_size))
         self.action_visits = np.zeros((self.observation_size, self.action_size))
 
+        self.observation_space = observation_space
         self.action_space = action_space
     
     def act(self, observation, greedy=False):
+        """ Gives the agent action when an observation is given.
+        
+        This function is essential to define the agent behavior.
+
+        Parameters
+        ----------
+            observation: :class:`numpy.ndarray` or int
+                The observation given by the |gym.Env| step to the agent
+            greedy: bool
+                Whether the agent will act greedly or not
+            
+        Return
+        ------
+            action_taken: sample of |gym.Space|
+                The action taken by the agent
+        """
         observation_id = self._hash_observation(observation)
 
         policy = self.control.get_policy(observation_id, self.action_values, self.action_visits)
         action_id = np.random.choice(range(self.action_size), p=policy)
 
         action_taken = self._invert_hash_action(action_id)
-        assert action_taken in self.action_space
+        if action_taken not in self.action_space:
+            raise ValueError(f'Action taken should be in action_space, but {action_taken} was not in {self.action_space}')
         return action_taken
     
     def remember(self, observation, action, reward, done, next_observation=None, info={}):
