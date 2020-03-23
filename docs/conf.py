@@ -27,16 +27,18 @@ author = 'Mathïs Fédérico'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-
-# Add autodoc and napoleon to the extensions list
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'plantweb.directive',
     'autoapi.sphinx'
 ]
 master_doc = 'index'
 autoapi_dirs = ['../learnrl']
+add_module_names = False
+# pygments_style = 'monokai'
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
@@ -82,4 +84,9 @@ html_context = {
     "github_version": "dev", # Version
     "conf_py_path": "/docs/", # Path in the checkout to the docs root
 }
+
+def setup(app):
+    app.add_stylesheet('styles/custom.css')
  
+
+html_static_path = ['_static']
