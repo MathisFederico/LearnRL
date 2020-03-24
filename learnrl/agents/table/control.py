@@ -26,19 +26,19 @@ class Control():
         self.name = name
         self.decay = kwargs.get('exploration_decay', 1)
 
-    def policy(self, state, action_values, action_visits=None):
+    def policy(self, observation, action_values, action_visits=None):
         raise NotImplementedError
 
-    def get_policy(self, state, action_values, action_visits=None):
+    def get_policy(self, observation, action_values, action_visits=None):
 
-        if type(state) != np.ndarray or state.ndim < 1:
-            policy = self.policy(state, action_values, action_visits)
+        if type(observation) != np.ndarray or observation.ndim < 1:
+            policy = self.policy(observation, action_values, action_visits)
             self.check_policy(policy)
             return policy
 
-        if state.ndim == 1:
-            state = state[:, np.newaxis]
-        policies = np.apply_along_axis(self.policy, axis=1, arr=state, action_values=action_values, action_visits=action_visits)
+        if observation.ndim == 1:
+            observation = observation[:, np.newaxis]
+        policies = np.apply_along_axis(self.policy, axis=1, arr=observation, action_values=action_values, action_visits=action_visits)
         self.check_policy(policies)
         return policies
     
@@ -70,8 +70,8 @@ class Greedy(Control):
     def __init__(self, action_size, initial_exploration=0.1, **kwargs):
         super().__init__(action_size, initial_exploration=initial_exploration, name="greedy", **kwargs)
 
-    def policy(self, state, action_values, action_visits=None):
-        best_action_id = np.argmax(action_values[state])
+    def policy(self, observation, action_values, action_visits=None):
+        best_action_id = np.argmax(action_values[observation])
         policy = np.ones(self.action_size) * self.exploration / self.action_size
         policy[best_action_id] += 1 - self.exploration
         return policy
@@ -82,12 +82,12 @@ class UCB(Control):
     def __init__(self, action_size, initial_exploration=1, **kwargs):
         super().__init__(action_size, initial_exploration=initial_exploration, name="ucb", **kwargs)
 
-    def policy(self, state, action_values, action_visits=None):
+    def policy(self, observation, action_values, action_visits=None):
         if action_visits is None:
             raise ValueError("action_visits must be specified for UCB")
 
-        N = action_visits[state]
-        Q = action_values[state]
+        N = action_visits[observation]
+        Q = action_values[observation]
         best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.log(1 + np.sum(N)) / (1.0 + N)))
 
         policy = np.zeros(self.action_size)
@@ -101,12 +101,12 @@ class Puct(Control):
         super().__init__(action_size, initial_exploration=initial_exploration, name="puct", **kwargs)
         self.decay = kwargs.get('decay', 1)
 
-    def policy(self, state, action_values, action_visits=None):
+    def policy(self, observation, action_values, action_visits=None):
         if action_visits is None:
             raise ValueError("action_visits must be specified for Puct")
         
-        N = action_visits[state]
-        Q = action_values[state]
+        N = action_visits[observation]
+        Q = action_values[observation]
         best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.sum(N) / (1.0 + N)))
         
         policy = np.zeros(self.action_size)

@@ -12,6 +12,8 @@ import os
 
 class CrossesAndNoughtsGame():
 
+    """Logic of the CrossesAndNoughts game"""
+
     def __init__(self):
         self.grid = np.zeros((3,3), dtype=np.uint8)
         self.crosses = 1
@@ -257,4 +259,3 @@ class CrossesAndNoughtsEnv(MultiEnv):
         self.game = CrossesAndNoughtsGame()
         return self.game.getObservation()
     
-
