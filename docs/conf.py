@@ -36,6 +36,10 @@ extensions = [
 ]
 master_doc = 'index'
 autoapi_dirs = ['../learnrl']
+autodoc_default_options = {
+    'member-order': 'bysource',
+    'undoc-members': True,
+}
 add_module_names = False
 # pygments_style = 'monokai'
 
