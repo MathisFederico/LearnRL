@@ -52,6 +52,7 @@ class Memory():
                 Additional informations given by the |gym.Env|
             **kwargs:
                 Optional additional stored informations
+        
         """
 
         def remember_key(datas, key, value, max_memory_len=self.max_memory_len):
@@ -110,7 +111,18 @@ class Agent():
         raise NotImplementedError
 
     def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
-        """ How the agent uses his memory to remember experiences """
+        """ Uses the agent's :class:`Memory` to remember experiences
+        
+        Often, the agent will use a |hash| to store observations efficiently
+
+        Example
+        -------
+            >>>  self.memory.remember(self._hash_observation(observation),
+            ...                       self._hash_action(action),
+            ...                       reward, done, 
+            ...                       self._hash_observation(next_observation), 
+            ...                       info, **param)
+        """
         # self.memory.remember(self._hash_observation(observation), self._hash_action(action), reward, done, self._hash_observation(next_observation), info, **param)
         raise NotImplementedError
     
@@ -168,14 +180,14 @@ class MultiEnv(Env):
 
 class Playground():
 
-    """
-    A playground is used to train and test one or multiple agents on an environement.
+    """ A playground is used to run agent(s) on an environement.
 
-    Typical use involve the methodes :
-        run : main method
-        fit : to train the agent(s) without rendering
-        test : to test the agent(s) without learning
-    
+    Attributes
+    ----------
+        env: :class:`MultiEnv` or |gym.Env|
+            The environement in which agents will play
+        agents: :class:`list`
+            The list of :class:`Agent` in the :class:`Playground`
     """
 
     def __init__(self, environement:Env, agents):

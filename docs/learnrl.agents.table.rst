@@ -10,9 +10,6 @@ TableAgent
 | An :ref:`Evaluation` object uses the experience of the :any:`TableAgent <learnrl.agents.table>`
  present in his :ref:`Memory`.
 
-.. |gym.Space| replace:: `Space <http://gym.openai.com/docs/#spaces>`__
-.. |gym.Env| replace:: `Env <http://gym.openai.com/docs/#environments>`__
-
 .. autoclass:: learnrl.agents.table.agent.TableAgent
    :members:
    :undoc-members:
@@ -34,3 +31,8 @@ Evaluation
 .. automodule:: learnrl.agents.table.evaluation
    :members:
    :undoc-members:
+
+
+.. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
+.. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
+.. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__
