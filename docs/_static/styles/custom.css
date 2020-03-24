@@ -1,5 +1,14 @@
 /* Improve autodoc */
 
+
+/* Change navbar color */
+.wy-nav-top {
+    background:hsl(35, 100%, 55%) !important;
+}
+.wy-side-nav-search {
+    background:hsl(35, 100%, 55%) !important;
+}
+
 /* Show reference in a box */
 dl.class,
 dl.function,
