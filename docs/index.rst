@@ -1,16 +1,6 @@
 Welcome to LearnRL's documentation!
 ===================================
 
-Table Of Content
-----------------
-
-.. toctree::
-   :maxdepth: 2
-
-   learnrl.core
-   learnrl.agents
-   learnrl.environments
-
 About LearnRL
 -------------
 
@@ -47,6 +37,16 @@ Installation
 Install LearnRL by running:
 
    pip install learnrl
+
+Table Of Content
+----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   learnrl.core
+   learnrl.agents
+   learnrl.environments
 
 Contribute
 ----------
