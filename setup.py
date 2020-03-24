@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 HERE = pathlib.Path(__file__).parent
 
 # The text of the README file
-README = (HERE / "README.md").read_text()
+README = (HERE / "README.rst").read_text()
 
 setup(
     name="learnrl",
@@ -17,7 +17,7 @@ setup(
     author_email="mathfederico@gmail.com",
     description="A package to learn about Reinforcement Learning",
     long_description=README,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
     url="https://github.com/MathisFederico/LearnRL",
     packages=find_packages(exclude=("tests", "docs")),
     include_package_data=True,
