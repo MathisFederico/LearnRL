@@ -12,7 +12,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="learnrl",
-    version="0.1.0",
+    version="0.1.1",
     author="Mathïs Fédérico",
     author_email="mathfederico@gmail.com",
     description="A package to learn about Reinforcement Learning",
