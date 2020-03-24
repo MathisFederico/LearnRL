@@ -9,6 +9,23 @@ dl.data {
     border: 1px solid #D3D3D3 !important;
 }
 
+
+dl.class > dt {
+    color: hsl(35, 100%, 45%) !important;
+    background-color: hsla(35, 100%, 75%, 0.2) !important;
+    border-top-color: hsl(35, 100%, 55%) !important;
+}
+
+/* Customized colors for attributes and methods */
+dl.attribute > dt {
+    background-color: hsla(135, 35%, 75%, 20%) !important;
+    border-left-color: hsl(135, 50%, 50%) !important;
+}
+dl.method > dt {
+    background-color: hsla(200, 35%, 75%, 20%) !important;
+    border-left-color: hsl(200, 50%, 50%) !important;
+}
+
 /* Extend reference heads to the width */
 dl.class dt,
 dl.function dt,
