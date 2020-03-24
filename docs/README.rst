@@ -48,16 +48,6 @@ Table Of Content
    learnrl.agents
    learnrl.environments
 
-Table Of Content
-----------------
-
-.. toctree::
-   :maxdepth: 2
-
-   learnrl.core
-   learnrl.agents
-   learnrl.environments
-
 Contribute
 ----------
 
