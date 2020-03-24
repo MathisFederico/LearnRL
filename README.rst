@@ -41,7 +41,7 @@ Install LearnRL by running::
 Documentation
 -------------
 
-See the `complete documentation <https://github.com/MathisFederico/LearnRL/issues>`_ for more details
+See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details
 
 Contribute
 ----------
