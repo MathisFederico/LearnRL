@@ -8,7 +8,6 @@ About LearnRL
 | Look how easy it is to use:
 
 .. code-block:: python
-   :linenos:
 
    import learnrl as rl
    from learnrl.environments import CrossesAndNoughtsEnv
