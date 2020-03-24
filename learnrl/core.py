@@ -137,6 +137,9 @@ class MultiEnv(Env):
     r"""
     A layer over the gym |gym.Env| class able to handle environements with multiple agents.
    
+    .. note::
+        A :ref:`MultiEnv` must be in a :ref:`Playground` in order to work !
+
     | The main add in MultiEnv is the method: 
     |   turn
 

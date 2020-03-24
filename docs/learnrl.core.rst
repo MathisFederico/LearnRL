@@ -24,9 +24,6 @@ Agent
 MultiEnv
 --------
 
- .. danger::
-   A :ref:`MultiEnv` must be in a :ref:`Playground` in order to work !
-
 .. autoclass:: learnrl.core.MultiEnv
    :members:
 
