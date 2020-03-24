@@ -16,10 +16,15 @@ class Memory():
     Using the methods :meth:`remember` and :meth:`forget`
     any :Class:`Agent` have a standardized :class:`Memory` !
     
-    Attributes:
-        max_memory_len(int): Max number of experiences stocked by the :class:`Memory`
-        MEMORY_KEYS: The keys of core parameters to gather from experience
-        datas(dict): The dictionary of experiences as :class:`numpy.ndarray` 
+    Attributes
+    ----------
+        max_memory_len: :class:`int`
+            Max number of experiences stocked by the :class:`Memory`
+        datas: :class:`dict`
+            The dictionary of experiences as :class:`numpy.ndarray`
+        MEMORY_KEYS:
+            | The keys of core parameters to gather from experience
+            | ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
     """
 
     MEMORY_KEYS = ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
@@ -31,9 +36,22 @@ class Memory():
     def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
         """ Add the new experience into the memory forgetting long past experience if neccesary
         
-        Args:
+        Parameters
+        ----------
             observation:
+                The observation given by the |gym.Env| or transformed by an :class:`Agent` hash function
             action:
+                The action given by to |gym.Env| or transformed by an :class:`Agent` hash function
+            reward: :class:`float`
+                The reward given by the |gym.Env|
+            done: :class:`bool`
+                Whether the |gym.Env| had ended after the action
+            next_observation:
+                The next_observation given by the |gym.Env| or transformed by the :class:`Agent` hash function
+            info: :class:`dict`
+                Additional informations given by the |gym.Env|
+            **kwargs:
+                Optional additional stored informations
         """
 
         def remember_key(datas, key, value, max_memory_len=self.max_memory_len):
@@ -63,29 +81,28 @@ class Memory():
 
 class Agent():
 
-    """
-    A general structure for reinforcement learning agents
-
-    The main API methods that users of this class need to know are:
-        act
-        learn
-        remember
-        forget
+    """ A general structure for reinforcement learning agents    
     
+    Attributes
+    ----------
+        name: :class:`str`
+            The agent's name
+        memory: :class:`Memory`
+            The agent's memory (see :class:`Memory`)
     """
 
-    name = None
-
-    observation_values = None
-    observation_visits = None
-
-    action_values = None
-    action_visits = None
-    
+    name = None    
     memory = Memory()
 
     def act(self, observation):
-        """ How the agent act given an observation """
+        """ How the agent act given an observation
+        
+        Parameters
+        ----------
+            observation:
+                The observation given by the |gym.Env|
+
+        """
         raise NotImplementedError
 
     def learn(self):
@@ -106,28 +123,46 @@ class Agent():
 class MultiEnv(Env):
 
     r"""
-    A layer over the Gym Env class able to handle environements with multiple agents.
-    
-    The main add in MultiEnv is the method:
-        turn: returns the next agent to play given the observation
+    A layer over the gym |gym.Env| class able to handle environements with multiple agents.
+   
+    | The main add in MultiEnv is the method: 
+    |   turn
 
-    On top of the main API basic methodes:
-        step: take a step of the environement given the action of the active player
-        reset  
-        render  
-        close  
-        seed
+    On top of the main API basic methodes (see |gym.Env|):
+        * step: take a step of the |gym.Env| given the action of the active player
+        * reset: reset the |gym.Env| and returns the first observation
+        * render
+        * close 
+        * seed
 
-    And basic attributes:
+    Attributes
+    ----------
+        action_space: |gym.Space|
+            The Space object corresponding to actions  
+        observation_space: |gym.Space|
+            The Space object corresponding to observations  
+        reward_range: :class:`tuple`
+            | A tuple corresponding to the min and max possible rewards.
+            | A default reward range set to [-inf,+inf] already exists. 
+            | Set it if you want a narrower range.
 
-        action_space: The Space object corresponding to valid actions  
-        observation_space: The Space object corresponding to valid observations  
-        reward_range: A tuple corresponding to the min and max possible rewards  
-
-    Note: a default reward range set to [-inf,+inf] already exists. Set it if you want a narrower range.
     """
 
-    def turn(self, observation):
+    def turn(self, state):
+        """Give the turn to the next agent to play
+        
+        Parameters
+        ----------
+            state: 
+                | The real state of the environement.
+                | Should be enough to determine which is the next agent to play.
+
+        Return
+        ------
+            agent_id: :class:`int`
+                The next player id
+
+        """
         raise NotImplementedError 
 
 
