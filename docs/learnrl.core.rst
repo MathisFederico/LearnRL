@@ -39,3 +39,7 @@ Memory
 
 .. autoclass:: learnrl.core.Memory
    :members:
+
+.. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
+.. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
+.. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__
