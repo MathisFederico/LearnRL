@@ -22,9 +22,6 @@ class Memory():
             Max number of experiences stocked by the :class:`Memory`
         datas: :class:`dict`
             The dictionary of experiences as :class:`numpy.ndarray`
-        MEMORY_KEYS:
-            | The keys of core parameters to gather from experience
-            | ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
     """
 
     MEMORY_KEYS = ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
