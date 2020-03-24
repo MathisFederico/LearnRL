@@ -6,4 +6,4 @@ Agents
 
 .. toctree::
 
-   learnrl.agents.table
+   agents/learnrl.agents.table

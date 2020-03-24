@@ -36,7 +36,17 @@ Installation
 
 Install LearnRL by running:
 
-   pip install learnrl
+>>> $pip install learnrl
+
+Table Of Content
+----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   learnrl.core
+   learnrl.agents
+   learnrl.environments
 
 Table Of Content
 ----------------

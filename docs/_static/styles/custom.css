@@ -49,6 +49,10 @@
     color: rgb(0, 0, 0);
 }
 
+.rst-content li a {
+    color: rgb(0, 0, 0);
+}
+
 
 /* Show reference in a box */
 dl.class,
