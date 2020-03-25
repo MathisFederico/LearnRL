@@ -11,7 +11,7 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.rst").read_text()
 
 def get_version():
-    version_file = open('../VERSION')
+    version_file = open('VERSION')
     return version_file.read().strip()
 VERSION = get_version()
 
