@@ -40,7 +40,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'autoapi.sphinx'
 ]
-master_doc = 'index'
+master_doc = 'README'
 autoapi_dirs = ['../learnrl']
 autodoc_mock_imports = ["pygame"]
 autodoc_default_options = {
