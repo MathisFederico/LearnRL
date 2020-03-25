@@ -88,8 +88,7 @@ html_context = {
     "conf_py_path": "/docs/", # Path in the checkout to the docs root
 }
 
+html_static_path = ['_static']
 def setup(app):
     app.add_stylesheet('styles/custom.css')
  
-
-html_static_path = ['_static']
