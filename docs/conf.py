@@ -28,7 +28,6 @@ def get_version():
 version = get_version()
 release = version
 
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -43,6 +42,7 @@ extensions = [
 ]
 master_doc = 'index'
 autoapi_dirs = ['../learnrl']
+autodoc_mock_imports = ["pygame"]
 autodoc_default_options = {
     'member-order': 'bysource',
     'undoc-members': True,
