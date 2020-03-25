@@ -6,8 +6,7 @@ Moreover, you can even build environments for multiple agent using a :ref:`Multi
 
 .. toctree::
 
-   crosses_and_noughts
-   nim
-
-   random_crosses_and_noughts
-   random_nim
+   environments/crosses_and_noughts
+   environments/nim
+   environments/random_crosses_and_noughts
+   environments/random_nim

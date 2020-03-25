@@ -36,7 +36,7 @@ Installation
 
 Install LearnRL by running:
 
-   pip install learnrl
+>>> $pip install learnrl
 
 Table Of Content
 ----------------
