@@ -1,9 +1,8 @@
 Welcome to LearnRL's documentation!
 ===================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+About LearnRL
+-------------
 
 | LearnRL is a librairie to use and learn reinforcement learning.
 | Look how easy it is to use:
@@ -37,7 +36,17 @@ Installation
 
 Install LearnRL by running:
 
-   pip install learnrl
+>>> $pip install learnrl
+
+Table Of Content
+----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   learnrl.core
+   learnrl.agents
+   learnrl.environments
 
 Contribute
 ----------
@@ -56,9 +65,6 @@ License
 | The project is licensed under the GNU LGPLv3 license.
 | See LICENCE, COPYING and COPYING.LESSER for more details.
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
+.. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
+.. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__

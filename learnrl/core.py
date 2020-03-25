@@ -13,27 +13,49 @@ class Memory():
     """
     A general memory for reinforcement learning agents
 
-    Contains the methods:
-        remember: Stock an experience
-        forget: Delete all experiences
+    Using the methods :meth:`remember` and :meth:`forget`
+    any :Class:`Agent` have a standardized :class:`Memory` !
     
-    And the attributes:
-        max_memory_len: Max number of experiences stocked by the memory
-        datas: The dictionary of experiences following MEMORY_KEYS
-               Each datas[key] is a numpy.ndarray tensor for computation speed optimisation
+    Attributes
+    ----------
+        max_memory_len: :class:`int`
+            Max number of experiences stocked by the :class:`Memory`
+        datas: :class:`dict`
+            The dictionary of experiences as :class:`numpy.ndarray`
+        MEMORY_KEYS:
+            | The keys of core parameters to gather from experience
+            | ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
     """
 
-    MEMORY_KEYS = ('state', 'action', 'reward', 'done', 'next_state', 'info')
+    MEMORY_KEYS = ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
 
-    def __init__(self, max_memory_len=1e4):
+    def __init__(self, max_memory_len=10000):
         self.datas = {key:None for key in self.MEMORY_KEYS}
         self.max_memory_len = max_memory_len
 
-    def remember(self, state, action, reward, done, next_state=None, info={}, **param):
-        """ Add the new experience into the memory forgetting long past experience if neccesary """
+    def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
+        """ Add the new experience into the memory forgetting long past experience if neccesary
+        
+        Parameters
+        ----------
+            observation:
+                The observation given by the |gym.Env| or transformed by an :class:`Agent` hash function
+            action:
+                The action given by to |gym.Env| or transformed by an :class:`Agent` hash function
+            reward: :class:`float`
+                The reward given by the |gym.Env|
+            done: :class:`bool`
+                Whether the |gym.Env| had ended after the action
+            next_observation:
+                The next_observation given by the |gym.Env| or transformed by the :class:`Agent` hash function
+            info: :class:`dict`
+                Additional informations given by the |gym.Env|
+            **kwargs:
+                Optional additional stored informations
+        
+        """
 
         def remember_key(datas, key, value, max_memory_len=self.max_memory_len):
-            """ Add the new experience key into the memory forgetting long past experience if neccesary """
             if datas[key] is None:
                 datas[key] = value
             else:
@@ -43,7 +65,7 @@ class Memory():
                     datas[key] = np.roll(datas[key], shift=-1, axis=0)
                     datas[key][-1] = np.array(value)
 
-        for key, value in zip(self.MEMORY_KEYS, (state, action, reward, done, next_state, info)):
+        for key, value in zip(self.MEMORY_KEYS, (observation, action, reward, done, next_observation, info)):
             # Check that value is an instance of numpy.ndarray or transform the value
             if isinstance(value, collections.Sequence) or type(value) != np.ndarray or value.ndim < 1:
                 value = np.array([value])
@@ -54,43 +76,54 @@ class Memory():
             remember_key(self.datas, key, param[key])
 
     def forget(self):
+        """ Remove all memory"""
         self.datas = {key:None for key in self.MEMORY_KEYS}
 
 
 class Agent():
 
-    """
-    A general structure for reinforcement learning agents
-
-    The main API methods that users of this class need to know are:
-        act
-        learn
-        remember
-        forget
+    """ A general structure for reinforcement learning agents    
     
+    Attributes
+    ----------
+        name: :class:`str`
+            The agent's name
+        memory: :class:`Memory`
+            The agent's memory (see :class:`Memory`)
     """
 
-    name = None
-
-    state_values = None
-    state_visits = None
-
-    action_values = None
-    action_visits = None
-    
+    name = None    
     memory = Memory()
 
     def act(self, observation):
-        """ How the agent act given an observation """
+        """ How the agent act given an observation
+        
+        Parameters
+        ----------
+            observation:
+                The observation given by the |gym.Env|
+
+        """
         raise NotImplementedError
 
     def learn(self):
         """ How the learns from his experiences """
         raise NotImplementedError
 
-    def remember(self, state, action, reward, done, next_state=None, info={}, **param):
-        """ How the agent uses his memory to remember experiences """
-        # self.memory.remember(self._hash_state(state), self._hash_action(action), reward, done, self._hash_state(next_state), info, **param)
+    def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
+        """ Uses the agent's :class:`Memory` to remember experiences
+        
+        Often, the agent will use a |hash| to store observations efficiently
+
+        Example
+        -------
+            >>>  self.memory.remember(self._hash_observation(observation),
+            ...                       self._hash_action(action),
+            ...                       reward, done, 
+            ...                       self._hash_observation(next_observation), 
+            ...                       info, **param)
+        """
+        # self.memory.remember(self._hash_observation(observation), self._hash_action(action), reward, done, self._hash_observation(next_observation), info, **param)
         raise NotImplementedError
     
     def forget(self):
@@ -102,41 +135,62 @@ class Agent():
 class MultiEnv(Env):
 
     r"""
-    A layer over the Gym Env class able to handle environements with multiple agents.
-    
-    The main add in MultiEnv is the method:
-        turn: returns the next agent to play given the state
+    A layer over the gym |gym.Env| class able to handle environements with multiple agents.
+   
+    .. note::
+        A :ref:`MultiEnv` must be in a :ref:`Playground` in order to work !
 
-    On top of the main API basic methodes:
-        step: take a step of the environement given the action of the active player
-        reset  
-        render  
-        close  
-        seed
+    | The main add in MultiEnv is the method: 
+    |   turn
 
-    And basic attributes:
+    On top of the main API basic methodes (see |gym.Env|):
+        * step: take a step of the |gym.Env| given the action of the active player
+        * reset: reset the |gym.Env| and returns the first observation
+        * render
+        * close 
+        * seed
 
-        action_space: The Space object corresponding to valid actions  
-        observation_space: The Space object corresponding to valid observations  
-        reward_range: A tuple corresponding to the min and max possible rewards  
+    Attributes
+    ----------
+        action_space: |gym.Space|
+            The Space object corresponding to actions  
+        observation_space: |gym.Space|
+            The Space object corresponding to observations  
+        reward_range: :class:`tuple`
+            | A tuple corresponding to the min and max possible rewards.
+            | A default reward range set to [-inf,+inf] already exists. 
+            | Set it if you want a narrower range.
 
-    Note: a default reward range set to [-inf,+inf] already exists. Set it if you want a narrower range.
     """
 
     def turn(self, state):
+        """Give the turn to the next agent to play
+        
+        Parameters
+        ----------
+            state: 
+                | The real state of the environement.
+                | Should be enough to determine which is the next agent to play.
+
+        Return
+        ------
+            agent_id: :class:`int`
+                The next player id
+
+        """
         raise NotImplementedError 
 
 
 class Playground():
 
-    """
-    A playground is used to train and test one or multiple agents on an environement.
+    """ A playground is used to run agent(s) on an environement.
 
-    Typical use involve the methodes :
-        run : main method
-        fit : to train the agent(s) without rendering
-        test : to test the agent(s) without learning
-    
+    Attributes
+    ----------
+        env: :class:`MultiEnv` or |gym.Env|
+            The environement in which agents will play
+        agents: :class:`list`
+            The list of :class:`Agent` in the :class:`Playground`
     """
 
     def __init__(self, environement:Env, agents):
@@ -158,8 +212,8 @@ class Playground():
         t0 = time()
         for episode in range(episodes):
 
-            state = self.env.reset()
-            previous = np.array([{'state':None, 'action':None, 'reward':None, 'done':None, 'info':None}]*len(self.agents))
+            observation = self.env.reset()
+            previous = np.array([{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None}]*len(self.agents))
             done = False
             gain = np.zeros_like(avg_gain)
             step = 0
@@ -169,27 +223,27 @@ class Playground():
                 if render: self.env.render()
 
                 if isinstance(self.env, MultiEnv):
-                    agent_id = self.env.turn(state)
+                    agent_id = self.env.turn(observation)
                 else: agent_id = 0
 
                 prev = previous[agent_id]
-                if learn and prev['state'] is not None:
-                    agent.remember(prev['state'], prev['action'], prev['reward'], prev['done'], state, prev['info'])
+                if learn and prev['observation'] is not None:
+                    agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
                     agent.learn()
                 
                 agent = self.agents[agent_id]
-                action = agent.act(state)
-                next_state, reward, done , info = self.env.step(action)
+                action = agent.act(observation)
+                next_observation, reward, done , info = self.env.step(action)
                 gain[agent_id] += reward
                 step += 1
 
                 if learn:
-                    for key, value in zip(prev, [state, action, reward, done, info]):
+                    for key, value in zip(prev, [observation, action, reward, done, info]):
                         prev[key] = value
 
                 if verbose > 1:
-                    print(f"------ Step {step} ------ Player is {agent_id}\nobservation:\n{state}\naction:\n{action}\nreward:{reward}\ndone:{done}\nnext_observation:\n{next_state}\ninfo:{info}")
-                state = next_state
+                    print(f"------ Step {step} ------ Player is {agent_id}\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}\nnext_observation:\n{next_observation}\ninfo:{info}")
+                observation = next_observation
             
             if verbose > 0:
                 steps += step

@@ -10,9 +10,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -28,7 +28,25 @@ author = 'Mathïs Fédérico'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.napoleon',
+    'autoapi.sphinx'
 ]
+master_doc = 'README'
+autoapi_dirs = ['../learnrl']
+autodoc_default_options = {
+    'member-order': 'bysource',
+    'undoc-members': True,
+}
+add_module_names = False
+# pygments_style = 'monokai'
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None)
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -44,12 +62,22 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_theme_options = {
+    'canonical_url': '',
+    'analytics_id': 'UA-XXXXXXX-1',  #  Provided by Google in your dashboard
+    'logo_only': False,
+    'display_version': True,
+    'prev_next_buttons_location': 'both',
+    'style_external_links': '#ff9900',
+    'style_nav_header_background': '#ff9900',
+    # Toc options
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}
 
 # -- Version control GitHub --------------------------------------------------
 html_context = {
@@ -59,4 +87,9 @@ html_context = {
     "github_version": "dev", # Version
     "conf_py_path": "/docs/", # Path in the checkout to the docs root
 }
+
+def setup(app):
+    app.add_stylesheet('styles/custom.css')
  
+
+html_static_path = ['_static']
