@@ -34,7 +34,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'autoapi.sphinx'
 ]
-master_doc = 'README'
+master_doc = 'index'
 autoapi_dirs = ['../learnrl']
 autodoc_default_options = {
     'member-order': 'bysource',
