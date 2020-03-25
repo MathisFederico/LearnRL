@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../'))
 
 
 # -- Project information -----------------------------------------------------
@@ -21,6 +21,12 @@ project = 'LearnRL'
 copyright = '2020, Mathïs Fédérico'
 author = 'Mathïs Fédérico'
 
+def get_version():
+    version_file = open('../VERSION')
+    return version_file.read().strip()
+ 
+version = get_version()
+release = version
 
 # -- General configuration ---------------------------------------------------
 
@@ -36,6 +42,7 @@ extensions = [
 ]
 master_doc = 'README'
 autoapi_dirs = ['../learnrl']
+autodoc_mock_imports = ["pygame"]
 autodoc_default_options = {
     'member-order': 'bysource',
     'undoc-members': True,
@@ -88,8 +95,8 @@ html_context = {
     "conf_py_path": "/docs/", # Path in the checkout to the docs root
 }
 
+
+html_static_path = ['_static']
 def setup(app):
     app.add_stylesheet('styles/custom.css')
  
-
-html_static_path = ['_static']

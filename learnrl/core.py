@@ -84,12 +84,8 @@ class Agent():
 
     """ A general structure for reinforcement learning agents    
     
-    Attributes
-    ----------
-        name: :class:`str`
-            The agent's name
-        memory: :class:`Memory`
-            The agent's memory (see :class:`Memory`)
+    It uses by default a :class:`Memory`
+    
     """
 
     name = None    
