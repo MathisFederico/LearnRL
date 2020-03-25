@@ -34,7 +34,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'autoapi.sphinx'
 ]
-master_doc = 'README'
+master_doc = 'index'
 autoapi_dirs = ['../learnrl']
 autodoc_default_options = {
     'member-order': 'bysource',
@@ -88,8 +88,8 @@ html_context = {
     "conf_py_path": "/docs/", # Path in the checkout to the docs root
 }
 
+
+html_static_path = ['_static']
 def setup(app):
     app.add_stylesheet('styles/custom.css')
  
-
-html_static_path = ['_static']
