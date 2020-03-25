@@ -21,6 +21,13 @@ project = 'LearnRL'
 copyright = '2020, Mathïs Fédérico'
 author = 'Mathïs Fédérico'
 
+def get_version():
+    version_file = open('../VERSION')
+    return version_file.read().strip()
+ 
+version = get_version()
+release = version
+
 
 # -- General configuration ---------------------------------------------------
 

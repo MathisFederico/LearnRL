@@ -10,9 +10,14 @@ HERE = pathlib.Path(__file__).parent
 # The text of the README file
 README = (HERE / "README.rst").read_text()
 
+def get_version():
+    version_file = open('../VERSION')
+    return version_file.read().strip()
+VERSION = get_version()
+
 setup(
     name="learnrl",
-    version="0.1.1",
+    version=VERSION,
     author="Mathïs Fédérico",
     author_email="mathfederico@gmail.com",
     description="A package to learn about Reinforcement Learning",
