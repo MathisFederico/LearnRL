@@ -6,8 +6,8 @@ from learnrl.environments import CrossesAndNoughtsEnv
 from learnrl.agents import TableAgent
 
 env = CrossesAndNoughtsEnv()
-agent1 = TableAgent(state_space=env.observation_space, action_space=env.action_space)
-agent2 = TableAgent(state_space=env.observation_space, action_space=env.action_space)
+agent1 = TableAgent(observation_space=env.observation_space, action_space=env.action_space)
+agent2 = TableAgent(observation_space=env.observation_space, action_space=env.action_space)
 
 agents = [agent1, agent2]
 pg = rl.Playground(env, agents)
