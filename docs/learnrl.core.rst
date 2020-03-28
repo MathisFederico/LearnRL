@@ -1,7 +1,14 @@
 LearnRL's Core
 ==============
 
-LearnRL is base on those core objects :
+LearnRL is base on those core objects: :ref:`Playground`,
+:ref:`Agent`, :ref:`MultiEnv`, :ref:`Memory`.
+
+They are all linked by the :ref:`Playground`, as showned by this:
+
+.. raw:: html
+   :file: LearnRL-Playground.svg
+
 
 .. _Playground:
 
