@@ -9,6 +9,7 @@ They are all linked by the :ref:`Playground`, as showned by this:
 .. raw:: html
    :file: LearnRL-Playground.svg
 
+| Legend : (O:observation, A:action, R:reward, D:done, O':next_observartion, I:info)
 
 .. _Playground:
 
