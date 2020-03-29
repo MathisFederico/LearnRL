@@ -20,7 +20,7 @@
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><metadata
      id="metadata4524"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
      id="defs4522"><clipPath
        clipPathUnits="userSpaceOnUse"
        id="clipPath4534"><path
@@ -347,8 +347,8 @@
      id="namedview4520"
      showgrid="false"
      inkscape:zoom="2.2093749"
-     inkscape:cx="751.20631"
-     inkscape:cy="468.26325"
+     inkscape:cx="671.77208"
+     inkscape:cy="540.68192"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -373,11 +373,11 @@
        id="path4540"
        inkscape:connector-curvature="0" /><a
        xlink:href="./learnrl.agents.html"
-       id="a5443"
-       xlink:title="learnlrl.agents"
-       style="opacity:0.5"
+       onmouseout="this.style.opacity=0.5"
        onmouseover="this.style.opacity=1"
-       onmouseout="this.style.opacity=0.5"><path
+       style="opacity:0.5"
+       xlink:title="learnrl.agents"
+       id="a5443"><path
          inkscape:connector-curvature="0"
          id="path4554"
          style="fill:#ff7e09;fill-opacity:1;fill-rule:evenodd;stroke:none"
@@ -409,8 +409,8 @@
        inkscape:connector-curvature="0"
        class="svg-line" /><a
        id="a5440"
-       xlink:href="#learnlrl.core.MultiEnv"
-       xlink:title="learnlrl.core.MultiEnv"
+       xlink:href="#learnrl.core.MultiEnv"
+       xlink:title="learnrl.core.MultiEnv"
        style="opacity:0.5"
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.5"><path
@@ -435,6 +435,7 @@
      y="0"
      x="0 20.461632 30.224136 46.903248 64.410912 82.206764 96.580345 115.70909 135.59433 155.69572">Playground</tspan></text>
 
+
 </g></g><text
    id="text4568"
    style="font-variant:normal;font-weight:normal;font-size:27.95999908px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -443,6 +444,7 @@
      sodipodi:role="line"
      y="0"
      x="0 17.419081 31.231319 44.875801 60.477482 69.927963">Agents</tspan></text>
+
 
 <g
    id="g4594"><g
@@ -455,6 +457,7 @@
      sodipodi:role="line"
      y="0"
      x="0 29.34 49.284 59.040001 71.208 81.216003 101.916 121.284">MultiEnv</tspan></text>
+
 
 </g></g></g><path
        d="m 194.4,120.64 c 0,2.5 2.02,4.52 4.52,4.52 h 118.16 c 2.5,0 4.52,-2.02 4.52,-4.52 V 86 c 0,-2.496 -2.02,-4.52 -4.52,-4.52 H 198.92 c -2.5,0 -4.52,2.024 -4.52,4.52 z"
@@ -493,6 +496,7 @@
      y="0"
      x="0">I</tspan></text>
 
+
 </g></g><g
          id="g4650"><g
            clip-path="url(#clipPath4656)"
@@ -503,6 +507,7 @@
      id="tspan4658"
      y="0"
      x="0">R</tspan></text>
+
 
 </g></g><g
          id="g4662"><g
@@ -515,6 +520,7 @@
      y="0"
      x="0">D</tspan></text>
 
+
 </g></g><g
          id="g4674"><g
            clip-path="url(#clipPath4680)"
@@ -525,6 +531,7 @@
      id="tspan4682"
      y="0"
      x="0">O</tspan></text>
+
 
 </g></g><g
          id="g5544"><g
@@ -539,6 +546,7 @@
      sodipodi:role="line"
      id="tspan4618">turn(O)</tspan></text>
 
+
 </g></g><g
            id="g4626"><g
              id="g4628"
@@ -551,6 +559,7 @@
      sodipodi:role="line"
      id="tspan4634">reset()</tspan></text>
 
+
 </g></g><g
            id="g4698"><g
              id="g4700"
@@ -562,6 +571,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan4706">step(A)</tspan></text>
+
 
 </g></g></g></g><path
        d="m 194.4,212.09 c 0,2.16 1.75,3.91 3.91,3.91 h 114.1 c 2.16,0 3.91,-1.75 3.91,-3.91 v -29.98 c 0,-2.16 -1.75,-3.91 -3.91,-3.91 h -114.1 c -2.16,0 -3.91,1.75 -3.91,3.91 z"
@@ -592,6 +602,7 @@
      y="0"
      x="0 6.8515201 13.78728 20.6388 28.47312 33.218639 39.25584 44.394482 51.84972 57.353401 65.145599 71.997124">agents_order</tspan></text>
 
+
 </g></g><g
          id="g4772"><g
            clip-path="url(#clipPath4778)"
@@ -603,6 +614,7 @@
      sodipodi:role="line"
      y="0"
      x="0 4.3126798 9.1134005 12.47988 16.175039 21.10524 26.02548 30.8262 36.34404 39.710522 44.013241 47.708401 52.997162 57.120602 62.608559 67.409279 71.492882 75.576477">set_agents_order()</tspan></text>
+
 
 </g></g></g><g
        id="g5530"
@@ -617,6 +629,7 @@
      y="0"
      x="0">Y</tspan></text>
 
+
 </g></g><g
          id="g4734"><g
            clip-path="url(#clipPath4740)"
@@ -627,6 +640,7 @@
      id="tspan4742"
      y="0"
      x="0">N</tspan></text>
+
 
 </g></g><path
          inkscape:connector-curvature="0"
@@ -648,6 +662,7 @@
      sodipodi:role="line"
      id="tspan4798">Done ?</tspan></text>
 
+
 </g></g><g
        id="g4804"
        class="svg-text"><g
@@ -660,6 +675,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan4812">prev_experience</tspan></text>
+
 
 </g></g><path
        d="m 755.64,318.35 c 0,4.25 3.44,7.69 7.69,7.69 h 117.1 c 4.25,0 7.69,-3.44 7.69,-7.69 v -49.18 c 0,-4.25 -3.44,-7.69 -7.69,-7.69 h -117.1 c -4.25,0 -7.69,3.44 -7.69,7.69 z"
@@ -709,6 +725,7 @@
      y="0"
      x="0 15.672 20.879999 35.832001 41.112 56.015999 61.200001 77.087997 82.367996">O A R D I</tspan></text>
 
+
 </g></g><g
          id="g4836"><g
            clip-path="url(#clipPath4842)"
@@ -721,6 +738,7 @@
      y="0"
      x="0 15.672 20.879999 35.832001 41.112 56.015999 61.200001 77.087997 82.367996">O A R D I</tspan></text>
 
+
 </g></g><g
          id="g4852"><g
            clip-path="url(#clipPath4858)"
@@ -732,6 +750,7 @@
      sodipodi:role="line"
      y="0"
      x="0 15.672 20.879999 35.832001 41.112 56.015999 61.200001 77.087997 82.367996">O A R D I</tspan></text>
+
 
 </g></g></g><path
        d="m 642,319.45 c 0,2.31 1.88,4.19 4.19,4.19 h 50.54 c 2.31,0 4.19,-1.88 4.19,-4.19 v -15.5 c 0,-2.31 -1.88,-4.19 -4.19,-4.19 h -50.54 c -2.31,0 -4.19,1.88 -4.19,4.19 z"
@@ -1045,6 +1064,7 @@
      y="0"
      x="0 9.9430799 17.85924 25.64772 34.553398">Agent</tspan></text>
 
+
 </g></g><g
              id="g5585"><g
                id="g4876"><g
@@ -1058,6 +1078,7 @@
      sodipodi:role="line"
      id="tspan4884">act(O)</tspan></text>
 
+
 </g></g><g
                id="g4892"><g
                  id="g4894"
@@ -1069,6 +1090,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan4900">learn()</tspan></text>
+
 
 </g></g></g></g><g
            id="g5625"><g
@@ -1083,6 +1105,7 @@
      y="0"
      x="0 13.0074 20.795879 34.0746 42.58128 49.188721">Memory</tspan></text>
 
+
 </g></g><g
              id="g5610"><g
                id="g4924"><g
@@ -1096,6 +1119,7 @@
      sodipodi:role="line"
      id="tspan4932">remember</tspan></text>
 
+
 </g></g><g
                id="g4936"><g
                  id="g4938"
@@ -1107,6 +1131,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan4944">(O, A, R, D, O’, I)</tspan></text>
+
 
 </g></g></g></g></g><g
          id="g5775"><g
@@ -1122,6 +1147,7 @@
      y="0"
      x="0 9.9430799 17.85924 25.64772 34.553398">Agent</tspan></text>
 
+
 </g></g><g
              id="g5722"><g
                id="g5010"><g
@@ -1135,6 +1161,7 @@
      sodipodi:role="line"
      id="tspan5018">act(O)</tspan></text>
 
+
 </g></g><g
                id="g5026"><g
                  id="g5028"
@@ -1146,6 +1173,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan5034">learn()</tspan></text>
+
 
 </g></g></g></g><g
            id="g5696"><g
@@ -1160,6 +1188,7 @@
      y="0"
      x="0 13.0074 20.795879 34.0746 42.58128 49.188721">Memory</tspan></text>
 
+
 </g></g><g
              id="g5673"><g
                id="g5058"><g
@@ -1173,6 +1202,7 @@
      sodipodi:role="line"
      id="tspan5066">remember</tspan></text>
 
+
 </g></g><g
                id="g5070"><g
                  id="g5072"
@@ -1184,6 +1214,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan5078">(O, A, </tspan></text>
+
 
 </g></g><g
                id="g5082"><g
@@ -1197,6 +1228,7 @@
      sodipodi:role="line"
      id="tspan5090">R, </tspan></text>
 
+
 </g></g><g
                id="g5094"><g
                  id="g5096"
@@ -1208,6 +1240,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan5102">D, O’, I)</tspan></text>
+
 
 </g></g></g></g></g><g
          id="g5855"><g
@@ -1223,6 +1256,7 @@
      y="0"
      x="0 9.9430799 17.85924 25.64772 34.553398">Agent</tspan></text>
 
+
 </g></g><g
              id="g5785"><g
                id="g5134"><g
@@ -1236,6 +1270,7 @@
      sodipodi:role="line"
      id="tspan5142">act(O)</tspan></text>
 
+
 </g></g><g
                id="g5150"><g
                  id="g5152"
@@ -1247,6 +1282,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan5158">learn()</tspan></text>
+
 
 </g></g></g></g><g
            id="g5825"><g
@@ -1261,6 +1297,7 @@
      y="0"
      x="0 12.963024 20.763216 34.061905 42.581375 49.198753">Memory</tspan></text>
 
+
 </g></g><g
              id="g5810"><g
                id="g5182"><g
@@ -1274,6 +1311,7 @@
      sodipodi:role="line"
      id="tspan5190">remember</tspan></text>
 
+
 </g></g><g
                id="g5194"><g
                  id="g5196"
@@ -1285,6 +1323,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan5202">(O, A, R, D, O’, I)</tspan></text>
+
 
 </g></g></g></g></g></g><path
        d="m 583.8,132.84 -4.7,-3.39 v 1.02 c -1.85,-1.18 -3.07,-3.01 -3.38,-5.04 -0.42,2.75 0.88,5.48 3.38,7.08 v 1.02 z"
@@ -1329,6 +1368,7 @@
      y="0"
      x="0">O</tspan></text>
 
+
 </g></g><g
          id="g5230"><g
            clip-path="url(#clipPath5236)"
@@ -1341,6 +1381,7 @@
      y="0"
      x="0 7.6930079 13.684272 20.547504 26.285616 33.12072 39.983952 44.737583 48.703632 56.171616 63.949009">bservation </tspan></text>
 
+
 </g></g><g
          id="g5242"><g
            clip-path="url(#clipPath5248)"
@@ -1351,6 +1392,7 @@
      id="tspan5250"
      y="0"
      x="0">A</tspan></text>
+
 
 </g></g><g
          id="g5254"><g
@@ -1364,6 +1406,7 @@
      y="0"
      x="0 6.2022238 11.026176 14.97816 22.446144 30.223536">ction </tspan></text>
 
+
 </g></g><g
          id="g5266"><g
            clip-path="url(#clipPath5272)"
@@ -1374,6 +1417,7 @@
      id="tspan5274"
      y="0"
      x="0">R</tspan></text>
+
 
 </g></g><g
          id="g5278"><g
@@ -1387,6 +1431,7 @@
      y="0"
      x="0 6.8632321 17.523745 24.386976 29.886 37.691521">eward </tspan></text>
 
+
 </g></g><g
          id="g5290"><g
            clip-path="url(#clipPath5296)"
@@ -1397,6 +1442,7 @@
      id="tspan5298"
      y="0"
      x="0">D</tspan></text>
+
 
 </g></g><g
          id="g5302"><g
@@ -1410,6 +1456,7 @@
      y="0"
      x="0 7.4679842 15.245376 22.108608">one </tspan></text>
 
+
 </g></g><g
          id="g5314"><g
            clip-path="url(#clipPath5320)"
@@ -1420,6 +1467,7 @@
      id="tspan5322"
      y="0"
      x="0">I</tspan></text>
+
 
 </g></g><g
          id="g5326"><g
@@ -1432,6 +1480,7 @@
      sodipodi:role="line"
      y="0"
      x="0 7.8055201 11.88408">nfo</tspan></text>
+
 
 </g></g></g><g
        id="g5501"
