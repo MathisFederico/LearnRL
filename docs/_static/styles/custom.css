@@ -13,9 +13,7 @@ svg .svg-text {
 
 
 /* Change navbar color */
-.wy-nav-top {
-    background:hsl(35, 100%, 55%) !important;
-}
+.wy-nav-top,
 .wy-side-nav-search {
     background:hsl(35, 100%, 55%) !important;
 }
