@@ -80,6 +80,12 @@ dl.attribute > dt {
     background-color: hsla(135, 35%, 75%, 20%) !important;
     border-left-color: hsl(135, 50%, 50%) !important;
 }
+
+/* Remove attributes with no ids */
+dl.attribute > dt:not([id]){
+    display: none !important;
+}
+
 dl.method > dt {
     background-color: hsla(200, 35%, 75%, 20%) !important;
     border-left-color: hsl(200, 50%, 50%) !important;
