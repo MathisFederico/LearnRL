@@ -85,6 +85,14 @@ class Agent():
     """ A general structure for reinforcement learning agents    
     
     It uses by default a :class:`Memory`
+
+    Attributes
+    ----------
+
+        name: :class:`str`
+            The Agent's name
+        memory: :class:`Memory`
+            The Agent's memory
     
     """
 
@@ -92,7 +100,7 @@ class Agent():
     memory = Memory()
 
     def act(self, observation):
-        """ How the agent act given an observation
+        """ How the :ref:`Agent` act given an observation
         
         Parameters
         ----------
@@ -103,7 +111,7 @@ class Agent():
         raise NotImplementedError
 
     def learn(self):
-        """ How the learns from his experiences """
+        """ How the :ref:`Agent` learns from his experiences """
         raise NotImplementedError
 
     def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
@@ -159,8 +167,33 @@ class MultiEnv(Env):
 
     """
 
+    def step(self, action):
+        """Perform a step of the environement
+        
+        Parameters
+        ----------
+            action:
+                The action taken by the agent who's turn was given by :meth:`turn`.
+        
+        Return
+        ------
+            observation: 
+                The observation to give to the :class:`Agent`.
+            reward: :class:`float`
+                The reward given to the :class:`Agent` for this step.
+            done: :class:`bool`
+                Is the environement done after this step ?
+            info: :class:`dict`
+                Additional informations given by the |gym.Env|.
+            
+        """
+        raise NotImplementedError
+
     def turn(self, state):
         """Give the turn to the next agent to play
+    
+        Assuming that agents are represented by a list like range(n_player)
+        where n_player is the number of players in the game.
         
         Parameters
         ----------
@@ -174,7 +207,18 @@ class MultiEnv(Env):
                 The next player id
 
         """
-        raise NotImplementedError 
+        raise NotImplementedError
+
+    def reset(self):
+        """Reset the environement and returns the initial state
+
+        Return
+        ------
+            observation:
+                The observation for the first :class:`Agent` to play
+        
+        """
+        raise NotImplementedError
 
 
 class Playground():
