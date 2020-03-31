@@ -346,9 +346,9 @@
      inkscape:window-height="1017"
      id="namedview4520"
      showgrid="false"
-     inkscape:zoom="2.2093749"
-     inkscape:cx="592.33785"
-     inkscape:cy="323.4259"
+     inkscape:zoom="1.1046875"
+     inkscape:cx="594.35608"
+     inkscape:cy="349.56592"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -437,6 +437,8 @@
 
 
 
+
+
 </g></g><text
    id="text4568"
    style="font-variant:normal;font-weight:normal;font-size:27.95999908px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -445,6 +447,8 @@
      sodipodi:role="line"
      y="0"
      x="0 17.419081 31.231319 44.875801 60.477482 69.927963">Agents</tspan></text>
+
+
 
 
 
@@ -462,27 +466,37 @@
 
 
 
+
+
 </g></g></g><path
        d="m 194.4,120.64 c 0,2.5 2.02,4.52 4.52,4.52 h 118.16 c 2.5,0 4.52,-2.02 4.52,-4.52 V 86 c 0,-2.496 -2.02,-4.52 -4.52,-4.52 H 198.92 c -2.5,0 -4.52,2.024 -4.52,4.52 z"
-       style="fill:#70ad47;fill-opacity:0.50196001;fill-rule:evenodd;stroke:none"
+       style="fill:#70ad47;fill-opacity:0.50196001;fill-rule:evenodd;stroke:none;opacity:0.5"
        id="path4606"
-       inkscape:connector-curvature="0" /><path
+       inkscape:connector-curvature="0"
+       onmouseover="this.style.opacity=1"
+       onmouseout="this.style.opacity=0.5" /><path
        d="m 194.4,120.64 c 0,2.5 2.02,4.52 4.52,4.52 h 118.16 c 2.5,0 4.52,-2.02 4.52,-4.52 V 86 c 0,-2.496 -2.02,-4.52 -4.52,-4.52 H 198.92 c -2.5,0 -4.52,2.024 -4.52,4.52 z"
        style="fill:none;stroke:#548235;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="path4608"
-       inkscape:connector-curvature="0" /><path
+       inkscape:connector-curvature="0"
+       onmouseover="this.style.opacity=1"
+       onmouseout="this.style.opacity=0.5" /><path
        d="m 79.56,214.48 c 0,2.5 2.024,4.52 4.52,4.52 h 74 c 2.5,0 4.52,-2.02 4.52,-4.52 v -34.64 c 0,-2.5 -2.02,-4.52 -4.52,-4.52 h -74 c -2.496,0 -4.52,2.02 -4.52,4.52 z"
-       style="fill:#70ad47;fill-opacity:0.50196001;fill-rule:evenodd;stroke:none"
+       style="fill:#70ad47;fill-opacity:0.50196001;fill-rule:evenodd;stroke:none;opacity:0.5"
        id="path4622"
-       inkscape:connector-curvature="0" /><path
+       inkscape:connector-curvature="0"
+       onmouseover="this.style.opacity=1"
+       onmouseout="this.style.opacity=0.5" /><path
        d="m 79.56,214.48 c 0,2.5 2.024,4.52 4.52,4.52 h 74 c 2.5,0 4.52,-2.02 4.52,-4.52 v -34.64 c 0,-2.5 -2.02,-4.52 -4.52,-4.52 h -74 c -2.496,0 -4.52,2.02 -4.52,4.52 z"
        style="fill:none;stroke:#548235;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="path4624"
        inkscape:connector-curvature="0" /><path
        d="m 189.24,332.44 c 0,2.5 2.02,4.52 4.52,4.52 h 118.16 c 2.5,0 4.52,-2.02 4.52,-4.52 V 297.8 c 0,-2.5 -2.02,-4.52 -4.52,-4.52 H 193.76 c -2.5,0 -4.52,2.02 -4.52,4.52 z"
-       style="fill:#70ad47;fill-opacity:0.50196001;fill-rule:evenodd;stroke:none"
+       style="fill:#70ad47;fill-opacity:0.50196001;fill-rule:evenodd;stroke:none;opacity:0.5"
        id="path4694"
-       inkscape:connector-curvature="0" /><path
+       inkscape:connector-curvature="0"
+       onmouseout="this.style.opacity=0.5"
+       onmouseover="this.style.opacity=1" /><path
        d="m 189.24,332.44 c 0,2.5 2.02,4.52 4.52,4.52 h 118.16 c 2.5,0 4.52,-2.02 4.52,-4.52 V 297.8 c 0,-2.5 -2.02,-4.52 -4.52,-4.52 H 193.76 c -2.5,0 -4.52,2.02 -4.52,4.52 z"
        style="fill:none;stroke:#548235;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="path4696"
@@ -501,6 +515,8 @@
 
 
 
+
+
 </g></g><g
          id="g4650"><g
            clip-path="url(#clipPath4656)"
@@ -511,6 +527,8 @@
      id="tspan4658"
      y="0"
      x="0">R</tspan></text>
+
+
 
 
 
@@ -527,6 +545,8 @@
 
 
 
+
+
 </g></g><g
          id="g4674"><g
            clip-path="url(#clipPath4680)"
@@ -537,6 +557,8 @@
      id="tspan4682"
      y="0"
      x="0">O</tspan></text>
+
+
 
 
 
@@ -555,6 +577,8 @@
 
 
 
+
+
 </g></g><g
            id="g4626"><g
              id="g4628"
@@ -569,6 +593,8 @@
 
 
 
+
+
 </g></g><g
            id="g4698"><g
              id="g4700"
@@ -580,6 +606,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan4706">step(A)</tspan></text>
+
+
 
 
 
@@ -614,6 +642,8 @@
 
 
 
+
+
 </g></g><g
          id="g4772"><g
            clip-path="url(#clipPath4778)"
@@ -625,6 +655,8 @@
      sodipodi:role="line"
      y="0"
      x="0 4.3126798 9.1134005 12.47988 16.175039 21.10524 26.02548 30.8262 36.34404 39.710522 44.013241 47.708401 52.997162 57.120602 62.608559 67.409279 71.492882 75.576477">set_agents_order()</tspan></text>
+
+
 
 
 
@@ -643,6 +675,8 @@
 
 
 
+
+
 </g></g><g
          id="g4734"><g
            clip-path="url(#clipPath4740)"
@@ -656,6 +690,8 @@
 
 
 
+
+
 </g></g><path
          inkscape:connector-curvature="0"
          id="path4786"
@@ -665,7 +701,8 @@
        style="fill:none;stroke:#548235;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="path4788"
        inkscape:connector-curvature="0" /><g
-       id="g4790"><g
+       id="g4790"
+       class="svg-text"><g
          id="g4792"
          clip-path="url(#clipPath4796)"><text
    transform="matrix(1,0,0,-1,94.656,260.78)"
@@ -675,6 +712,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan4798">Done ?</tspan></text>
+
+
 
 
 
@@ -690,6 +729,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan4812">prev_experience</tspan></text>
+
+
 
 
 
@@ -743,6 +784,8 @@
 
 
 
+
+
 </g></g><g
          id="g4836"><g
            clip-path="url(#clipPath4842)"
@@ -757,6 +800,8 @@
 
 
 
+
+
 </g></g><g
          id="g4852"><g
            clip-path="url(#clipPath4858)"
@@ -768,6 +813,8 @@
      sodipodi:role="line"
      y="0"
      x="0 15.672 20.879999 35.832001 41.112 56.015999 61.200001 77.087997 82.367996">O A R D I</tspan></text>
+
+
 
 
 
@@ -1088,6 +1135,8 @@
 
 
 
+
+
 </g></g><g
              id="g5585"><g
                id="g4876"><g
@@ -1103,6 +1152,8 @@
 
 
 
+
+
 </g></g><g
                id="g4892"><g
                  id="g4894"
@@ -1114,6 +1165,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan4900">learn()</tspan></text>
+
+
 
 
 
@@ -1132,6 +1185,8 @@
 
 
 
+
+
 </g></g><g
              id="g5610"><g
                id="g4924"><g
@@ -1147,6 +1202,8 @@
 
 
 
+
+
 </g></g><g
                id="g4936"><g
                  id="g4938"
@@ -1158,6 +1215,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan4944">(O, A, R, D, O’, I)</tspan></text>
+
+
 
 
 
@@ -1177,6 +1236,8 @@
 
 
 
+
+
 </g></g><g
              id="g5722"><g
                id="g5010"><g
@@ -1192,6 +1253,8 @@
 
 
 
+
+
 </g></g><g
                id="g5026"><g
                  id="g5028"
@@ -1203,6 +1266,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan5034">learn()</tspan></text>
+
+
 
 
 
@@ -1221,6 +1286,8 @@
 
 
 
+
+
 </g></g><g
              id="g5673"><g
                id="g5058"><g
@@ -1233,6 +1300,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan5066">remember</tspan></text>
+
+
 
 
 
@@ -1250,6 +1319,8 @@
 
 
 
+
+
 </g></g><g
                id="g5082"><g
                  id="g5084"
@@ -1264,6 +1335,8 @@
 
 
 
+
+
 </g></g><g
                id="g5094"><g
                  id="g5096"
@@ -1275,6 +1348,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan5102">D, O’, I)</tspan></text>
+
+
 
 
 
@@ -1294,6 +1369,8 @@
 
 
 
+
+
 </g></g><g
              id="g5785"><g
                id="g5134"><g
@@ -1309,6 +1386,8 @@
 
 
 
+
+
 </g></g><g
                id="g5150"><g
                  id="g5152"
@@ -1320,6 +1399,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan5158">learn()</tspan></text>
+
+
 
 
 
@@ -1338,6 +1419,8 @@
 
 
 
+
+
 </g></g><g
              id="g5810"><g
                id="g5182"><g
@@ -1353,6 +1436,8 @@
 
 
 
+
+
 </g></g><g
                id="g5194"><g
                  id="g5196"
@@ -1364,6 +1449,8 @@
      y="0"
      sodipodi:role="line"
      id="tspan5202">(O, A, R, D, O’, I)</tspan></text>
+
+
 
 
 
@@ -1412,6 +1499,8 @@
 
 
 
+
+
 </g></g><g
          id="g5230"><g
            clip-path="url(#clipPath5236)"
@@ -1426,6 +1515,8 @@
 
 
 
+
+
 </g></g><g
          id="g5242"><g
            clip-path="url(#clipPath5248)"
@@ -1436,6 +1527,8 @@
      id="tspan5250"
      y="0"
      x="0">A</tspan></text>
+
+
 
 
 
@@ -1453,6 +1546,8 @@
 
 
 
+
+
 </g></g><g
          id="g5266"><g
            clip-path="url(#clipPath5272)"
@@ -1463,6 +1558,8 @@
      id="tspan5274"
      y="0"
      x="0">R</tspan></text>
+
+
 
 
 
@@ -1480,6 +1577,8 @@
 
 
 
+
+
 </g></g><g
          id="g5290"><g
            clip-path="url(#clipPath5296)"
@@ -1490,6 +1589,8 @@
      id="tspan5298"
      y="0"
      x="0">D</tspan></text>
+
+
 
 
 
@@ -1507,6 +1608,8 @@
 
 
 
+
+
 </g></g><g
          id="g5314"><g
            clip-path="url(#clipPath5320)"
@@ -1517,6 +1620,8 @@
      id="tspan5322"
      y="0"
      x="0">I</tspan></text>
+
+
 
 
 
@@ -1531,6 +1636,8 @@
      sodipodi:role="line"
      y="0"
      x="0 7.8055201 11.88408">nfo</tspan></text>
+
+
 
 
 

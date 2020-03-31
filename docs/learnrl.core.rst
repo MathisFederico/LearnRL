@@ -7,7 +7,7 @@ LearnRL is base on those core objects: :ref:`Playground`,
 They are all linked by the :ref:`Playground`, as showned by this:
 
 .. raw:: html
-   :file: _static/images/LearnRL-Playground.svg
+   :file: _static/images/Playground.svg
 
 .. _Playground:
 
