@@ -67,7 +67,9 @@ class Memory():
 
         for key, value in zip(self.MEMORY_KEYS, (observation, action, reward, done, next_observation, info)):
             # Check that value is an instance of numpy.ndarray or transform the value
-            if isinstance(value, collections.Sequence) or type(value) != np.ndarray or value.ndim < 1:
+            if type(value) == np.ndarray:
+                value = value[np.newaxis, ...]
+            if isinstance(value, collections.Sequence) or type(value) != np.ndarray:
                 value = np.array([value])
             remember_key(self.datas, key, value)
         
@@ -206,7 +208,7 @@ class Playground():
         avg_gain = np.zeros_like(self.agents)
         steps = 0
         t0 = time()
-        for episode in range(episodes):
+        for episode in range(1, episodes+1):
 
             observation = self.env.reset()
             previous = np.array([{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None}]*len(self.agents))
@@ -236,6 +238,9 @@ class Playground():
                 if learn:
                     for key, value in zip(prev, [observation, action, reward, done, info]):
                         prev[key] = value
+                    if done:
+                        agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
+                        agent.learn()
 
                 if verbose > 1:
                     print(f"------ Step {step} ------ Player is {agent_id}\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}\nnext_observation:\n{next_observation}\ninfo:{info}")
