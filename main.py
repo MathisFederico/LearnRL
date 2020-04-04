@@ -2,13 +2,13 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 import learnrl as rl
-from learnrl.environments import CrossesAndNoughtsEnv
+from learnrl.environments import RdNimEnv, CrossesAndNoughtsEnv
+from learnrl.agents.deepRL.agent import DeepRLAgent
 from learnrl.agents import TableAgent
 
 env = CrossesAndNoughtsEnv()
-agent1 = TableAgent(observation_space=env.observation_space, action_space=env.action_space)
-agent2 = TableAgent(observation_space=env.observation_space, action_space=env.action_space)
+agent = DeepRLAgent(observation_space=env.observation_space, action_space=env.action_space)
 
-agents = [agent1, agent2]
+agents = [agent, agent]
 pg = rl.Playground(env, agents)
-pg.fit(50000, verbose=1)
+pg.run(10000, render=False, verbose=1)
