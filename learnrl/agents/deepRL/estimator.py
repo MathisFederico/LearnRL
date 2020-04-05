@@ -9,7 +9,10 @@ class Estimator():
         self.action_space = action_space
 
         self.observation_size = self.get_space_size(observation_space)
+        self.observation_shape = self.get_space_shape(observation_space)
+
         self.action_size = self.get_space_size(action_space)
+        self.action_shape = self.get_space_shape(action_space)
 
         self.observation_encoder, self.observation_decoder = self.get_encoder_decoder(observation_space)
         self.action_encoder, self.action_decoder = self.get_encoder_decoder(action_space)
@@ -22,11 +25,26 @@ class Estimator():
     def build(self):
         raise NotImplementedError
 
-    def fit(self, observation, action, Y):
+    def fit(self, observations, actions, Y):
         raise NotImplementedError
     
-    def predict(self, observation, action):
+    def predict(self, observations, actions):
         raise NotImplementedError
+    
+    def encoder(self, arr, arr_type):
+        flatten_array = np.reshape(arr, (arr.shape[0], -1))
+        if arr_type == 'actions' or arr_type== 'action':
+            return np.apply_along_axis(self.action_encoder, axis=1, arr=flatten_array)
+        elif arr_type == 'observations' or arr_type== 'observation':
+            return np.apply_along_axis(self.observation_encoder, axis=1, arr=flatten_array)
+        else:
+            raise ValueError(f"{arr_type} is an unkwoned type of array ... use 'action' or 'observation' instead")
+
+    def update_learning_rate(self, learning_rate=None):
+        if learning_rate is not None:
+            self.learning_rate = learning_rate
+        else:
+            self.learning_rate *= self.learning_rate_decay
 
     @staticmethod
     def get_space_size(space):
@@ -38,47 +56,50 @@ class Estimator():
             raise TypeError(f'Space {type(space)} is not supported yet ... open an issue if needed')
 
     @staticmethod
+    def get_space_shape(space):
+        if isinstance(space, spaces.Discrete):
+            return (space.n,)
+        elif isinstance(space, spaces.MultiDiscrete):
+            return space.nvec.shape
+        else:
+            raise TypeError(f'Space {type(space)} is not supported yet ... open an issue if needed')
+
+    @staticmethod
     def get_encoder_decoder(space):
-        int_id = lambda x: int(x)
+        int_id = np.vectorize(lambda x: int(x))
 
         if isinstance(space, spaces.Discrete):
             return int_id, int_id
         
         elif isinstance(space, spaces.MultiDiscrete):
-            base_mat = np.ones_like(space.nvec, dtype=np.uint32)
-            rank = base_mat.ndim
-            p = 1
+            rank = space.nvec.ndim
             if rank == 0:
                 return int_id, int_id
-            elif rank == 1:
-                for i in range(len(base_mat)):
-                    base_mat[i] = p
-                    p *= int(space.nvec[i])
-            elif rank == 2:
-                for i in range(base_mat.shape[0]): # pylint:disable=E1136
-                    for j in range(base_mat.shape[1]): # pylint:disable=E1136
-                        base_mat[i, j] = p
-                        p *= int(space.nvec[i, j])
             else:
-                raise ValueError(f'MultiDiscrete spaces of rank {rank} are not supported yet ... open an issue if needed')
+                flat_vec = space.nvec.flatten()
+                base_mat = np.ones_like(flat_vec, dtype=np.uint32)
+                p = 1
+                for i in range(len(flat_vec)):
+                    base_mat[i] = p
+                    p *= int(flat_vec[i])
             
             def hash_multidiscrete(space_sample, base_mat=base_mat):
-                return np.sum(space_sample*base_mat)
+                flatten_sample = space_sample.flatten()
+                return np.sum(flatten_sample*base_mat)
             
-            def invert_hash_multidiscrete(hashed_space_sample, base_mat=base_mat):
-                flat_mat = base_mat.flatten()
-                space_sample = np.zeros_like(flat_mat)
-                for i in range(len(space_sample))[::-1]:
-                    space_sample[i] = hashed_space_sample // flat_mat[i]
-                    hashed_space_sample -= space_sample[i] * flat_mat[i]
-                return space_sample.reshape(base_mat.shape)
+            def invert_hash_multidiscrete(hashed_space_sample, base_mat=base_mat, sample_shape=space.nvec.shape):
+                flat_sample = np.zeros_like(base_mat)
+                for i in range(len(flat_sample))[::-1]:
+                    flat_sample[i] = hashed_space_sample // base_mat[i]
+                    hashed_space_sample -= flat_sample[i] * base_mat[i]
+                return flat_sample.reshape(sample_shape)
 
             return hash_multidiscrete, invert_hash_multidiscrete
         else:
             raise TypeError(f'Space {type(space)} is not supported yet ... open an issue if needed')
 
-    def __call__(self, observation, action=None):
-        return self.predict(observation, action)
+    def __call__(self, observations, actions=None):
+        return self.predict(observations, actions)
 
 class TableEstimator(Estimator):
 
@@ -86,18 +107,19 @@ class TableEstimator(Estimator):
         dtype = kwargs.get('dtype', None)
         self.table = np.zeros((self.observation_size, self.action_size), dtype=dtype)
 
-    def fit(self, observation, action, Y):
-        observation_id = self.observation_encoder(observation)
-        action_id = self.action_encoder(action)
+    def fit(self, observations, actions, Y):
+        observations_id = self.observation_encoder(observations)
+        actions_id = self.action_encoder(actions)
 
-        delta = Y - self.table[observation_id, action_id]
-        self.table[observation_id, action_id] += self.learning_rate * delta
+        delta = Y - self.table[observations_id, actions_id]
+        self.table[observations_id, actions_id] += self.learning_rate * delta
     
-    def predict(self, observation, action):
-        observation_id = self.observation_encoder(observation)
-        if action is not None: 
-            action_id = self.action_encoder(action)
-            return self.table[observation_id, action_id]
+    def predict(self, observations, actions):
+        
+        observations_ids = self.encoder(observations, arr_type='observation')
+        if actions is not None: 
+            action_ids = self.encoder(actions, arr_type='action')
+            return self.table[observations_ids, action_ids]
         else:
-            return self.table[observation_id, :]
+            return self.table[observations_ids, :]
 
