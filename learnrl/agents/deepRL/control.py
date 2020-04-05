@@ -29,25 +29,17 @@ class Control():
         raise NotImplementedError
 
     def get_policy(self, observations, action_values:Estimator, action_visits:Estimator=None):
-        if len(observations) == 1:
-            policy = self.policy(observations[0], action_values, action_visits)
-            self.check_policy(policy)
-            return policy
-        else:
-            policies = []
-            for observation in observations:
-                policy = self.policy(observation, action_values, action_visits)
-                self.check_policy(policy)
-                policies.append(policy)
-            return np.array(policies)
+        policies = self.policy(observations, action_values, action_visits)
+        self.check_policy(policies)
+        return policies
     
-    def check_policy(self, policy):
-        if not np.all(policy >= 0):
-            raise ValueError("Policy have probabilities < 0")
-        prob_sums = np.sum(policy, axis=-1)
-        valid_policy = np.abs(np.sum(prob_sums - 1)) <= 1e-8
-        if not np.all(valid_policy):
-            raise ValueError(f"Policy {policy} probabilities sum to {prob_sums[np.logical_not(valid_policy)]} and not 1")
+    def check_policy(self, policies):
+        if np.any(policies < 0) or np.any(policies > 1):
+            raise ValueError("Policy are not in [0, 1]")
+        prob_sums = np.sum(policies, axis=1)
+        invalid_policy = np.abs(np.sum(prob_sums - 1)) > 1e-8
+        if np.any(invalid_policy):
+            raise ValueError(f"Policy {policies[invalid_policy]} probabilities sum to {prob_sums[invalid_policy]} and not 1")
 
     def update_exploration(self, exploration=None):
         if exploration is not None:
@@ -69,25 +61,24 @@ class Greedy(Control):
     def __init__(self, exploration=0.1, **kwargs):
         super().__init__(exploration=exploration, name="greedy", **kwargs)
 
-    def policy(self, observation, action_values:Estimator, action_visits:Estimator=None):
-        Q = action_values(observation)
-        best_action_id = np.argmax(Q)
-        policy = np.ones_like(Q) * self.exploration / len(Q)
-        policy[best_action_id] += 1 - self.exploration
-        return policy
-
+    def policy(self, observations, action_values:Estimator, action_visits:Estimator=None):
+        Q = action_values(observations)
+        best_action_id = np.argmax(Q, axis=1)
+        policies = np.ones_like(Q) * self.exploration / Q.shape[1]
+        policies[:, best_action_id] += 1 - self.exploration
+        return policies
 
 class UCB(Control):
 
     def __init__(self, exploration=1, **kwargs):
         super().__init__(exploration=exploration, name="ucb", **kwargs)
 
-    def policy(self, observation, action_values:Estimator, action_visits:Estimator=None):
+    def policy(self, observations, action_values:Estimator, action_visits:Estimator=None):
         if action_visits is None:
             raise ValueError("action_visits must be specified for UCB")
 
-        N = action_visits(observation)
-        Q = action_values(observation)
+        N = action_visits(observations)
+        Q = action_values(observations)
         best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.log(1 + np.sum(N)) / (1.0 + N)))
 
         policy = np.zeros_like(Q)
@@ -101,12 +92,12 @@ class Puct(Control):
         super().__init__(exploration=exploration, name="puct", **kwargs)
         self.decay = kwargs.get('decay', 1)
 
-    def policy(self, observation, action_values:Estimator, action_visits:Estimator=None):
+    def policy(self, observations, action_values:Estimator, action_visits:Estimator=None):
         if action_visits is None:
             raise ValueError("action_visits must be specified for Puct")
         
-        N = action_visits(observation)
-        Q = action_values(observation)
+        N = action_visits(observations)
+        Q = action_values(observations)
         best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.sum(N) / (1.0 + N)))
         
         policy = np.zeros_like(Q)
