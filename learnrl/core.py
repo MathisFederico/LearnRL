@@ -203,7 +203,6 @@ class Playground():
 
     def run(self, episodes, render=True, learn=True, verbose=0):
         """Let the agent(s) play on the environement for a number of episodes."""
-        np.set_printoptions(precision=3)
         print_cycle = max(1, episodes // 100)
         avg_gain = np.zeros_like(self.agents)
         steps = 0
