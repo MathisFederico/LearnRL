@@ -51,8 +51,12 @@ class DeepRLAgent(Agent):
 
         self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
     
-        self.action_values = action_values if action_values is not None else TableEstimator(observation_space, action_space)
-        self.action_visits = action_visits if action_visits is not None else TableEstimator(observation_space, action_space, learning_rate=1, dtype=np.uint64)
+        self.action_values = action_values if action_values is not None else TableEstimator(observation_space, action_space) 
+        if action_visits is not None:
+            self.action_visits = action_visits
+        else:
+            if not isinstance(self.control, Greedy):
+                self.action_visits = TableEstimator(observation_space, action_space, learning_rate=1, dtype=np.uint64)
 
         self.observation_space = observation_space
         self.action_space = action_space
@@ -81,11 +85,12 @@ class DeepRLAgent(Agent):
         if type(observation) == np.ndarray:
             if observation.ndim == self.observation_rank:
                 observation = observation[np.newaxis, :]
-        else:
-            observation = np.array([observation])
-        policy = self.control.get_policy(observation, self.action_values, self.action_visits)
+        else: observation = np.array([observation])
+
+        policy = self.control.get_policy(observation, self.action_values, self.action_visits)[0]
         action_id = np.random.choice(range(policy.shape[-1]), p=policy)
         action_taken = self.action_values.action_decoder(action_id)
+        
         if action_taken not in self.action_space:
             raise ValueError(f'Action taken should be in action_space, but {action_taken} was not in {self.action_space}')
         return action_taken
@@ -94,10 +99,11 @@ class DeepRLAgent(Agent):
         self.memory.remember(observation, action, reward, done, next_observation, info)
 
     def learn(self, **kwargs):
-        observation, action, expected_reward = self.evaluation.eval(self.action_values, self.action_visits, self.memory, self.control, **kwargs)
-        self.action_values.fit(observation=observation, action=action, Y=expected_reward)
-        if self.action_visits: self.action_visits.fit(observation=observation, action=action, Y=self.action_visits(observation, action)+1)
+        observations, actions, expected_rewards = self.evaluation.eval(self.action_values, self.action_visits, self.memory, self.control, **kwargs)
+        self.action_values.fit(observations=observations, actions=actions, Y=expected_rewards)
+        if self.action_visits: self.action_visits.fit(observations=observations, actions=actions, Y=self.action_visits(observations, actions)+1)
         self.control.update_exploration()
+        self.action_values.update_learning_rate()
     
     def __repr__(self):
         return self.name
