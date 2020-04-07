@@ -51,24 +51,19 @@ class DeepRLAgent(Agent):
 
         self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
     
-        self.action_values = action_values if action_values is not None else TableEstimator(observation_space, action_space) 
-        if action_visits is not None:
-            self.action_visits = action_visits
-        else:
+        self.action_values = action_values if action_values is not None else TableEstimator(observation_space, action_space)
+        self.action_visits = action_visits
+        if action_visits is None:
             if not isinstance(self.control, Greedy):
                 self.action_visits = TableEstimator(observation_space, action_space, learning_rate=1, dtype=np.uint64)
 
         self.observation_space = observation_space
         self.action_space = action_space
-        if isinstance(observation_space, spaces.Discrete):
-            self.observation_rank = 0
-        elif isinstance(observation_space, spaces.MultiDiscrete):
-            self.observation_rank = observation_space.nvec.ndim
     
     def act(self, observation, greedy=False):
         """ Gives the agent action when an observation is given.
         
-        This function is essential to define the agent behavior.
+        This function defines the agent behavior or policy.
 
         Parameters
         ----------
@@ -82,17 +77,17 @@ class DeepRLAgent(Agent):
             action_taken: sample of |gym.Space|
                 The action taken by the agent
         """
-        if type(observation) == np.ndarray:
-            if observation.ndim == self.observation_rank:
-                observation = observation[np.newaxis, :]
+        if isinstance(observation, np.ndarray):
+            observation = observation[np.newaxis, :]
         else: observation = np.array([observation])
 
         policy = self.control.get_policy(observation, self.action_values, self.action_visits)[0]
-        action_id = np.random.choice(range(policy.shape[-1]), p=policy)
+        action_id = np.random.choice(range(len(policy)), p=policy)
         action_taken = self.action_values.action_decoder(action_id)
         
         if action_taken not in self.action_space:
-            raise ValueError(f'Action taken should be in action_space, but {action_taken} was not in {self.action_space}')
+            raise ValueError(f'Action taken should be in action_space, but {action_taken} was not in {self.action_space}. '
+                             f'Check the action_decoder of your action_values Estimator')
         return action_taken
     
     def remember(self, observation, action, reward, done, next_observation=None, info={}):
