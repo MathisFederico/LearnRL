@@ -123,3 +123,29 @@ class TableEstimator(Estimator):
         else:
             return self.table[observations_ids, :]
 
+class KerasEstimator(Estimator):
+
+    def build(self):
+        self.model = None
+        raise NotImplementedError
+
+    def preprocess(self, observations):
+        raise NotImplementedError
+
+    def fit(self, observations, actions, Y, batch_size=1):
+        x_train = self.preprocess(observations)
+        y_train = self.model.predict(x_train)
+        action_ids = self.encoder(actions, arr_type='action')
+        y_train[:, action_ids] = Y
+        self.model.fit(x_train, y_train, verbose=0)
+
+    def predict(self, observations, actions=None):
+        x = self.preprocess(observations)
+        Y = self.model.predict(x)
+
+        if actions is not None:
+            action_id = self.encoder(actions, arr_type='action')
+            return Y[action_id]
+        else:
+            return Y
+
