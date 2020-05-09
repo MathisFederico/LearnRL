@@ -37,7 +37,7 @@ class Control():
         if np.any(policies < 0) or np.any(policies > 1):
             raise ValueError("Policy are not in [0, 1]")
         prob_sums = np.sum(policies, axis=1)
-        invalid_policy = np.abs(np.sum(prob_sums - 1)) > 1e-8
+        invalid_policy = np.abs(np.sum(prob_sums - 1)) > 1e-6
         if np.any(invalid_policy):
             raise ValueError(f"Policy {policies[invalid_policy]} probabilities sum to {prob_sums[invalid_policy]} and not 1")
 
