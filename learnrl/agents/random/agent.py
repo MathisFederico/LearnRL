@@ -1,5 +1,7 @@
 from learnrl.core import Agent
 
+from learnrl.agent_parts.control import Random
+
 class RandomAgent(Agent):
 
     def __init__(self, observation_space, action_space, control=None, evaluation=None, action_values=None, action_visits=None, **kwargs):
@@ -7,6 +9,7 @@ class RandomAgent(Agent):
         self.name = "random"
         self.observation_space = observation_space
         self.action_space = action_space
+        self.control = Random()
     
     def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
         pass
