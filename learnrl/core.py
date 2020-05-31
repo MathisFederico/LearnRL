@@ -90,7 +90,7 @@ class Agent():
     
     """
 
-    name = None    
+    name = None
     memory = Memory()
 
     def act(self, observation):
@@ -115,10 +115,10 @@ class Agent():
 
         Example
         -------
-            >>>  self.memory.remember(self._hash_observation(observation),
-            ...                       self._hash_action(action),
+            >>>  self.memory.remember(self.observation_encoder(observation),
+            ...                       self.action_encoder(action),
             ...                       reward, done, 
-            ...                       self._hash_observation(next_observation), 
+            ...                       self.observation_encoder(next_observation), 
             ...                       info, **param)
         """
         # self.memory.remember(self._hash_observation(observation), self._hash_action(action), reward, done, self._hash_observation(next_observation), info, **param)
