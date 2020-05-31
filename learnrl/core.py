@@ -248,10 +248,10 @@ class Playground():
             if verbose > 0:
                 steps += step
                 avg_gain += gain
-                if episode%print_cycle==0: 
-                    print(f"Episode {episode}/{episodes}    \t gain({print_cycle}):{avg_gain/print_cycle} \t"
-                          f"explorations:{np.array([agent.control.exploration for agent in self.agents])}\t"
-                          f"steps/s:{steps/(time()-t0):.0f}, episodes/s:{print_cycle/(time()-t0):.0f}")
+                if episode%print_cycle==0:
+                    dt = max(1e-6, time()-t0)
+                    print(f"Episode {episode}/{episodes}    \t gain:{avg_gain/print_cycle} \t"
+                          f"steps/s:{steps/dt:.0f}, episodes/s:{print_cycle/dt:.0f}")
                     avg_gain = np.zeros_like(self.agents)
                     steps = 0
                     t0 = time()
