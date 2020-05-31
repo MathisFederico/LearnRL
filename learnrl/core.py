@@ -238,11 +238,13 @@ class Playground():
                     for key, value in zip(prev, [observation, action, reward, done, info]):
                         prev[key] = value
                     if done:
-                        agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
+                        agent.remember(observation, action, reward, done, next_observation, info)
                         agent.learn()
 
                 if verbose > 1:
-                    print(f"------ Step {step} ------ Player is {agent_id}\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}\nnext_observation:\n{next_observation}\ninfo:{info}")
+                    print(f"------ Step {step} ------ Player is {agent_id}"
+                          f"\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}"
+                          f"\nnext_observation:\n{next_observation}\ninfo:{info}")
                 observation = next_observation
             
             if verbose > 0:
