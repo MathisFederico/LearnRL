@@ -35,7 +35,7 @@ def test_forget(memory):
 
 def test_remember(memory):
     """
-    As a reminder, we ought to remember at least those MEMORY_KEYS : (observation, action, reward, done, next_observation, info)
+    We ought to remember at least those MEMORY_KEYS : (observation, action, reward, done, next_observation, info)
     For observation, action, next_observation :
         Test that we can remember int, floats, lists, or numpy.ndarrays as numpy.ndarrays
     For reward :
@@ -73,4 +73,6 @@ def test_remember(memory):
     with pytest.raises(ValueError):
         memory.remember(observation=0, action=1.0, reward=2, done=False, next_observation=3, info={'param':4})
         memory.remember(observation=[0, 1], action=[2, 3], reward=4, done=False, next_observation=[5, 6], info={'param':7})
-
+    
+# def test_sample(memory):
+#     raise NotImplementedError
