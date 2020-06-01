@@ -1,7 +1,7 @@
 LearnRL's Core
 ==============
 
-LearnRL is base on those core objects: :ref:`Playground`,
+LearnRL is based on those core objects: :ref:`Playground`,
 :ref:`Agent`, :ref:`MultiEnv`, :ref:`Memory`.
 
 They are all linked by the :ref:`Playground`, as showned by this:

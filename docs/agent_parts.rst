@@ -1,3 +1,5 @@
+.. _Agent_parts:
+
 Agent_parts
 ===========
 

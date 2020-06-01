@@ -1,6 +1,17 @@
 StandardAgent
 =============
 
+StandardAgent are composed of three :ref:`Agent_parts`:
+- :ref:`Control`
+- :ref:`Evaluation`
+- :ref:`Estimator`
+
+They are all linked by the :class:`~learnrl.agents.StandardAgent`, as showned by this:
+
+.. raw:: html
+   :file: ../_static/images/StandardAgent.svg
+
+
 TableAgent
 ----------
 
