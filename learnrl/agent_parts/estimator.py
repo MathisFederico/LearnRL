@@ -1,23 +1,70 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+
 import numpy as np
 from copy import deepcopy
 import gym.spaces as spaces
 
 class Estimator():
 
+    """ Estimator base object
+
+    The methods build, fit and predict must be specified.
+    Kwargs are passed to the build method.
+
+    Arguments
+    ---------
+        observation_space: |gym.Space|
+            The observation space of the agent
+        action_space: |gym.Space|
+            The action space of the agent
+        learning_rate: float
+            The learning rate of the estimator
+        learning_rate_decay: float
+            The learning rate decay of the estimator
+        verbose: int
+            The amount of informations to be logged by the agent, 0 is silent.
+
+    Attributes
+    ----------
+        name: str
+            The name of the Estimator
+        observation_space: |gym.Space|
+            The observation space of the agent
+        observation_size: int
+            The size of the observation space
+        observation_shape: tuple
+            The shape of the observation space
+        observation_encoder: func
+            The encoder of the observation space (identity by default)
+        observation_decoder: func
+            The decoder of the observation space (identity by default)
+        action_space: |gym.Space|
+            The action space of the agent
+        action_size: int
+            The size of the action space
+        action_shape: tuple
+            The shape of the action space
+        action_encoder: func
+            The encoder of the action space (identity by default)
+        action_decoder: func
+            The decoder of the action space (identity by default)
+        
+    
+    """
+
     def __init__(self, observation_space, action_space, learning_rate=0.1, learning_rate_decay=0, verbose=0,**kwargs):
         self.observation_space = observation_space
         self.action_space = action_space
 
-        self.observation_size = self.get_space_size(observation_space)
-        self.observation_shape = self.get_space_shape(observation_space)
+        self.observation_size = self._get_space_size(observation_space)
+        self.observation_shape = self._get_space_shape(observation_space)
 
-        self.action_size = self.get_space_size(action_space)
-        self.action_shape = self.get_space_shape(action_space)
+        self.action_size = self._get_space_size(action_space)
+        self.action_shape = self._get_space_shape(action_space)
 
         self.observation_encoder, self.observation_decoder = lambda x: x, lambda x: x
-        self.action_encoder, self.action_decoder = self.get_table_encoder_decoder(action_space)
+        self.action_encoder, self.action_decoder = lambda x: x, lambda x: x
 
         self.learning_rate = learning_rate
         self.learning_rate_decay = learning_rate_decay
@@ -27,6 +74,7 @@ class Estimator():
         self.build(**kwargs)
     
     def build(self, **kwargs):
+        """ Build the estimator """
         raise NotImplementedError
 
     def _fit(self, observations, actions, Y):
@@ -35,9 +83,31 @@ class Estimator():
         self.fit(observations, actions, Y)
     
     def fit(self, observations, actions, Y):
+        """ Fit the estimator
+        
+        Arguments
+        ---------
+            observations: np.ndarray
+                The sample of observations.
+            actions: np.ndarray
+                The sample of actions.
+            Y:
+                The ground truth that the estimator should predict.
+        
+        """
         raise NotImplementedError
     
     def predict(self, observations, actions):
+        """ Uses the estimator to make a prediction
+
+        Arguments
+        ---------
+            observations: np.ndarray
+                The sample of observations.
+            actions: np.ndarray
+                The sample of actions.       
+        
+        """
         raise NotImplementedError
     
     def encoder(self, arr, arr_type):
@@ -62,7 +132,7 @@ class Estimator():
             self.learning_rate *= 1 - self.learning_rate_decay
 
     @staticmethod
-    def get_space_size(space):
+    def _get_space_size(space):
         if isinstance(space, spaces.Discrete):
             return space.n
         elif isinstance(space, spaces.MultiDiscrete):
@@ -71,7 +141,7 @@ class Estimator():
             raise TypeError(f'Space {type(space)} is not supported yet ... open an issue if needed')
 
     @staticmethod
-    def get_space_shape(space):
+    def _get_space_shape(space):
         if isinstance(space, spaces.Discrete):
             return (space.n,)
         elif isinstance(space, spaces.MultiDiscrete):
@@ -80,7 +150,7 @@ class Estimator():
             raise TypeError(f'Space {type(space)} is not supported yet ... open an issue if needed')
 
     @staticmethod
-    def get_table_encoder_decoder(space):
+    def _get_table_encoder_decoder(space):
         int_id = lambda x: int(x)
         
         if isinstance(space, spaces.Discrete):
@@ -127,7 +197,8 @@ class TableEstimator(Estimator):
     def build(self, **kwargs):
         dtype = kwargs.get('dtype', None)
         self.name = 'table'
-        self.observation_encoder, self.observation_decoder = self.get_table_encoder_decoder(self.observation_space)
+        self.observation_encoder, self.observation_decoder = self._get_table_encoder_decoder(self.observation_space)
+        self.action_encoder, self.action_decoder = self._get_table_encoder_decoder(self.action_space)
         self.table = np.zeros((self.observation_size, self.action_size), dtype=dtype)
     
     def load(self, data):
@@ -154,6 +225,7 @@ class KerasEstimator(Estimator):
                        freezed_steps=0, **kwargs):
         self.model = None
         super().__init__(observation_space, action_space, learning_rate, learning_rate_decay, **kwargs)
+        self.action_encoder, self.action_decoder = self._get_table_encoder_decoder(self.action_space)
         self.freezed_steps = freezed_steps
         if self.freezed_steps > 0:
             self.step_freezed_left = freezed_steps

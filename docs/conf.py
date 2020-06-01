@@ -98,5 +98,5 @@ html_context = {
 
 html_static_path = ['_static']
 def setup(app):
-    app.add_stylesheet('styles/custom.css')
+    app.add_css_file('styles/custom.css')
  

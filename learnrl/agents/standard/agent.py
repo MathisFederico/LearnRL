@@ -1,8 +1,5 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
-""" DeepRL Agents
-
-"""
 
 from learnrl.agent_parts.evaluation import QLearning
 from learnrl.agent_parts.control import Greedy
@@ -18,9 +15,9 @@ class StandardAgent(Agent):
 
     """  A standard structure of RL agents
 
-    Build with parts :class:`Control` for policy,
-    :class:`Evaluation` for futur rewards estimations
-    and :class:`Estimator` for action_value estimation.
+    Build with parts :class:`~learnrl.agent_parts.control.Control` for policy,
+    :class:`~learnrl.agent_parts.evaluation.Evaluation` for futur rewards estimations
+    and :class:`~learnrl.agent_parts.estimator.Estimator` for action_value estimation.
     
     Arguments
     ---------
@@ -28,14 +25,14 @@ class StandardAgent(Agent):
             The observation_space of the environement that the agent will observe
         action_space: |gym.Space|
             The action_space of the environement that the agent will act on
-        control: :class:`Control`
+        control: :class:`~learnrl.agent_parts.control.Control`
             Control object to define policy from :attr:`action_value` (default is 0.1-Greedy)
-        evaluation: :class:`Evaluation`
+        evaluation:  :class:`~learnrl.agent_parts.evaluation.Evaluation`
             Evaluation object to update :attr:`action_value` from agent :class:`~learnrl.core.Memory` (default is QLearning)
-        action_values: :class:`Estimator`
+        action_values: :class:`~learnrl.agent_parts.estimator.Estimator`
             Known as Q(s,a), this represent the expected return (futur rewards) given that
             the agent took the action a in the state s.
-        action_visits: :class:`Estimator`
+        action_visits: :class:`~learnrl.agent_parts.estimator.Estimator`
             Known as N(s,a), this represent the number of times that
             the agent took the action a in the state s.
     
@@ -58,8 +55,6 @@ class StandardAgent(Agent):
             The name of the DeepRLAgent
 
     """
-
-    name = 'standard'
     
     def __init__(self, observation_space, action_space, control=None, evaluation=None, action_values=None, action_visits=None, **kwargs):
         self.memory = Memory()
@@ -67,7 +62,7 @@ class StandardAgent(Agent):
         self.online = kwargs.pop('online', True)
         self.evaluation = evaluation if evaluation is not None else QLearning(online=self.online, **kwargs)
 
-        self.name = f'{self.name}_{self.control.name}_{self.evaluation.name}_{kwargs}'
+        self.name = f'standard_{self.control.name}_{self.evaluation.name}_{kwargs}'
 
         self.action_values = action_values if action_values is not None else TableEstimator(observation_space, action_space, **kwargs)
         self.action_visits = action_visits
@@ -105,7 +100,7 @@ class StandardAgent(Agent):
             observation = observation[np.newaxis, :]
         else: observation = np.array([observation])
         
-        policy = self.control.get_policy(observation, self.action_values, self.action_visits, greedy=greedy)[0]
+        policy = self.control._get_policy(observation, self.action_values, self.action_visits, greedy=greedy)[0]
         action_id = np.random.choice(range(len(policy)), p=policy)
         action_taken = self.action_values.action_decoder(action_id)
         
@@ -130,7 +125,7 @@ class StandardAgent(Agent):
         if self.online or done[-1]:
             # Get expected rewards from self.evaluation
             target_control = target_control if target_control is not None else self.control
-            expected_rewards = self.evaluation.get_evaluation(reward, done, next_observation, self.action_values, self.action_visits, target_control=target_control)
+            expected_rewards = self.evaluation._get_evaluation(reward, done, next_observation, self.action_values, self.action_visits, target_control=target_control)
 
             # Update estimators
             self.action_values._fit(observations=observations, actions=actions, Y=expected_rewards)

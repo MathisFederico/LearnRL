@@ -28,9 +28,8 @@ class Memory():
             | ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
     """
 
-    MEMORY_KEYS = ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
-
-    def __init__(self, max_memory_len=10000):
+    def __init__(self, max_memory_len=10000): 
+        self.MEMORY_KEYS = ('observation', 'action', 'reward', 'done', 'next_observation', 'info')
         self.datas = {key:None for key in self.MEMORY_KEYS}
         self.max_memory_len = max_memory_len
 
@@ -136,8 +135,6 @@ class Agent():
             The Agent's memory
     
     """
-
-    name = None
 
     def act(self, observation):
         """ How the :ref:`Agent` act given an observation

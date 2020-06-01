@@ -14,9 +14,9 @@ from itertools import cycle
 
 class Evaluation():
 
-    """ Basic evaluation object
+    """ Evaluation base object
 
-    This method must be specified : eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control)
+    The method eval must be specified :
 
     """
 
@@ -26,9 +26,33 @@ class Evaluation():
         self.name = name
 
     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
+        """ Evaluate the expected futur rewards
+        
+        Arguments
+        ---------
+            reward: float
+                The real reward of the last step
+            done: bool
+                True if the environment has ended and previous step was the last.
+            next_observation: np.ndarray
+                The observation made after the step, used to predict what will happend next.
+            action_values: :class:`~learnrl.agent_parts.estimator.Estimator`
+                The action_values approximated by the agent.
+            action_visits: :class:`~learnrl.agent_parts.estimator.Estimator`
+                The action_visits approximated by the agent.
+            control: :class:`~learnrl.agent_parts.control.Control`
+                The control object used to predict agent behavior,
+                can be the same (on-policy) or another (off-policy) that the agent is using.
+        
+        Return
+        ------
+            expected_return: np.ndarray
+                The batch of expected returns (some of rewards) at the end of the episode for each experience.
+
+        """
         raise NotImplementedError
 
-    def get_evaluation(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, target_control:Control):
+    def _get_evaluation(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, target_control:Control):
         expected_return = self.eval(reward, done, next_observation, action_values, action_visits, target_control)
         return expected_return
 
@@ -59,7 +83,7 @@ class TemporalDifference(Evaluation):
         not_done = np.logical_not(done)
 
         if len(next_observation[not_done]) > 0:
-            policy = control.get_policy
+            policy = control._get_policy
             action_impact = policy(next_observation[not_done], action_values, action_visits)
             expected_futur_reward[not_done] += np.sum(action_impact * action_values(next_observation[not_done]), axis=-1)
 
