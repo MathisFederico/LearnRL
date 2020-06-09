@@ -313,8 +313,11 @@ class Playground():
                     if done:
                         agent.remember(observation, action, reward, done, next_observation, info)
                         agent.learn()
+                
+                if verbose == 2:
+                    print(f"Step: {step} | Player {agent_id} | Reward {reward}")
 
-                if verbose > 1:
+                if verbose > 2:
                     print(f"------ Step {step} ------ Player is {agent_id}"
                           f"\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}"
                           f"\nnext_observation:\n{next_observation}\ninfo:{info}")
