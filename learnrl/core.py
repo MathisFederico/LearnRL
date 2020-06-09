@@ -283,7 +283,7 @@ class Playground():
         for episode in range(1, episodes+1):
 
             observation = self.env.reset()
-            previous = np.array([{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None}]*len(self.agents))
+            previous = [{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None} for _ in range(len(self.agents))]
             done = False
             gain = np.zeros_like(avg_gain)
             step = 0
@@ -315,12 +315,13 @@ class Playground():
                         agent.learn()
                 
                 if verbose == 2:
-                    print(f"Step: {step} | Player {agent_id} | Reward {reward}")
+                    print(f"Step: {step} \t| Player {agent_id} \t| Reward {reward}")
 
                 if verbose > 2:
                     print(f"------ Step {step} ------ Player is {agent_id}"
                           f"\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}"
                           f"\nnext_observation:\n{next_observation}\ninfo:{info}")
+                
                 observation = next_observation
             
             if verbose > 0:
