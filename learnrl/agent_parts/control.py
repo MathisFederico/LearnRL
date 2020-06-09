@@ -71,17 +71,18 @@ class Control():
         self.decay = kwargs.get('exploration_decay', 0)
         self.need_action_visit = False
 
-    def policy(self, observation:np.ndarray, action_values:Estimator, action_visits:Estimator=None):
+    def policy(self, Q:np.ndarray, N:np.ndarray=None):
         """ Return the policy of the agent given an observation
         
         Arguments
         ---------
-            observation: np.ndarray
-                The input observation
-            action_values: :class:`Estimator`
+            Q: np.ndarray
                 The estimator of Q(s,a), the expected futur reward if we do action 'a' in state 's'.
-            action_visits: :class:`Estimator`, optional
+                Shape is (sample_size, action_size).
+
+            N: np.ndarray, optional
                 The estimator of N(s,a), the number of times we did action 'a' in state 's'.
+                Shape is (sample_size, action_size).
         
         Return
         ------
@@ -95,12 +96,9 @@ class Control():
         if action_visits is None and self.need_action_visit:
             raise ValueError(f"action_visits must be specified for {self.name} control")
 
-        policy = self.policy if not greedy else Greedy(0).policy
-        policies = np.empty((len(observations), action_values.action_size))
-        for i, observation in enumerate(observations):
-            policies[i] = policy(observation, action_values, action_visits)
-        policies = np.stack(policies)
-
+        Q = action_values(observations)
+        N = action_visits(observations) if self.need_action_visit else None
+        policies = self.policy(Q, N)
         self._check_policy(policies)
         return policies
     
@@ -148,10 +146,10 @@ class Random(Control):
     def __init__(self, exploration=1, **kwargs):
         super().__init__(exploration=exploration, name="random", **kwargs)
 
-    def policy(self, observations:np.ndarray, action_values:Estimator, action_visits:Estimator=None):
-        action_size = action_values.action_size
-        p = np.zeros((len(observations), action_size))
-        action = np.random.choice(action_size, size=(len(observations),), replace=True)
+    def policy(self, Q:np.ndarray, N:np.ndarray=None):
+        sample_size, action_size = Q.shape
+        p = np.zeros(Q.shape)
+        action = np.random.choice(action_size, size=(sample_size,), replace=True)
         p[:, action] = 1
         return p
 
@@ -167,13 +165,14 @@ class Greedy(Control):
     def __init__(self, exploration=0.1, **kwargs):
         super().__init__(exploration=exploration, name="greedy", **kwargs)
 
-    def policy(self, observations:np.ndarray, action_values:Estimator, action_visits:Estimator=None):
+    def policy(self, Q:np.ndarray, N:np.ndarray=None):
         if self.exploration < 0 or self.exploration > 1:
             raise ValueError(f"Exploration should be in [0, 1] for greedy control but was {self.exploration}")
-        Q = action_values(observations)
-        best_action_id = np.argmax(Q)
-        policy = np.ones_like(Q) * self.exploration / Q.size
-        policy[best_action_id] += 1 - self.exploration
+            
+        best_action_id = np.argmax(Q, axis=1)
+        _, action_size = Q.shape
+        policy = np.ones_like(Q) * self.exploration / action_size
+        policy[np.arange(len(best_action_id)), best_action_id] += 1 - self.exploration
         return policy
 
 class Ucb(Control):
@@ -186,13 +185,10 @@ class Ucb(Control):
         super().__init__(exploration=exploration, name="ucb", **kwargs)
         self.need_action_visit = True
 
-    def policy(self, observations:np.ndarray, action_values:Estimator, action_visits:Estimator):
-        N = action_visits(observations)
-        Q = action_values(observations)
-        best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.log(1 + np.sum(N)) / (1.0 + N)))
-
-        policy = np.zeros_like(Q)
-        policy[best_action_id] = 1.0
+    def policy(self, Q:np.ndarray, N:np.ndarray=None):
+        best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.log(1 + np.sum(N, axis=1)) / (1.0 + N)), axis=1)
+        policy = np.zeros_like(Q, dtype=np.uint8)
+        policy[np.arange(len(best_action_id)), best_action_id] = 1
         return policy
 
 
@@ -206,11 +202,8 @@ class Puct(Control):
         super().__init__(exploration=exploration, name="puct", **kwargs)
         self.need_action_visit = True
 
-    def policy(self, observations, action_values:Estimator, action_visits:Estimator):       
-        N = action_visits(observations)
-        Q = action_values(observations)
-        best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.sum(N) / (1.0 + N)))
-        
-        policy = np.zeros_like(Q)
-        policy[best_action_id] = 1.0
+    def policy(self, Q:np.ndarray, N:np.ndarray=None):  
+        best_action_id = np.argmax(Q + self.exploration * np.sqrt( np.sum(N, axis=1) / (1.0 + N)), axis=1)
+        policy = np.zeros_like(Q, dtype=np.uint8)
+        policy[np.arange(len(best_action_id)), best_action_id] = 1
         return policy
