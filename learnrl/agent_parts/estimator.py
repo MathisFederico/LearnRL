@@ -248,7 +248,7 @@ class KerasEstimator(Estimator):
 
         if self.freezed_steps > 0:
             if self.step_freezed_left == 0:
-                self.model_freezed = deepcopy(self.model)
+                self.model_freezed.set_weights(self.model.get_weights()) 
                 self.step_freezed_left = self.freezed_steps
                 if self.verbose > 0:
                     print("Freezed model updated")
