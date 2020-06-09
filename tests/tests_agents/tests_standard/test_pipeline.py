@@ -62,7 +62,7 @@ def test_controls(env, pertinent_observations, expected_optimal_actions):
     controls = [
         Greedy(exploration=0.1),
         Ucb(exploration=0.1),
-        Puct(exploration=0.1),
+        Puct(exploration=0.05),
     ]
     for control in controls:
         agent = StandardAgent(observation_space=env.observation_space, action_space=env.action_space,
@@ -78,4 +78,4 @@ def test_controls(env, pertinent_observations, expected_optimal_actions):
         pertinent_actions = greedy_actions[pertinent_observations]
 
         if not np.all(pertinent_actions==expected_optimal_actions):
-            raise ValueError(f'Got policy {pertinent_actions} instead of {expected_optimal_actions} for evaluation {str(evaluation)}')
+            raise ValueError(f'Got policy {pertinent_actions} instead of {expected_optimal_actions} for control {str(control)}')
