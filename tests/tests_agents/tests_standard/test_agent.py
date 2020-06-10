@@ -3,24 +3,21 @@
 
 import pytest
 
-from learnrl.agents import TableAgent
-from learnrl.agents.table.control import Greedy
+from learnrl.agents import RandomAgent, StandardAgent
+from learnrl.agent_parts.control import Greedy
 import numpy as np
 from gym.spaces import Discrete, MultiDiscrete
 
-@pytest.fixture
-def agent():
-    return TableAgent(Discrete(3), Discrete(4))
-
-def test_name(agent):
-    default_name = r"table_greedy_qlearning_{}"
+def test_name():
+    agent = StandardAgent(Discrete(3), Discrete(4))
+    default_name = r"standard_greedy_qlearning_{}"
     if agent.name != default_name:
         raise ValueError(f'Default name should be {default_name} and not {agent.name}')
     if str(agent) != default_name:
         raise ValueError(f'str(BasicAgent) should be {default_name}(agent name) and not {str(agent)}')
     
-    agent = TableAgent(Discrete(3), Discrete(4), foo='foo')
-    default_name = r"table_greedy_qlearning_{'foo': 'foo'}"
+    agent = StandardAgent(Discrete(3), Discrete(4), foo='foo')
+    default_name = r"standard_greedy_qlearning_{'foo': 'foo'}"
     if agent.name != default_name:
         raise ValueError(f'Default name should be {default_name} and not {agent.name}')
 

@@ -12,11 +12,11 @@ About LearnRL
 
    import learnrl as rl
    from learnrl.environments import CrossesAndNoughtsEnv
-   from learnrl.agents import TableAgent
+   from learnrl.agents import StandardAgent
 
    env = CrossesAndNoughtsEnv()
-   agent1 = TableAgent(state_space=env.observation_space, action_space=env.action_space)
-   agent2 = TableAgent(state_space=env.observation_space, action_space=env.action_space)
+   agent1 = StandardAgent(state_space=env.observation_space, action_space=env.action_space)
+   agent2 = StandardAgent(state_space=env.observation_space, action_space=env.action_space)
 
    agents = [agent1, agent2]
    pg = rl.Playground(env, agents)
@@ -44,9 +44,9 @@ Table Of Content
 .. toctree::
    :maxdepth: 2
 
-   learnrl.core
-   learnrl.agents
-   learnrl.environments
+   core
+   agents
+   environments
 
 Contribute
 ----------
@@ -63,8 +63,6 @@ License
 -------
 
 | The project is licensed under the GNU LGPLv3 license.
+| This means that you can use this software for commercial application as long
+| as you mention using LearnRL and does not allow to reproduce LearnRL in your application.
 | See LICENCE, COPYING and COPYING.LESSER for more details.
-
-.. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
-.. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
-.. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__

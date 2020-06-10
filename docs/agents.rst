@@ -5,5 +5,7 @@ Agents
 | The core Agent object is :ref:`Agent`
 
 .. toctree::
+   :maxdepth: 2
 
-   agents/learnrl.agents.table
+   agent_parts
+   agents/standard

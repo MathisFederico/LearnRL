@@ -84,7 +84,7 @@ class CrossesAndNoughtsGame():
         # Open Pygame window
         self.window = pygame.display.set_mode((200*scale_factor, 100*scale_factor))
         # Load images
-        path = os.path.join("envs", "single_agents_envs", "random_crosses_and_noughts")
+        path = os.path.join("learnrl", "environments", "single_agents", "random_crosses_and_noughts")
         self.empty_grid_img = pygame.image.load(os.path.join(path, "images", "empty_grid.png")).convert()
         self.empty_grid_img = scale(self.empty_grid_img, (scale_factor*self.empty_grid_img.get_width(), scale_factor*self.empty_grid_img.get_height()))
 
