@@ -58,10 +58,10 @@ class CatchEnv(Env):
             self.apple_pos[0] < self.basket_pos + self.basket_shape[0] and
             self.apple_pos[0] > self.basket_pos):
             self._get_new_apple()
-            return 1
+            return 1 / self.n_apples
         elif self.apple_pos[1] <= 0:
             self._get_new_apple()
-            return -1
+            return -1 / self.n_apples
         return 0
 
     def _update_basket_pos(self, action):
