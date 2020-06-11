@@ -137,6 +137,8 @@ class Estimator():
             return space.n
         elif isinstance(space, spaces.MultiDiscrete):
             return np.prod(space.nvec)
+        elif isinstance(space, spaces.Box):
+            return np.prod(space.shape)
         else:
             raise TypeError(f'Space {type(space)} is not supported yet ... open an issue if needed')
 
@@ -146,6 +148,8 @@ class Estimator():
             return (space.n,)
         elif isinstance(space, spaces.MultiDiscrete):
             return space.nvec.shape
+        elif isinstance(space, spaces.Box):
+            return space.shape
         else:
             raise TypeError(f'Space {type(space)} is not supported yet ... open an issue if needed')
 
@@ -220,7 +224,7 @@ class TableEstimator(Estimator):
 class KerasEstimator(Estimator):
 
     def __init__(self, observation_space, action_space,
-                       learning_rate=0.1, learning_rate_decay=1,
+                       learning_rate=1e-3, learning_rate_decay=0.,
                        epochs_per_step=1, batch_size=32,
                        freezed_steps=0, **kwargs):
         self.model = None
