@@ -247,7 +247,7 @@ class KerasEstimator(Estimator):
     def fit(self, observations, actions, Y):
         x_train = self.preprocess(observations, actions)
         y_train = self.model.predict(x_train)
-        y_train[:, actions] = Y
+        y_train[np.arange(len(actions)), actions] = Y
         self.model.fit(x_train, y_train, epochs=self.epochs, batch_size=self.batch_size, verbose=self.verbose)
 
         if self.freezed_steps > 0:
