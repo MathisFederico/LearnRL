@@ -70,7 +70,7 @@ class StandardAgent(Agent):
             if self.control.need_action_visit:
                 self.action_visits = TableEstimator(observation_space, action_space, learning_rate=1, dtype=np.uint64)
 
-        self.sample_size = kwargs.pop('max_sample_size', 128)
+        self.sample_size = kwargs.pop('sample_size', 128)
         self.forget_after_update = kwargs.pop('forget_after_update', isinstance(self.action_values, TableEstimator))
         default_sample_method = 'naive_uniform' if self.online else 'last'
         self.sample_method = kwargs.pop('sample_method', default_sample_method)

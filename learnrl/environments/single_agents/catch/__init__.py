@@ -18,7 +18,7 @@ class CatchEnv(Env):
             area_shape[0] - basket_shape[0]
         )
         self.observation_space = spaces.Box(low=np.array([0, 0, 0]),
-                                            high=np.array(self.max_observation), 
+                                            high=np.array(self.max_observation),
                                             dtype=np.float64)
 
         self.area_shape = area_shape
