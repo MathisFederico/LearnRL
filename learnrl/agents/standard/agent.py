@@ -40,7 +40,7 @@ class StandardAgent(Agent):
     ----------------
         online: bool
             If False, wait the end of the episode to learn, else learn every step.
-        max_sample_size: int
+        sample_size: int
             Maximum number of samples to take from memory to perform a learning step. If 0, takes all memory.
         sample_method: str
             The sampling used, see :meth:`~learnrl.core.Memory.sample` for details.
