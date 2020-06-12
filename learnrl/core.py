@@ -280,7 +280,7 @@ class Playground():
         self.env = environement
         self.agents = agents
 
-    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.01, verbose=0, callbacks=[]):
+    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0, callbacks=[]):
         """ Let the agent(s) play on the environement for a number of episodes.
         
         Arguments
@@ -365,7 +365,7 @@ class Playground():
                 observation = next_observation
             
             callbacks.on_episode_end(episode, logs)
-            if (episode+1) % cycle_len == 0:
+            if (episode+1) % cycle_len == 0 or episode == episodes - 1:
                 callbacks.on_cycle_end(episode, logs)
         
         callbacks.on_run_end(logs)

@@ -56,7 +56,7 @@ class CallbackList():
         for callback in self.callbacks:
             callback.set_playground(playground)
         
-    def _call_key_hook(self, key, hook, value=None, logs=None):
+    def _call_key_hook(self, key, hook, value=None, logs={}):
         """ Helper func for {step|episode|cycle|run}_{begin|end} methods. """
 
         if len(self.callbacks) == 0:
@@ -70,8 +70,10 @@ class CallbackList():
             setattr(self, t_begin_name, time.time())
         
         if hook == 'end':
-            t_begin = getattr(self, t_begin_name, time.time())
-            setattr(self, dt_name, time.time() - t_begin)
+            t_begin = getattr(self, t_begin_name)
+            dt = time.time() - t_begin
+            setattr(self, dt_name, dt)
+            logs.update({dt_name: dt})
         
         for callback in self.callbacks:
             step_hook = getattr(callback, hook_name)
@@ -117,15 +119,23 @@ class Logger(Callback):
             print('-' * semibar_lenght + f' {text} ' + '-' * (semibar_lenght + 1*odd))
 
     def on_step_end(self, step, logs=None):
+        self.episode_seen_steps += 1
+        self.cycle_seen_steps += 1
+
         agent_id = logs.get('agent_id')
         reward = logs.get('reward')
         done = logs.get('done')
         self.returns[agent_id] += reward
+
+        step_time = logs.get('dt_step')
+        self.episode_step_time += (step_time - self.episode_step_time) / self.episode_seen_steps
+        self.cycle_step_time += (step_time - self.cycle_step_time) / self.cycle_seen_steps
         
         if self.params['verbose'] == 3:
             if self.n_agents > 1:
                 print(f"Agent :{logs.get('agent_id')}", end='\t| ')
-            print(f"Reward {reward}")
+            print(f"Reward {reward}", end='\t| ')
+            print(self._get_time_text(step_time, 'step'))
             if done:
                 print()
         elif self.params['verbose'] > 3:
@@ -136,32 +146,49 @@ class Logger(Callback):
             print(f"Reward {reward}")
             print(f"Done {done}")
             print(f"Next Observation {logs.get('next_observation')}")
+            print(self._get_time_text(step_time, 'step'))
             print('-'*self.bar_lenght, end='\n\n')
 
     def on_episode_begin(self, episode, logs=None):
         self.returns = np.zeros(self.n_agents)
+        self.episode_step_time = 0
+        self.episode_seen_steps = 0
         if self.params['verbose'] > 2:
             print("="*self.bar_lenght)
         if self.params['verbose'] >= 2:
-            end = ' | ' if self.params['verbose'] == 2 else '\n\n'
-            print("Episode " + self._get_episode_text(episode), end=end)
+            print("Episode " + self._get_episode_text(episode), end=' | ')
+        if self.params['verbose'] > 2:
+            print()
 
     def on_episode_end(self, episode, logs=None):
-        self.seen_episodes += 1
-        self.avg_returns += (self.returns - self.avg_returns) / self.seen_episodes
+        self.cycle_seen_episodes += 1
+        self.avg_returns += (self.returns - self.avg_returns) / self.cycle_seen_episodes
+
+        episode_time = logs.get('dt_episode')
+        self.cycle_episode_time += (episode_time - self.cycle_episode_time) / self.cycle_seen_episodes
+
         if self.params['verbose'] >= 2:
-            print(f"Returns {self.returns}")
+            print(f"Returns {self.returns}", end='\t| ')
+            print(self._get_time_text(episode_time, 'episode'), end='\t| ')
+            print(self._get_time_text(self.episode_step_time, 'step'))
         if self.params['verbose'] > 2:
             print("="*self.bar_lenght, end='\n\n')
 
     def on_cycle_begin(self, episode, logs=None):
         self.avg_returns = np.zeros(self.n_agents)
-        self.seen_episodes = 0
+
+        self.cycle_seen_episodes = 0
+        self.cycle_episode_time = 0
+
+        self.cycle_seen_steps = 0
+        self.cycle_step_time = 0
 
     def on_cycle_end(self, episode, logs=None):
         if self.params['verbose'] == 1:
             print("Episode " + self._get_episode_text(episode), end=' | ')
-            print(f"Returns {self.avg_returns}")
+            print(f"Returns {self.avg_returns}", end='\t| ')
+            print(self._get_time_text(self.cycle_episode_time, 'episode'), end='\t| ')
+            print(self._get_time_text(self.cycle_step_time, 'step'))
 
     def on_run_begin(self, logs=None):
         self.n_agents = len(self.playground.agents)
@@ -177,3 +204,15 @@ class Logger(Callback):
         text = " "*(self.n_digits_episodes - len(text)) + text
         text += f"/{self.params['episodes']}"
         return text
+    
+    def _get_time_text(self, dt, unit):
+        if dt < 1e-9:
+            return f'{dt/1e-12:.00f}ps/{unit}'
+        if dt < 1e-6:
+            return f'{dt/1e-9:.00f}ns/{unit}'
+        if dt < 1e-3:
+            return f'{dt/1e-6:.00f}us/{unit}'
+        if dt < 1:
+            return f'{dt/1e-3:.00f}ms/{unit}'
+        return f'{dt:.01f}s/{unit}'
+
