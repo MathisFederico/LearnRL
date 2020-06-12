@@ -8,6 +8,8 @@ from copy import copy
 from time import time
 from gym import Env
 
+from learnrl.callbacks import CallbackList, Logger
+
 
 class Memory():
 
@@ -259,9 +261,10 @@ class Playground():
     Attributes
     ----------
         env: :class:`MultiEnv` or |gym.Env|
-            The environement in which agents will play
-        agents: :class:`list`
-            The list of :class:`Agent` in the :class:`Playground`
+            Environement in which agents will play
+        agents: list or :class:`Agent`
+            List of :class:`Agent` to run on the :class:`MultiEnv`
+
     """
 
     def __init__(self, environement:Env, agents):
@@ -274,38 +277,74 @@ class Playground():
         self.env = environement
         self.agents = agents
 
-    def run(self, episodes, render=True, learn=True, verbose=0):
-        """Let the agent(s) play on the environement for a number of episodes."""
-        print_cycle = max(1, episodes // 100)
-        avg_gain = np.zeros_like(self.agents)
-        steps = 0
-        t0 = time()
-        for episode in range(1, episodes+1):
+    def run(self, episodes, cycle_len=None, render=True, learn=True, verbose=0, callbacks=[]):
+        """Let the agent(s) play on the environement for a number of episodes.
+        
+        Arguments
+        ---------
+            episodes: int
+                Number of episodes to run.
+            cycle_len: int
+                Number of episodes that compose a cycle, used in :class:`Callback`.
+            render: bool
+                If True, call :meth:`MultiEnv.render` every step.
+            learn: bool
+                If True, call :meth:`Agent.learn` every step.
+            verbose: int
+                The verbosity level: {0:silent, 1:cycle_summary, 2:episode_summary, 3:step_summary, 4:step_detailed}
+            callbacks: list
+                List of :class:``Callback` to use in runs.
+        
+        """
+        cycle_len = cycle_len or max(1, episodes // 100)
+
+        params = {
+            'episodes': episodes,
+            'cycle_len': cycle_len,
+            'verbose': verbose,
+            'render': render,
+            'learn': learn
+        }
+
+        callbacks = CallbackList([Logger()] + callbacks)
+        callbacks.set_params(params)
+        callbacks.set_playground(self)
+
+        logs = {}
+        logs.update(params)
+        callbacks.on_run_begin(logs)
+
+        for episode in range(episodes):
+
+            cycle = episode // cycle_len
+            if episode % cycle_len == 0:
+                callbacks.on_cycle_begin(cycle, logs)
 
             observation = self.env.reset()
             previous = [{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None} for _ in range(len(self.agents))]
             done = False
-            gain = np.zeros_like(avg_gain)
             step = 0
+
+            logs.update({'episode':episode})
+            callbacks.on_episode_begin(episode, logs)
 
             while not done:
 
                 if render: self.env.render()
 
-                if isinstance(self.env, MultiEnv):
-                    agent_id = self.env.turn(observation)
-                else: agent_id = 0
-
+                agent_id = self.env.turn(observation) if isinstance(self.env, MultiEnv) else 0
+                     
                 prev = previous[agent_id]
                 if learn and prev['observation'] is not None:
                     agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
                     agent.learn()
                 
+                logs.update({'step':step, 'agent_id':agent_id, 'observation':observation})
+                callbacks.on_step_begin(step, logs)
+
                 agent = self.agents[agent_id]
                 action = agent.act(observation)
-                next_observation, reward, done , info = self.env.step(action)
-                gain[agent_id] += reward
-                step += 1
+                next_observation, reward, done, info = self.env.step(action)
 
                 if learn:
                     for key, value in zip(prev, [observation, action, reward, done, info]):
@@ -314,26 +353,18 @@ class Playground():
                         agent.remember(observation, action, reward, done, next_observation, info)
                         agent.learn()
                 
-                if verbose == 2:
-                    print(f"Step: {step} \t| Player {agent_id} \t| Reward {reward}")
+                logs.update({'action': action, 'reward':reward, 'done':done, 'next_observation':next_observation})
+                logs.update(info)
 
-                if verbose > 2:
-                    print(f"------ Step {step} ------ Player is {agent_id}"
-                          f"\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}"
-                          f"\nnext_observation:\n{next_observation}\ninfo:{info}")
-                
+                callbacks.on_step_end(step, logs)
+                step += 1               
                 observation = next_observation
             
-            if verbose > 0:
-                steps += step
-                avg_gain += gain
-                if episode%print_cycle==0:
-                    dt = max(1e-6, time()-t0)
-                    print(f"Episode {episode}/{episodes}    \t gain:{avg_gain/print_cycle} \t"
-                          f"steps/s:{steps/dt:.0f}, episodes/s:{print_cycle/dt:.0f}")
-                    avg_gain = np.zeros_like(self.agents)
-                    steps = 0
-                    t0 = time()
+            callbacks.on_episode_end(episode, logs)
+            if episode - 1 % cycle_len == 0:
+                callbacks.on_cycle_end(cycle, logs)
+        
+        callbacks.on_run_end(logs)
 
     def fit(self, episodes, verbose=0):
         """Train the agent(s) on the environement for a number of episodes."""
@@ -342,5 +373,4 @@ class Playground():
     def test(self, episodes, verbose=0):
         """Test the agent(s) on the environement for a number of episodes."""
         self.run(episodes, render=True, learn=False, verbose=verbose)
-
 
