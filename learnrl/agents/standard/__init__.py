@@ -146,4 +146,4 @@ class StandardAgent(Agent):
         return self.name
     
     def __call__(self, observation, greedy=False):
-        return self.act(observation, greedy=False)
+        return self.act(observation, greedy=greedy)
