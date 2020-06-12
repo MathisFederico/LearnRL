@@ -53,7 +53,7 @@ class Estimator():
     
     """
 
-    def __init__(self, observation_space, action_space, learning_rate=0.1, learning_rate_decay=0, verbose=0,**kwargs):
+    def __init__(self, observation_space, action_space, learning_rate=0.1, learning_rate_decay=0, step_skip=0, verbose=0,**kwargs):
         self.observation_space = observation_space
         self.action_space = action_space
 
@@ -224,9 +224,8 @@ class TableEstimator(Estimator):
 class KerasEstimator(Estimator):
 
     def __init__(self, observation_space, action_space,
-                       learning_rate=1e-3, learning_rate_decay=0.,
-                       epochs_per_step=1, batch_size=32,
-                       freezed_steps=0, **kwargs):
+                       learning_rate=1e-3, learning_rate_decay=0,
+                       batch_size=32, freezed_steps=0, **kwargs):
         self.model = None
         super().__init__(observation_space, action_space, learning_rate, learning_rate_decay, **kwargs)
         self.action_encoder, self.action_decoder = self._get_table_encoder_decoder(self.action_space)
@@ -236,7 +235,6 @@ class KerasEstimator(Estimator):
             self.model_freezed = deepcopy(self.model)
         self.name = 'keras'
         self.batch_size = batch_size
-        self.epochs = epochs_per_step
 
     def build(self, **kwargs):
         raise NotImplementedError
@@ -245,10 +243,11 @@ class KerasEstimator(Estimator):
         raise NotImplementedError
 
     def fit(self, observations, actions, Y):
+       
         x_train = self.preprocess(observations, actions)
         y_train = self.model.predict(x_train)
         y_train[np.arange(len(actions)), actions] = Y
-        self.model.fit(x_train, y_train, epochs=self.epochs, batch_size=self.batch_size, verbose=self.verbose)
+        self.model.fit(x_train, y_train, epochs=1, batch_size=self.batch_size, verbose=self.verbose)
 
         if self.freezed_steps > 0:
             if self.step_freezed_left == 0:

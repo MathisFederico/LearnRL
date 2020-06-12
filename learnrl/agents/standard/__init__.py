@@ -46,6 +46,8 @@ class StandardAgent(Agent):
             The sampling used, see :meth:`~learnrl.core.Memory.sample` for details.
         forget_after_update: bool
             If True, forget all past memory after a learning step.
+        step_skip: int
+            The number of steps between learn calls.
     
     Attributes
     ----------
@@ -58,8 +60,9 @@ class StandardAgent(Agent):
     
     def __init__(self, observation_space, action_space, control=None, evaluation=None, action_values=None, action_visits=None, **kwargs):
         self.memory = Memory()
-        self.control = control if control is not None else Greedy(**kwargs)
+
         self.online = kwargs.pop('online', True)
+        self.control = control if control is not None else Greedy(**kwargs)
         self.evaluation = evaluation if evaluation is not None else QLearning(online=self.online, **kwargs)
 
         self.name = f'standard_{self.control.name}_{self.evaluation.name}_{kwargs}'
@@ -77,6 +80,9 @@ class StandardAgent(Agent):
 
         self.observation_space = observation_space
         self.action_space = action_space
+
+        self.step_skip = kwargs.pop('step_skip', 0)
+        self._step_to_skip = self.step_skip
     
     def act(self, observation, greedy=False):
         """ Gives the agent action when an observation is given.
@@ -118,6 +124,10 @@ class StandardAgent(Agent):
                              info)
 
     def learn(self, target_control=None):
+        # Skip learning step if step_skip > 0
+        if self._skip():
+            return
+
         # Take a sample of experiences
         observations, actions, reward, done, next_observation, _ = self.memory.sample(sample_size=self.sample_size, method=self.sample_method)
 
@@ -138,6 +148,15 @@ class StandardAgent(Agent):
             # Update hyperparameters
             self.control.update_exploration()
             self.action_values.update_learning_rate()
+        
+    def _skip(self):
+        if self.step_skip > 0:
+            if self._step_to_skip > 0:
+                self._step_to_skip -= 1
+                return True
+            else:
+                self._step_to_skip = self.step_skip
+                return False
     
     def __repr__(self):
         return self.name
