@@ -144,7 +144,7 @@ class Logger(Callback):
             print("="*self.bar_lenght)
         if self.params['verbose'] >= 2:
             end = ' | ' if self.params['verbose'] == 2 else '\n\n'
-            print("Episode " + + self._get_episode_text(episode), end=end)
+            print("Episode " + self._get_episode_text(episode), end=end)
 
     def on_episode_end(self, episode, logs=None):
         self.seen_episodes += 1
