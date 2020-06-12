@@ -6,3 +6,4 @@ __version__ = "0.1.2"
 from learnrl.core import *
 import learnrl.environments
 import learnrl.agents
+import learnrl.control

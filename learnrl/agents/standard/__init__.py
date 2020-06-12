@@ -1,9 +1,9 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-from learnrl.agent_parts.evaluation import QLearning
-from learnrl.agent_parts.control import Greedy
-from learnrl.agent_parts.estimator import TableEstimator
+from learnrl.evaluation import QLearning
+from learnrl.control import Greedy
+from learnrl.estimator import TableEstimator
 from learnrl.core import Agent, Memory
 
 from gym import spaces

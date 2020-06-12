@@ -2,7 +2,7 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 from learnrl.core import Agent
-from learnrl.agent_parts.control import Random
+from learnrl.control import Random
 
 class RandomAgent(Agent):
 

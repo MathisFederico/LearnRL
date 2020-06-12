@@ -10,8 +10,8 @@ from copy import deepcopy
 from learnrl.environments import RdNimEnv
 from learnrl.agents import StandardAgent
 from learnrl.core import Memory, Playground
-from learnrl.agent_parts.evaluation import MonteCarlo, TemporalDifference, QLearning
-from learnrl.agent_parts.control import Greedy, Ucb, Puct
+from learnrl.evaluation import MonteCarlo, TemporalDifference, QLearning
+from learnrl.control import Greedy, Ucb, Puct
 
 
 @pytest.fixture
