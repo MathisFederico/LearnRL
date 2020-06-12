@@ -41,6 +41,7 @@ Documentation
 -------------
 
 See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details
+See the `developpement documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see whats comming !
 
 Contribute
 ----------
