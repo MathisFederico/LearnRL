@@ -36,11 +36,11 @@ class Evaluation():
                 True if the environment has ended and previous step was the last.
             next_observation: np.ndarray
                 The observation made after the step, used to predict what will happend next.
-            action_values: :class:`~learnrl.agent_parts.estimator.Estimator`
+            action_values: :class:`~learnrl.estimator.Estimator`
                 The action_values approximated by the agent.
-            action_visits: :class:`~learnrl.agent_parts.estimator.Estimator`
+            action_visits: :class:`~learnrl.estimator.Estimator`
                 The action_visits approximated by the agent.
-            control: :class:`~learnrl.agent_parts.control.Control`
+            control: :class:`~learnrl.control.Control`
                 The control object used to predict agent behavior,
                 can be the same (on-policy) or another (off-policy) that the agent is using.
         

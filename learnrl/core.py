@@ -281,7 +281,7 @@ class Playground():
         self.agents = agents
 
     def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.01, verbose=0, callbacks=[]):
-        """Let the agent(s) play on the environement for a number of episodes.
+        """ Let the agent(s) play on the environement for a number of episodes.
         
         Arguments
         ---------
@@ -292,13 +292,13 @@ class Playground():
             learn: bool
                 If True, call :meth:`Agent.learn` every step.
             cycle_len: int
-                Number of episodes that compose a cycle, used in :class:`Callback`.
+                Number of episodes that compose a cycle, used in :class:`~learnrl.callbacks.Callback`.
             cycle_prop: float
                 Propotion of total episodes to compose a cycle, used if cycle_len is not set.
             verbose: int
-                The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step), 4 (detailed step)
+                The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step), 4 (detailed step).
             callbacks: list
-                List of :class:``Callback` to use in runs.
+                List of :class:`~learnrl.callbacks.Callback` to use in runs.
         
         """
         cycle_len = cycle_len or max(1, int(cycle_prop*episodes))
