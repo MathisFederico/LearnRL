@@ -40,7 +40,7 @@ class StandardAgent(Agent):
     ----------------
         online: bool
             If False, wait the end of the episode to learn, else learn every step.
-        max_sample_size: int
+        sample_size: int
             Maximum number of samples to take from memory to perform a learning step. If 0, takes all memory.
         sample_method: str
             The sampling used, see :meth:`~learnrl.core.Memory.sample` for details.
@@ -70,7 +70,7 @@ class StandardAgent(Agent):
             if self.control.need_action_visit:
                 self.action_visits = TableEstimator(observation_space, action_space, learning_rate=1, dtype=np.uint64)
 
-        self.sample_size = kwargs.pop('max_sample_size', 128)
+        self.sample_size = kwargs.pop('sample_size', 128)
         self.forget_after_update = kwargs.pop('forget_after_update', isinstance(self.action_values, TableEstimator))
         default_sample_method = 'naive_uniform' if self.online else 'last'
         self.sample_method = kwargs.pop('sample_method', default_sample_method)
