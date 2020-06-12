@@ -207,12 +207,12 @@ class Logger(Callback):
     
     def _get_time_text(self, dt, unit):
         if dt < 1e-9:
-            return f'{dt/1e-12:.00f}ps/{unit}'
+            return f'Instant'
         if dt < 1e-6:
-            return f'{dt/1e-9:.00f}ns/{unit}'
+            return f'{dt/1e-9:.01f}ns/{unit}'
         if dt < 1e-3:
-            return f'{dt/1e-6:.00f}us/{unit}'
+            return f'{dt/1e-6:.01f}us/{unit}'
         if dt < 1:
-            return f'{dt/1e-3:.00f}ms/{unit}'
+            return f'{dt/1e-3:.01f}ms/{unit}'
         return f'{dt:.01f}s/{unit}'
 
