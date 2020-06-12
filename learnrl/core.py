@@ -4,6 +4,7 @@
 import numpy as np
 import collections.abc as collections
 from copy import copy
+import warnings
 
 from time import time
 from gym import Env
@@ -279,26 +280,28 @@ class Playground():
         self.env = environement
         self.agents = agents
 
-    def run(self, episodes, cycle_len=None, render=True, learn=True, verbose=0, callbacks=[]):
+    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.01, verbose=0, callbacks=[]):
         """Let the agent(s) play on the environement for a number of episodes.
         
         Arguments
         ---------
             episodes: int
                 Number of episodes to run.
-            cycle_len: int
-                Number of episodes that compose a cycle, used in :class:`Callback`.
             render: bool
                 If True, call :meth:`MultiEnv.render` every step.
             learn: bool
                 If True, call :meth:`Agent.learn` every step.
+            cycle_len: int
+                Number of episodes that compose a cycle, used in :class:`Callback`.
+            cycle_prop: float
+                Propotion of total episodes to compose a cycle, used if cycle_len is not set.
             verbose: int
-                The verbosity level: {0:silent, 1:cycle_summary, 2:episode_summary, 3:step_summary, 4:step_detailed}
+                The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step), 4 (detailed step)
             callbacks: list
                 List of :class:``Callback` to use in runs.
         
         """
-        cycle_len = cycle_len or max(1, episodes // 100)
+        cycle_len = cycle_len or max(1, int(cycle_prop*episodes))
 
         params = {
             'episodes': episodes,
@@ -318,9 +321,8 @@ class Playground():
 
         for episode in range(episodes):
 
-            cycle = episode // cycle_len
             if episode % cycle_len == 0:
-                callbacks.on_cycle_begin(cycle, logs)
+                callbacks.on_cycle_begin(episode, logs)
 
             observation = self.env.reset()
             previous = [{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None} for _ in range(len(self.agents))]
@@ -363,16 +365,31 @@ class Playground():
                 observation = next_observation
             
             callbacks.on_episode_end(episode, logs)
-            if episode - 1 % cycle_len == 0:
-                callbacks.on_cycle_end(cycle, logs)
+            if (episode+1) % cycle_len == 0:
+                callbacks.on_cycle_end(episode, logs)
         
         callbacks.on_run_end(logs)
 
-    def fit(self, episodes, verbose=0):
+    def fit(self, episodes, **kwargs):
         """Train the agent(s) on the environement for a number of episodes."""
-        self.run(episodes, render=False, learn=True, verbose=verbose)
+        learn = kwargs.pop('learn', True)
+        render = kwargs.pop('render', False)
+        if not learn:
+            warnings.warn("learn should be True in Playground.fit(), otherwise the agents will not improve", UserWarning)
+        if render:
+            warnings.warn("rendering degrades heavely computation speed, use CycleRenderCallback to see your agent performence suring training", RuntimeWarning)
 
-    def test(self, episodes, verbose=0):
+        self.run(episodes, render=render, learn=learn, **kwargs)
+
+    def test(self, episodes, **kwargs):
         """Test the agent(s) on the environement for a number of episodes."""
-        self.run(episodes, render=True, learn=False, verbose=verbose)
+        learn = kwargs.pop('learn', False)
+        render = kwargs.pop('render', True)
+        verbose = kwargs.pop('verbose', 0)
+        if learn:
+            warnings.warn("learn should be False in Playground.test(), otherwise the agents will not act greedy and can have random behavior", UserWarning)
+        if not render and verbose == 0:
+            warnings.warn("you should set verbose > 0 or render=True to see something ...", UserWarning)
+
+        self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
 

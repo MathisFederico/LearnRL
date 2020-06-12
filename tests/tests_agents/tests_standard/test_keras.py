@@ -70,4 +70,4 @@ def test_keras_pipeline():
     agent = StandardAgent(observation_space=env.observation_space, action_space=env.action_space, action_values=custom_action_value)
 
     pg = rl.Playground(env, agent)
-    pg.fit(1, verbose=1)
+    pg.fit(1)

@@ -1,9 +1,10 @@
 import time
 import sys
+import numpy as np
 
 class Callback():
 
-    """ An object to log informations while the :class:`Playground` is running.
+    """ An object to call functions while the :class:`~learnrl.core.Playground` is running.
     """
 
     def set_params(self, params):
@@ -101,30 +102,78 @@ class CallbackList():
         self._call_key_hook('run', 'end', logs=logs)
 
 class Logger(Callback):
-    pass
-    # def __init__(self, verbose):
-    #     self.verbose = verbose
 
-    # def on_step_end(self, step, logs=None):
-    #     if self.verbose == 3:
-    #         print(f"Step: {step} \t| Player {agent_id} \t| Reward {reward}")
-    #     if self.verbose > 3:
-    #         print(f"------ Step {step} ------ Player is {agent_id}"
-    #                 f"\nobservation:\n{observation}\naction:\n{action}\nreward:{reward}\ndone:{done}"
-    #                 f"\nnext_observation:\n{next_observation}\ninfo:{info}")
-    
-    # def on_episode_end(self, episode, logs=None):
-    #     if self.verbose == 1:
-    #         pass
+    """ Default logger in every :class:`~learnrl.core.Playground` run """
 
-    # def on_episode_cycle_end(self, cycle, logs=None):
-    #     if self.verbose > 0:
-    #         steps += step
-    #         avg_gain += gain
-    #         if episode%print_cycle==0:
-    #             dt = max(1e-6, time()-t0)
-    #             print(f"Episode {episode}/{episodes}    \t gain:{avg_gain/print_cycle} \t"
-    #                     f"steps/s:{steps/dt:.0f}, episodes/s:{print_cycle/dt:.0f}")
-    #             avg_gain = np.zeros_like(self.agents)
-    #             steps = 0
-    #             t0 = time()
+    bar_lenght = 40
+
+    def on_step_begin(self, step, logs=None):
+        if self.params['verbose'] == 3:
+            print(f'Step {step+1}', end='\t| ')
+        elif self.params['verbose'] > 3:
+            text = f'Step {step+1}'
+            semibar_lenght = (self.bar_lenght - len(text)) // 2 - 1
+            odd = (self.bar_lenght - len(text)) % 2 == 1
+            print('-' * semibar_lenght + f' {text} ' + '-' * (semibar_lenght + 1*odd))
+
+    def on_step_end(self, step, logs=None):
+        agent_id = logs.get('agent_id')
+        reward = logs.get('reward')
+        done = logs.get('done')
+        self.returns[agent_id] += reward
+        
+        if self.params['verbose'] == 3:
+            if self.n_agents > 1:
+                print(f"Agent :{logs.get('agent_id')}", end='\t| ')
+            print(f"Reward {reward}")
+            if done:
+                print()
+        elif self.params['verbose'] > 3:
+            if self.n_agents > 1:
+                print(f"Agent {agent_id}")
+            print(f"Observation {logs.get('observation')}")
+            print(f"Action {logs.get('action')}")
+            print(f"Reward {reward}")
+            print(f"Done {done}")
+            print(f"Next Observation {logs.get('next_observation')}")
+            print('-'*self.bar_lenght, end='\n\n')
+
+    def on_episode_begin(self, episode, logs=None):
+        self.returns = np.zeros(self.n_agents)
+        if self.params['verbose'] > 2:
+            print("="*self.bar_lenght)
+        if self.params['verbose'] >= 2:
+            end = ' | ' if self.params['verbose'] == 2 else '\n\n'
+            print("Episode " + + self._get_episode_text(episode), end=end)
+
+    def on_episode_end(self, episode, logs=None):
+        self.seen_episodes += 1
+        self.avg_returns += (self.returns - self.avg_returns) / self.seen_episodes
+        if self.params['verbose'] >= 2:
+            print(f"Returns {self.returns}")
+        if self.params['verbose'] > 2:
+            print("="*self.bar_lenght, end='\n\n')
+
+    def on_cycle_begin(self, episode, logs=None):
+        self.avg_returns = np.zeros(self.n_agents)
+        self.seen_episodes = 0
+
+    def on_cycle_end(self, episode, logs=None):
+        if self.params['verbose'] == 1:
+            print("Episode " + self._get_episode_text(episode), end=' | ')
+            print(f"Returns {self.avg_returns}")
+
+    def on_run_begin(self, logs=None):
+        self.n_agents = len(self.playground.agents)
+        self.n_digits_episodes = int(np.log10(self.params['episodes'])) + 1
+        if self.params['verbose'] >= 1:
+            print('Run started')
+
+    def on_run_end(self, logs=None):
+        pass
+
+    def _get_episode_text(self, episode):
+        text = f"{episode+1}"
+        text = " "*(self.n_digits_episodes - len(text)) + text
+        text += f"/{self.params['episodes']}"
+        return text
