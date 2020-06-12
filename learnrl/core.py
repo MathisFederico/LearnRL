@@ -138,13 +138,15 @@ class Agent():
     
     """
 
-    def act(self, observation):
+    def act(self, observation, greedy=False):
         """ How the :ref:`Agent` act given an observation
         
         Parameters
         ----------
             observation:
                 The observation given by the |gym.Env|
+            greedy: bool
+                If True, act greedely (without exploration)
 
         """
         raise NotImplementedError
@@ -343,8 +345,8 @@ class Playground():
                 callbacks.on_step_begin(step, logs)
 
                 agent = self.agents[agent_id]
-                action = agent.act(observation)
-                next_observation, reward, done, info = self.env.step(action)
+                action = agent.act(observation, greedy=not learn)
+                next_observation, reward, done , info = self.env.step(action)
 
                 if learn:
                     for key, value in zip(prev, [observation, action, reward, done, info]):
