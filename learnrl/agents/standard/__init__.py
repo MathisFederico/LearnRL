@@ -59,7 +59,8 @@ class StandardAgent(Agent):
     """
     
     def __init__(self, observation_space, action_space, control=None, evaluation=None, action_values=None, action_visits=None, **kwargs):
-        self.memory = Memory()
+        memory_len = kwargs.pop('memory_len', 10000)
+        self.memory = Memory(memory_len)
 
         self.online = kwargs.pop('online', True)
         self.control = control if control is not None else Greedy(**kwargs)

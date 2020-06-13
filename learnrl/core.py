@@ -280,7 +280,7 @@ class Playground():
         self.env = environement
         self.agents = agents
 
-    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0, callbacks=[]):
+    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0, callbacks=[], reward_handler=None, done_handler=None):
         """ Let the agent(s) play on the environement for a number of episodes.
         
         Arguments
@@ -299,6 +299,10 @@ class Playground():
                 The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step), 4 (detailed step).
             callbacks: list
                 List of :class:`~learnrl.callbacks.Callback` to use in runs.
+            reward_handler: func or :class:`RewardHandler`
+                A callable to redifine rewards of the environement.
+            done_handler: func or :class:`DoneHandler`
+                A callable to redifine the environement end.
         
         """
         cycle_len = cycle_len or max(1, int(cycle_prop*episodes))
@@ -325,6 +329,11 @@ class Playground():
                 callbacks.on_cycle_begin(episode, logs)
 
             observation = self.env.reset()
+            if isinstance(reward_handler, RewardHandler):
+                reward_handler.reset()
+            if isinstance(done_handler, DoneHandler):
+                done_handler.reset()
+
             previous = [{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None} for _ in range(len(self.agents))]
             done = False
             step = 0
@@ -348,7 +357,13 @@ class Playground():
 
                 agent = self.agents[agent_id]
                 action = agent.act(observation, greedy=not learn)
-                next_observation, reward, done , info = self.env.step(action)
+                next_observation, reward, done, info = self.env.step(action)
+
+                if reward_handler is not None:
+                    reward = reward_handler(observation, action, reward, done, info, next_observation)
+                
+                if done_handler is not None:
+                    done = done_handler(observation, action, reward, done, info, next_observation)
 
                 if learn:
                     for key, value in zip(prev, [observation, action, reward, done, info]):
@@ -393,3 +408,36 @@ class Playground():
 
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
 
+class DoneHandler():
+
+    def done(self, observation, action, reward, done, info, next_observation):
+        raise NotImplementedError
+
+    def reset(self):
+        pass
+
+    def _done(self, *args):
+        done = self.done(*args)
+        if not isinstance(done, (bool, np.bool, np.bool_)):
+            raise ValueError(f"Done should be bool, got {done} of type {type(done)} instead")
+        return done
+    
+    def __call__(self, *args):
+        return self._done(*args)
+
+class RewardHandler():
+
+    def reward(self, observation, action, reward, done, info, next_observation):
+        raise NotImplementedError
+
+    def reset(self):
+        pass
+
+    def _reward(self, *args):
+        reward = self.reward(*args)
+        if not isinstance(reward, (int, float)):
+            raise ValueError(f"Rewards should be scalars, got {reward} of type {type(reward)} instead")
+        return reward
+    
+    def __call__(self, *args):
+        return self._reward(*args)
