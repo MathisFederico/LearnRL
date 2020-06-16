@@ -25,10 +25,10 @@ class Callback():
     def on_episode_end(self, episode, logs=None):
         pass
 
-    def on_cycle_begin(self, cycle, logs=None):
+    def on_cycle_begin(self, episode, logs=None):
         pass
 
-    def on_cycle_end(self, cycle, logs=None):
+    def on_cycle_end(self, episode, logs=None):
         pass
 
     def on_run_begin(self, logs=None):
@@ -91,11 +91,11 @@ class CallbackList():
     def on_episode_end(self, episode, logs=None):
         self._call_key_hook('episode', 'end', episode , logs)
 
-    def on_cycle_begin(self, cycle, logs=None):
-        self._call_key_hook('cycle', 'begin', cycle , logs)
+    def on_cycle_begin(self, episode, logs=None):
+        self._call_key_hook('cycle', 'begin', episode , logs)
 
-    def on_cycle_end(self, cycle, logs=None):
-        self._call_key_hook('cycle', 'end', cycle , logs)
+    def on_cycle_end(self, episode, logs=None):
+        self._call_key_hook('cycle', 'end', episode , logs)
 
     def on_run_begin(self, logs=None):
         self._call_key_hook('run', 'begin', logs=logs)
@@ -215,4 +215,3 @@ class Logger(Callback):
         if dt < 1:
             return f'{dt/1e-3:.01f}ms/{unit}'
         return f'{dt:.01f}s/{unit}'
-
