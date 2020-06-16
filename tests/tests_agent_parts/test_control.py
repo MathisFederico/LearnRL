@@ -4,7 +4,7 @@
 import pytest
 import numpy as np
 from learnrl.control import Control, Greedy, Ucb, Puct
-from learnrl.estimator import TableEstimator
+from learnrl.estimators import TableEstimator
 from gym.spaces import Discrete
 
 @pytest.fixture

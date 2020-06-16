@@ -3,7 +3,7 @@ import numpy as np
 
 import learnrl as rl
 from learnrl.environments import CatchEnv
-from learnrl.estimator import KerasEstimator
+from learnrl.estimators import KerasEstimator
 from learnrl.agents import StandardAgent
 
 from gym import spaces
@@ -56,7 +56,6 @@ def test_keras_pipeline():
 
         def build(self):
             self.model = Sequential()
-            print(self.observation_size, self.observation_shape)
             self.model.add(Dense(self.observation_size, activation='relu', input_shape=self.observation_shape))
             self.model.add(Dense(self.action_size))
 

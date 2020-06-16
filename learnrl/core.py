@@ -153,7 +153,14 @@ class Agent():
         raise NotImplementedError
 
     def learn(self):
-        """ How the :ref:`Agent` learns from his experiences """
+        """ How the :ref:`Agent` learns from his experiences 
+        
+        Returns
+        -------
+            logs: dict
+                The agent learning logs.
+
+        """
         raise NotImplementedError
 
     def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
@@ -270,7 +277,7 @@ class Playground():
 
     """
 
-    def __init__(self, environement:Env, agents):
+    def __init__(self, environement:Env, agents:Agent):
         assert isinstance(environement, Env)
         if isinstance(agents, Agent):
             agents = [agents]
@@ -350,7 +357,8 @@ class Playground():
                 prev = previous[agent_id]
                 if learn and prev['observation'] is not None:
                     agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
-                    agent.learn()
+                    agent_logs = agent.learn()
+                    logs.update({f'agent_{agent_id}': agent_logs})
                 
                 logs.update({'step':step, 'agent_id':agent_id, 'observation':observation})
                 callbacks.on_step_begin(step, logs)
@@ -370,7 +378,8 @@ class Playground():
                         prev[key] = value
                     if done:
                         agent.remember(observation, action, reward, done, next_observation, info)
-                        agent.learn()
+                        agent_logs = agent.learn()
+                        logs.update({f'agent_{agent_id}': agent_logs})
                 
                 logs.update({'action': action, 'reward':reward, 'done':done, 'next_observation':next_observation})
                 logs.update(info)
@@ -405,8 +414,8 @@ class Playground():
             warnings.warn("learn should be False in Playground.test(), otherwise the agents will not act greedy and can have random behavior", UserWarning)
         if not render and verbose == 0:
             warnings.warn("you should set verbose > 0 or render=True to see something ...", UserWarning)
-
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
+    
 
 class DoneHandler():
 

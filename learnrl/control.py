@@ -5,7 +5,7 @@
 Control methodes to improve the policy based on value fonctions
 """
 import numpy as np
-from learnrl.estimator import Estimator
+from learnrl.estimators import Estimator
 
 class Control():
 

@@ -1,4 +1,4 @@
-from learnrl.estimator import Estimator
+from learnrl.estimators import Estimator
 from gym.spaces import Discrete
 
 class DummyEstimator(Estimator):

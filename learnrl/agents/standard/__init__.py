@@ -3,7 +3,7 @@
 
 from learnrl.evaluation import QLearning
 from learnrl.control import Greedy
-from learnrl.estimator import TableEstimator
+from learnrl.estimators import TableEstimator
 from learnrl.core import Agent, Memory
 
 from gym import spaces
@@ -125,7 +125,11 @@ class StandardAgent(Agent):
                              info)
 
     def learn(self, target_control=None):
+        logs = {}
+
         # Skip learning step if step_skip > 0
+        skip = self._skip()
+        logs.update({'skip': skip})
         if self._skip():
             return
 
@@ -136,19 +140,29 @@ class StandardAgent(Agent):
         if self.online or done[-1]:
             # Get expected rewards from self.evaluation
             target_control = target_control if target_control is not None else self.control
+            logs.update({'target_control': target_control})
+
             expected_rewards = self.evaluation._get_evaluation(reward, done, next_observation, self.action_values, self.action_visits, target_control=target_control)
 
             # Update estimators
-            self.action_values._fit(observations=observations, actions=actions, Y=expected_rewards)
-            if self.action_visits: self.action_visits._fit(observations=observations, actions=actions, Y=self.action_visits(observations, actions)+1)
+            action_values_logs = self.action_values._fit(observations, actions, Y=expected_rewards)
+            logs.update({'action_value': action_values_logs})
+            if self.action_visits: 
+                action_visits_logs = self.action_visits._fit(observations, actions, Y=self.action_visits(observations, actions)+1)
+                logs.update({'action_visit': action_visits_logs})
         
             # Forget memory if needed
+            logs.update({'forget': self.forget_after_update})
             if self.forget_after_update:
                 self.memory.forget()
         
             # Update hyperparameters
             self.control.update_exploration()
+            logs.update({'exploration': self.control.exploration})
             self.action_values.update_learning_rate()
+            logs.update({'learning_rate': self.action_values.learning_rate})
+        
+        return logs
         
     def _skip(self):
         if self.step_skip > 0:

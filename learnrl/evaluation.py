@@ -6,7 +6,7 @@ Evaluation methodes to modify the value fonctions from experiences
 """
 from learnrl.core import Memory
 from learnrl.control import Control
-from learnrl.estimator import Estimator
+from learnrl.estimators import Estimator
 
 import numpy as np
 from copy import copy
