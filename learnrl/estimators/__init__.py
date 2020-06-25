@@ -3,5 +3,5 @@
 
 from learnrl.estimators.estimator import Estimator
 from learnrl.estimators.numpy import TableEstimator
-from learnrl.estimators.keras import KerasEstimator
+from learnrl.estimators.tensorflow import KerasEstimator
 
