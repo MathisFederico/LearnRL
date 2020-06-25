@@ -287,7 +287,9 @@ class Playground():
         self.env = environement
         self.agents = agents
 
-    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0, callbacks=[], reward_handler=None, done_handler=None):
+    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0,
+                  callbacks=[], logger=None, reward_handler=None, done_handler=None):
+        
         """ Let the agent(s) play on the environement for a number of episodes.
         
         Arguments
@@ -322,7 +324,9 @@ class Playground():
             'learn': learn
         }
 
-        callbacks = CallbackList([Logger()] + callbacks)
+        logger = logger if logger else Logger()
+        callbacks.append(logger)
+        callbacks = CallbackList(callbacks)
         callbacks.set_params(params)
         callbacks.set_playground(self)
 

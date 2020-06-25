@@ -80,7 +80,7 @@ class Estimator():
     def _fit(self, observations, actions, Y):
         if observations is None or actions is None or Y is None :
             return
-        self.fit(observations, actions, Y)
+        return self.fit(observations, actions, Y)
     
     def fit(self, observations, actions, Y):
         """ Fit the estimator

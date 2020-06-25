@@ -67,11 +67,11 @@ class CallbackList():
         dt_name = f'dt_{key}'
 
         if hook == 'begin':
-            setattr(self, t_begin_name, time.time())
+            setattr(self, t_begin_name, time.time_ns())
         
         if hook == 'end':
             t_begin = getattr(self, t_begin_name)
-            dt = time.time() - t_begin
+            dt = (time.time_ns() - t_begin) / 1e9
             setattr(self, dt_name, dt)
             logs.update({dt_name: dt})
         
@@ -168,7 +168,7 @@ class Logger(Callback):
                        step_only_metrics=['done'],
                        step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
                        episode_only_metrics=[], 
-                       episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_episode~', 'dt_step~'],
+                       episode_metrics=['reward.sum', 'loss.last', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_episode~', 'dt_step~'],
                        cycle_metrics=['reward~rwd', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_episode~', 'dt_step~'],
                        cycle_only_metrics=[]):
 
@@ -183,7 +183,7 @@ class Logger(Callback):
 
         self.detailed_step_only_metrics = MetricList(detailed_step_only_metrics)
 
-        self._bar_lenght = 50    
+        self._bar_lenght = 100
 
     def on_step_begin(self, step, logs=None):
         text = f'Step {step+1}'
@@ -214,19 +214,18 @@ class Logger(Callback):
                     self._print_metric(metric, metric_value)
             print('-'*self._bar_lenght, end='\n\n')
         
-        if verbose in (1, 2):
-            for metric in self.episode_metrics:
-                if not metric == 'dt_episode':
-                    metric_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-                    if metric_value != 'N/A':
-                        attr_name = 'episode_' + metric.name
-                        self._update_attr(attr_name, metric_value, metric.operator)
+        for metric in self.episode_metrics:
+            if not metric == 'dt_episode':
+                metric_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
+                if metric_value != 'N/A':
+                    attr_name = self._get_attr_name('episode', metric)
+                    self._update_attr(attr_name, metric_value, metric.operator)
 
 
     def on_episode_begin(self, episode, logs=None):
         for metric in self.episode_metrics:
-            attrname = 'episode_' + metric.name
-            setattr(self, attrname, 0)
+            attrname = self._get_attr_name('episode', metric)
+            self._reset_attr(attrname, metric.operator)
 
         if self.params['verbose'] >= 2:
             text = "Episode " + self._get_episode_text(episode)
@@ -247,7 +246,7 @@ class Logger(Callback):
                     self._print_metric(metric, metric_value, end='\t| ')
             
             for metric in self.episode_metrics:
-                episode_name = 'episode_' + metric.name
+                episode_name = self._get_attr_name('episode', metric)
                 episode_value = getattr(self, episode_name, 'N/A') if not metric == 'dt_episode' else logs.get(metric.name)
                 if episode_value != 'N/A':
                      self._print_metric(metric, episode_value,  end='\t| ')
@@ -259,22 +258,16 @@ class Logger(Callback):
         
         if verbose == 1:
             for metric in self.cycle_metrics:
-                episode_name = 'episode_' + metric.name
+                episode_name = self._get_attr_name('episode', metric)
                 episode_value = getattr(self, episode_name, 'N/A') if not metric == 'dt_episode' else logs.get(metric.name)
-                
-                cycle_name = 'cycle_' + metric.name
-                self._update_attr(cycle_name, episode_value, metric.operator)
+                if episode_value != 'N/A':
+                    cycle_name = self._get_attr_name('cycle', metric)
+                    self._update_attr(cycle_name, episode_value, metric.operator)
 
     def on_cycle_begin(self, episode, logs=None):
-        self.avg_returns = np.zeros(self.n_agents)
-
-        self.cycle_seen_episodes = 0
-        self.cycle_episode_time = 0
-
-        self.cycle_seen_steps = 0
-        self.cycle_step_time = 0
-
-        self.cycle_loss = 0
+        for metric in self.cycle_metrics:
+            attrname = self._get_attr_name('cycle', metric)
+            self._reset_attr(attrname, metric.operator)
 
     def on_cycle_end(self, episode, logs=None):
          if self.params['verbose'] == 1:
@@ -286,7 +279,7 @@ class Logger(Callback):
                     self._print_metric(metric, metric_value, end='\t| ')
             
             for metric in self.cycle_metrics:
-                cycle_name = 'cycle_' + metric.name
+                cycle_name = self._get_attr_name('cycle', metric)
                 cycle_value = getattr(self, cycle_name, 'N/A')
                 if cycle_value != 'N/A':
                      self._print_metric(metric, cycle_value,  end='\t| ')
@@ -297,7 +290,7 @@ class Logger(Callback):
         self.n_agents = len(self.playground.agents)
         self.n_digits_episodes = int(np.log10(self.params['episodes'])) + 1
         if self.params['verbose'] >= 1:
-            print('***** Run started *****')
+            self._print_bar('Run started', '*')
 
     def on_run_end(self, logs=None):
         pass
@@ -320,21 +313,36 @@ class Logger(Callback):
         semibar_lenght = (self._bar_lenght - len(text)) // 2 - 1
         odd = (self._bar_lenght - len(text)) % 2 == 1
         print(line * semibar_lenght + f' {text} ' + line * (semibar_lenght + 1*odd), **kwargs)
+    
+    def _reset_attr(self, attr_name, operator):
+        if operator == 'avg':
+            metric_seen = attr_name + '_seen'
+            setattr(self, metric_seen, 0)
+        setattr(self, attr_name, 'N/A')
 
     def _update_attr(self, attr_name, last_value, operator):
-        previous_value = getattr(self, attr_name, 0)
+        previous_value = getattr(self, attr_name)
+
+        if previous_value == 'N/A':
+            previous_value = 0
 
         if operator == 'avg':
             metric_seen = attr_name + '_seen'
-            seen = getattr(self, metric_seen, 1)
-            setattr(self, attr_name, last_value + (last_value - previous_value) / seen)
-            setattr(self, metric_seen, seen + 1)
+            seen = getattr(self, metric_seen)
+            new_seen = seen + 1
+            setattr(self, metric_seen, new_seen)
+            setattr(self, attr_name, previous_value + (last_value - previous_value) / new_seen)
+            
         elif operator == 'sum':
             setattr(self, attr_name, last_value + previous_value)
         elif operator == 'last':
             setattr(self, attr_name, last_value)
         else:
             raise ValueError(f'Unknowed operator {operator}')
+    
+    @staticmethod
+    def _get_attr_name(prefix, metric):
+        return '_'.join((prefix, metric.name, metric.operator))
 
     def _get_episode_text(self, episode):
         text = f"{episode+1}"
