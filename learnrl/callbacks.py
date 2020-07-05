@@ -169,8 +169,9 @@ class Logger(Callback):
                        step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
                        episode_only_metrics=['dt_episode~'], 
                        episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
-                       cycle_metrics=['reward~rwd', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_episode~', 'dt_step~'],
-                       cycle_only_metrics=[]):
+                       cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                       cycle_only_metrics=['dt_episode~'],
+                       titles_on_top=True):
 
         self.cycle_only_metrics = MetricList(cycle_only_metrics)
         self.cycle_metrics = MetricList(cycle_metrics)
@@ -184,54 +185,62 @@ class Logger(Callback):
         self.detailed_step_only_metrics = MetricList(detailed_step_only_metrics)
 
         self._bar_lenght = 100
+        self._number_window = 9
+        self.titles_on_top = titles_on_top
 
     def on_step_begin(self, step, logs=None):
         text = f'Step {step+1}'
         if self.params['verbose'] == 3:
-            print(text, end='\t| ')
+            print(text + ' ' * (4 - len(str(step+1))), end=' | ')
         elif self.params['verbose'] > 3:
             self._print_bar('-', text)
     
     def on_step_end(self, step, logs={}):
         agent_id = logs.get('agent_id')
         verbose = self.params['verbose']
+        titles_on_top = False if verbose == 4 else self.titles_on_top
 
         if verbose > 2:
-            sep, end = ('\t| ', '\n') if verbose == 3 else (None, '')
+            sep, end = (' | ', '\n') if verbose == 3 else (None, '')
             if self.n_agents > 1:
                 print(f"Agent {agent_id}", end=sep)
-            self._print_metrics(self.step_only_metrics + self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end)                
+            self._print_metrics(self.step_only_metrics + self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end, titles_on_top=titles_on_top)                
 
         if verbose == 4:
-            self._print_metrics(self.detailed_step_only_metrics, 'logs', logs=logs)
+            self._print_metrics(self.detailed_step_only_metrics, 'logs', logs=logs, titles_on_top=titles_on_top)
             self._print_bar('-')
         
         self._update_metrics(self.episode_metrics, 'episode', logs=logs, agent_id=agent_id)
 
 
     def on_episode_begin(self, episode, logs=None):
+        verbose = self.params['verbose']
         for agent_id in range(self.n_agents):
             self._update_metrics(self.episode_metrics, 'episode', agent_id=agent_id, reset=True)
 
-        if self.params['verbose'] >= 2:
+        if verbose >= 2:
             text = "Episode " + self._get_episode_text(episode)
-            if self.params['verbose'] == 2:
+            if verbose == 2:
                 print(text, end=' | ')
             else:
                 self._print_bar('=', text)
+                if verbose == 3:
+                    self._print_titles(self.step_only_metrics + self.step_metrics, offset=' '*20 + '|', end='\n')
 
     def on_episode_end(self, episode, logs=None):
         verbose = self.params['verbose']
         if verbose >= 3:
             print()
-            print("Episode " + self._get_episode_text(episode), end=' | ')
+            print("Episode " + self._get_episode_text(episode), end=' | ')                
         
         if verbose >= 2:
-            self._print_metrics(self.episode_only_metrics, 'logs', logs=logs, sep='\t| ')
+            self._print_metrics(self.episode_only_metrics, 'logs', logs=logs, sep=' | ', titles_on_top=False)
+            if self.titles_on_top:
+                self._print_titles(self.episode_metrics, prefix='\n', offset=' '*12 + '|')
             for agent_id in range(self.n_agents):
                 if self.n_agents > 1:
                     print(end=f'\n    Agent {agent_id} | ')    
-                self._print_metrics(self.episode_metrics, 'attrs', prefix='episode', agent_id=agent_id, sep='\t| ')
+                self._print_metrics(self.episode_metrics, 'attrs', prefix='episode', agent_id=agent_id, sep=' | ')
 
         if verbose == 1:
             for agent_id in range(self.n_agents):
@@ -242,8 +251,6 @@ class Logger(Callback):
         if verbose > 2:
             self._print_bar('=')
 
-        # print(logs)
-
     def on_cycle_begin(self, episode, logs=None):
         for agent_id in range(self.n_agents):
             self._update_metrics(self.cycle_metrics, 'cycle', agent_id=agent_id, reset=True)
@@ -253,10 +260,12 @@ class Logger(Callback):
          if self.params['verbose'] == 1:
             print("Episode " + self._get_episode_text(episode), end=' | ')
             
-            self._print_metrics(self.cycle_only_metrics, 'logs', logs=logs, sep='\t| ')            
+            self._print_metrics(self.cycle_only_metrics, 'logs', logs=logs, sep=' | ', titles_on_top=False)
+            if self.titles_on_top:
+                self._print_titles(self.cycle_metrics, prefix='\n', offset=' '*12 + '|')       
             for agent_id in range(self.n_agents):
                 if self.n_agents > 1: print(end=f'\n    Agent {agent_id} | ')
-                self._print_metrics(self.cycle_metrics, 'attrs', prefix='cycle', agent_id=agent_id, sep='\t| ')
+                self._print_metrics(self.cycle_metrics, 'attrs', prefix='cycle', agent_id=agent_id, sep=' | ')
                     
             print()
 
@@ -291,8 +300,9 @@ class Logger(Callback):
             if src_value != 'N/A':
                 self._update_attr(target_name, src_value, metric.operator)
 
-    def _print_metrics(self, metric_list:MetricList, source:str, prefix=None, agent_id=None, logs=None, sep=None, end=''):
+    def _print_metrics(self, metric_list:MetricList, source:str, prefix=None, agent_id=None, logs=None, sep=None, end='', titles_on_top=None):
         """ Print a metric list """
+        titles_on_top = titles_on_top if titles_on_top is not None else self.titles_on_top
         for metric in metric_list:
             if source.startswith('attr'):
                 name = self._get_attr_name(prefix, metric, agent_id)
@@ -302,19 +312,19 @@ class Logger(Callback):
             
             pass_metric = isinstance(value, str) and value == 'N/A'
             if not pass_metric:
-                self._print_metric(metric, value, end=sep)
+                self._print_metric(metric, value, titles_on_top, end=sep)
         
         print(end=end)
 
-    def _print_metric(self, metric:Metric, metric_value, **kwargs):
+    def _print_metric(self, metric:Metric, metric_value, titles_on_top, **kwargs):
         """ Print a single metric based on the input type """
         if metric.name.startswith('dt_'):
             level = metric.name.split('_')[1]
             metric_display = self._get_time_text(metric_value, level)
         
-        elif isinstance(metric_value, (float, np.float32, np.float64)):
-            if abs(metric_value) < 100 and abs(metric_value) > 0.01:
-                metric_display = f"{metric_value:.2f}"
+        elif isinstance(metric_value, (int, float, np.float32, np.float64)):
+            if metric_value == 0 or (abs(metric_value) < 1000 and abs(metric_value) > 0.001):
+                metric_display = f"{metric_value:.3g}"
             else:
                 metric_display = f"{metric_value:.2E}"
         
@@ -325,16 +335,36 @@ class Logger(Callback):
             metric_display = str(metric_value)
         
         space = ' ' if len(metric.surname) > 0 else ''
-        print(f"{metric.surname.capitalize()}" + space + metric_display, **kwargs)
+        if titles_on_top:
+            prefix = ''
+        else:
+            prefix = f"{metric.surname.capitalize()}" + space
+        
+        metric_display = metric_display + (self._number_window - len(metric_display)) * ' '
+        print(prefix + metric_display, **kwargs)
     
+    def _print_titles(self, metric_list:MetricList, prefix='', offset='', end=''):
+        """ Print the titles of the metric list """
+        print(prefix, end=offset)
+        for metric in metric_list:
+            if not metric.name.startswith('dt'):
+                surname = metric.surname.capitalize()[:self._number_window]
+                display_name = self._text_in_middle(' ', surname, self._number_window+2)
+                print(display_name, end='|')
+        print(end=end)
+
     def _print_bar(self, line, text=None, **kwargs):
         """ Print a bar of line with centered text """
         if text:
-            semibar_lenght = (self._bar_lenght - len(text)) // 2 - 1
-            odd = (self._bar_lenght - len(text)) % 2 == 1
-            print(line * semibar_lenght + f' {text} ' + line * (semibar_lenght + 1*odd), **kwargs)
+            print(self._text_in_middle(line, text, self._bar_lenght), **kwargs)
         else:
             print(line * self._bar_lenght)
+
+    @staticmethod
+    def _text_in_middle(line, text, lenght):
+        semibar_lenght = (lenght - len(text)) // 2 - 1
+        odd = (lenght - len(text)) % 2 == 1
+        return line * semibar_lenght + f' {text} ' + line * (semibar_lenght + 1*odd)
     
     def _reset_attr(self, attr_name, operator):
         """ Reset a metric attribute based on the metric operator """
@@ -381,16 +411,25 @@ class Logger(Callback):
     
     def _get_time_text(self, dt, unit):
         """ Get the display text for a time mesurment """
-        unit = 'eps' if unit == 'episode' else unit
+        if unit == 'episode':
+            unit = 'eps'
         if dt < 1e-9:
-            return f'Instant'
-        if dt < 1e-6:
-            return f'{dt/1e-9:.01f}ns/{unit}'
-        if dt < 1e-3:
-            return f'{dt/1e-6:.01f}us/{unit}'
-        if dt < 1:
-            return f'{dt/1e-3:.01f}ms/{unit}'
-        return f'{dt:.01f}s/{unit}'
+            return 'N/A         '
+        elif dt < 1e-6:
+            time_display = f'{dt/1e-9:.01f}'
+            time_unit = 'ns'
+        elif dt < 1e-3:
+            time_display = f'{dt/1e-6:.01f}'
+            time_unit = 'us'
+        elif dt < 1:
+            time_display = f'{dt/1e-3:.01f}'
+            time_unit = 'ms'
+        else:
+            time_display = f'{dt:.01f}'
+            time_unit = 's'
+        
+        margin = (5 - len(time_display)) * ' '
+        return margin + f'{time_display}{time_unit}/{unit}'
 
     @staticmethod
     def _extract_metric_from_logs(metric_name, logs, agent_id=None):
