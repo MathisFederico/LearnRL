@@ -325,8 +325,7 @@ class Playground():
         }
 
         logger = logger if logger else Logger()
-        callbacks.append(logger)
-        callbacks = CallbackList(callbacks)
+        callbacks = CallbackList(callbacks + [logger])
         callbacks.set_params(params)
         callbacks.set_playground(self)
 
@@ -357,7 +356,10 @@ class Playground():
                 if render: self.env.render()
 
                 agent_id = self.env.turn(observation) if isinstance(self.env, MultiEnv) else 0
-                     
+                if agent_id >= len(previous):
+                    raise ValueError(f'Not enough agents to play environement {self.env}')
+                agent = self.agents[agent_id]
+
                 prev = previous[agent_id]
                 if learn and prev['observation'] is not None:
                     agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
@@ -367,7 +369,6 @@ class Playground():
                 logs.update({'step':step, 'agent_id':agent_id, 'observation':observation})
                 callbacks.on_step_begin(step, logs)
 
-                agent = self.agents[agent_id]
                 action = agent.act(observation, greedy=not learn)
                 next_observation, reward, done, info = self.env.step(action)
 
@@ -417,7 +418,7 @@ class Playground():
         if learn:
             warnings.warn("learn should be False in Playground.test(), otherwise the agents will not act greedy and can have random behavior", UserWarning)
         if not render and verbose == 0:
-            warnings.warn("you should set verbose > 0 or render=True to see something ...", UserWarning)
+            warnings.warn("you should set verbose > 0 or render=True to have any feedback ...", UserWarning)
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
     
 
