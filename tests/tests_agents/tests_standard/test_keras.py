@@ -7,59 +7,46 @@ from learnrl.estimators import KerasEstimator
 from learnrl.agents import StandardAgent
 
 from gym import spaces
+import tensorflow as tf
 
 def test_fit():
-    
-    class LinearModel():
-
-        def __init__(self, observation_size, action_size, learning_rate):
-            self.weights = np.zeros((observation_size, action_size))
-            self.learning_rate = learning_rate
-
-        def predict(self, observations):
-            return np.dot(observations, self.weights)
-
-        def fit(self, x, y, **kwargs):
-            y_pred = self.predict(x)
-            self.weights -= self.learning_rate * np.dot(np.transpose(x), (y_pred - y))
-
-    class DummyEstimator(KerasEstimator):
-
-        def build(self):
-            self.model = LinearModel(self.observation_size, self.action_size, self.learning_rate)
-
-        def preprocess(self, observations, actions):
-            return np.eye(self.observation_size)[observations]
-    
-    observation_size, action_size = 3, 2
-    estimator = DummyEstimator(spaces.Discrete(observation_size), spaces.Discrete(action_size), learning_rate=1)
-
-    observations = np.array([0, 2, 0, 1])
-    actions = np.array([0, 0, 1, 1])
-    returns = np.array([1, -1, 1, -1])
-    estimator.fit(observations, actions, returns)
-
-    expected_weights = np.array([[1, 1], [0, -1],[-1, 0]])
-    new_returns = estimator.predict(observations)[np.arange(len(actions)), actions]
-
-    assert np.allclose(new_returns, returns)
-    assert np.allclose(estimator.model.weights, expected_weights)
-
-
-@pytest.mark.slow
-def test_keras_pipeline():
-    from keras.layers import Conv2D, Flatten, Dense
-    from keras.models import Sequential
-    from keras.optimizers import Adam
 
     class MyEstimator(KerasEstimator):
 
         def build(self):
-            self.model = Sequential()
-            self.model.add(Dense(self.observation_size, activation='relu', input_shape=self.observation_shape))
-            self.model.add(Dense(self.action_size))
+            self.model = tf.keras.experimental.LinearModel(units=self.action_size, use_bias=False)
+            self.model.compile(tf.keras.optimizers.SGD(learning_rate=self.learning_rate), loss='mse')
 
-            self.model.compile(Adam(learning_rate=self.learning_rate), loss='mse')
+        def preprocess(self, observations, actions):
+            return tf.one_hot(observations, self.observation_size, on_value=1, off_value=0)
+    
+    observation_size, action_size = 3, 2
+    observations = np.array([0, 2, 0, 1])
+    actions = np.array([0, 0, 1, 1])
+    returns = np.array([1, -1, 1, -1], dtype=np.float32)
+
+    estimator = MyEstimator(spaces.Discrete(observation_size), spaces.Discrete(action_size), learning_rate=len(observations))
+    estimator.fit(observations, actions, returns)
+
+    expected_weights = np.array([[1, 1], [0, -1],[-1, 0]], dtype=np.float32)
+    new_returns = estimator.predict(observations).numpy()[np.arange(len(actions)), actions]
+
+    print(new_returns, returns)
+    assert np.allclose(new_returns, returns)
+    print(estimator.model.weights[0].numpy(), expected_weights)
+    assert np.allclose(estimator.model.weights[0].numpy(), expected_weights)
+
+
+def test_keras_pipeline():
+    
+    class MyEstimator(KerasEstimator):
+
+        def build(self):
+            self.model = tf.keras.models.Sequential()
+            self.model.add(tf.keras.layers.Dense(self.observation_size, activation='relu', input_shape=self.observation_shape))
+            self.model.add(tf.keras.layers.Dense(self.action_size))
+
+            self.model.compile(tf.keras.optimizers.Adam(learning_rate=self.learning_rate), loss='mse')
 
         def preprocess(self, observations, actions):
             return observations

@@ -24,7 +24,7 @@ class KerasEstimator(Estimator):
 
     def build(self, **kwargs):
         raise NotImplementedError
-
+    
     def preprocess(self, observations:tf.Tensor, actions:tf.Tensor=None):
         raise NotImplementedError
 
