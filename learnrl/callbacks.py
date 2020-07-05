@@ -167,8 +167,8 @@ class Logger(Callback):
     def __init__(self, detailed_step_only_metrics=['observation', 'action', 'next_observation'],
                        step_only_metrics=['done'],
                        step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
-                       episode_only_metrics=[], 
-                       episode_metrics=['reward.sum', 'loss.last', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_episode~', 'dt_step~'],
+                       episode_only_metrics=['dt_episode~'], 
+                       episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                        cycle_metrics=['reward~rwd', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_episode~', 'dt_step~'],
                        cycle_only_metrics=[]):
 
@@ -190,137 +190,161 @@ class Logger(Callback):
         if self.params['verbose'] == 3:
             print(text, end='\t| ')
         elif self.params['verbose'] > 3:
-            self._print_bar(text, '-')
-
+            self._print_bar('-', text)
+    
     def on_step_end(self, step, logs={}):
         agent_id = logs.get('agent_id')
         verbose = self.params['verbose']
 
-        if self.n_agents > 1 and verbose > 2:
-            print(f"Agent :{logs.get('agent_id')}", end='\t| ')
-
         if verbose > 2:
-            for metric in self.step_only_metrics + self.step_metrics:
-                metric_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-                if metric_value != 'N/A':
-                    end = '\t| ' if verbose == 3 else None
-                    self._print_metric(metric, metric_value, end=end)                    
-            if verbose == 3: print()
+            sep, end = ('\t| ', '\n') if verbose == 3 else (None, '')
+            if self.n_agents > 1:
+                print(f"Agent {agent_id}", end=sep)
+            self._print_metrics(self.step_only_metrics + self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end)                
 
-        if verbose > 3:
-            for metric in self.detailed_step_only_metrics:
-                metric_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-                if metric_value != 'N/A':
-                    self._print_metric(metric, metric_value)
-            print('-'*self._bar_lenght, end='\n\n')
+        if verbose == 4:
+            self._print_metrics(self.detailed_step_only_metrics, 'logs', logs=logs)
+            self._print_bar('-')
         
-        for metric in self.episode_metrics:
-            if not metric == 'dt_episode':
-                metric_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-                if metric_value != 'N/A':
-                    attr_name = self._get_attr_name('episode', metric)
-                    self._update_attr(attr_name, metric_value, metric.operator)
+        self._update_metrics(self.episode_metrics, 'episode', logs=logs, agent_id=agent_id)
 
 
     def on_episode_begin(self, episode, logs=None):
-        for metric in self.episode_metrics:
-            attrname = self._get_attr_name('episode', metric)
-            self._reset_attr(attrname, metric.operator)
+        for agent_id in range(self.n_agents):
+            self._update_metrics(self.episode_metrics, 'episode', agent_id=agent_id, reset=True)
 
         if self.params['verbose'] >= 2:
             text = "Episode " + self._get_episode_text(episode)
             if self.params['verbose'] == 2:
                 print(text, end=' | ')
             else:
-                self._print_bar(text, '=')
+                self._print_bar('=', text)
 
     def on_episode_end(self, episode, logs=None):
         verbose = self.params['verbose']
-        if verbose >= 2:
-            if verbose == 3:
-                print()
-
-            for metric in self.episode_only_metrics:
-                metric_value = self._extract_metric_from_logs(metric, logs)
-                if metric_value != 'N/A':
-                    self._print_metric(metric, metric_value, end='\t| ')
-            
-            for metric in self.episode_metrics:
-                episode_name = self._get_attr_name('episode', metric)
-                episode_value = getattr(self, episode_name, 'N/A') if not metric == 'dt_episode' else logs.get(metric.name)
-                if episode_value != 'N/A':
-                     self._print_metric(metric, episode_value,  end='\t| ')
-
+        if verbose >= 3:
             print()
-
-        if verbose > 2:
-            print("="*self._bar_lenght, end='\n\n')
+            print("Episode " + self._get_episode_text(episode), end=' | ')
         
+        if verbose >= 2:
+            self._print_metrics(self.episode_only_metrics, 'logs', logs=logs, sep='\t| ')
+            for agent_id in range(self.n_agents):
+                if self.n_agents > 1:
+                    print(end=f'\n    Agent {agent_id} | ')    
+                self._print_metrics(self.episode_metrics, 'attrs', prefix='episode', agent_id=agent_id, sep='\t| ')
+
         if verbose == 1:
-            for metric in self.cycle_metrics:
-                episode_name = self._get_attr_name('episode', metric)
-                episode_value = getattr(self, episode_name, 'N/A') if not metric == 'dt_episode' else logs.get(metric.name)
-                if episode_value != 'N/A':
-                    cycle_name = self._get_attr_name('cycle', metric)
-                    self._update_attr(cycle_name, episode_value, metric.operator)
+            for agent_id in range(self.n_agents):
+                self._update_metrics(self.cycle_metrics, 'cycle', 'episode', logs, agent_id)
+        
+        if verbose > 1:
+            print()
+        if verbose > 2:
+            self._print_bar('=')
+
+        # print(logs)
 
     def on_cycle_begin(self, episode, logs=None):
-        for metric in self.cycle_metrics:
-            attrname = self._get_attr_name('cycle', metric)
-            self._reset_attr(attrname, metric.operator)
+        for agent_id in range(self.n_agents):
+            self._update_metrics(self.cycle_metrics, 'cycle', agent_id=agent_id, reset=True)
+
 
     def on_cycle_end(self, episode, logs=None):
          if self.params['verbose'] == 1:
             print("Episode " + self._get_episode_text(episode), end=' | ')
             
-            for metric in self.cycle_only_metrics:
-                metric_value = self._extract_metric_from_logs(metric, logs)
-                if metric_value != 'N/A':
-                    self._print_metric(metric, metric_value, end='\t| ')
-            
-            for metric in self.cycle_metrics:
-                cycle_name = self._get_attr_name('cycle', metric)
-                cycle_value = getattr(self, cycle_name, 'N/A')
-                if cycle_value != 'N/A':
-                     self._print_metric(metric, cycle_value,  end='\t| ')
-            
+            self._print_metrics(self.cycle_only_metrics, 'logs', logs=logs, sep='\t| ')            
+            for agent_id in range(self.n_agents):
+                if self.n_agents > 1: print(end=f'\n    Agent {agent_id} | ')
+                self._print_metrics(self.cycle_metrics, 'attrs', prefix='cycle', agent_id=agent_id, sep='\t| ')
+                    
             print()
 
     def on_run_begin(self, logs=None):
         self.n_agents = len(self.playground.agents)
         self.n_digits_episodes = int(np.log10(self.params['episodes'])) + 1
-        if self.params['verbose'] >= 1:
-            self._print_bar('Run started', '*')
 
     def on_run_end(self, logs=None):
         pass
 
-    def _print_metric(self, metric, metric_value, **kwargs):
+    def _update_metrics(self, metric_list:MetricList, target_prefix, source_prefix=None, logs=None, agent_id=None, reset=False):
+        """ Update the logger attributes based on a metric list """
+        for metric in metric_list:
+            target_name = self._get_attr_name(target_prefix, metric, agent_id)
+
+            if reset:
+                self._reset_attr(target_name, metric.operator)
+                continue
+
+            # Search for source-wise attr
+            if source_prefix is not None:
+                src_name = self._get_attr_name(source_prefix, metric, agent_id)
+                src_value = getattr(self, src_name, 'N/A')
+            else:
+                src_value = 'N/A'
+
+            # If not found or no source, search in logs directly
+            if src_value == 'N/A':
+                src_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
+            
+            # Update attr if a value was found
+            if src_value != 'N/A':
+                self._update_attr(target_name, src_value, metric.operator)
+
+    def _print_metrics(self, metric_list:MetricList, source:str, prefix=None, agent_id=None, logs=None, sep=None, end=''):
+        """ Print a metric list """
+        for metric in metric_list:
+            if source.startswith('attr'):
+                name = self._get_attr_name(prefix, metric, agent_id)
+                value = getattr(self, name, 'N/A')
+            elif source.startswith('log'):
+                value = self._extract_metric_from_logs(metric.name, logs, agent_id)
+            
+            pass_metric = isinstance(value, str) and value == 'N/A'
+            if not pass_metric:
+                self._print_metric(metric, value, end=sep)
+        
+        print(end=end)
+
+    def _print_metric(self, metric:Metric, metric_value, **kwargs):
+        """ Print a single metric based on the input type """
         if metric.name.startswith('dt_'):
             level = metric.name.split('_')[1]
             metric_display = self._get_time_text(metric_value, level)
+        
         elif isinstance(metric_value, (float, np.float32, np.float64)):
             if abs(metric_value) < 100 and abs(metric_value) > 0.01:
                 metric_display = f"{metric_value:.2f}"
             else:
                 metric_display = f"{metric_value:.2E}"
+        
+        elif isinstance(metric_value, np.ndarray):
+            metric_display = '\n' + str(metric_value)
+        
         else:
             metric_display = str(metric_value)
+        
         space = ' ' if len(metric.surname) > 0 else ''
         print(f"{metric.surname.capitalize()}" + space + metric_display, **kwargs)
     
-    def _print_bar(self, text, line, **kwargs):
-        semibar_lenght = (self._bar_lenght - len(text)) // 2 - 1
-        odd = (self._bar_lenght - len(text)) % 2 == 1
-        print(line * semibar_lenght + f' {text} ' + line * (semibar_lenght + 1*odd), **kwargs)
+    def _print_bar(self, line, text=None, **kwargs):
+        """ Print a bar of line with centered text """
+        if text:
+            semibar_lenght = (self._bar_lenght - len(text)) // 2 - 1
+            odd = (self._bar_lenght - len(text)) % 2 == 1
+            print(line * semibar_lenght + f' {text} ' + line * (semibar_lenght + 1*odd), **kwargs)
+        else:
+            print(line * self._bar_lenght)
     
     def _reset_attr(self, attr_name, operator):
+        """ Reset a metric attribute based on the metric operator """
         if operator == 'avg':
             metric_seen = attr_name + '_seen'
             setattr(self, metric_seen, 0)
         setattr(self, attr_name, 'N/A')
 
     def _update_attr(self, attr_name, last_value, operator):
+        """ Update a metric attribute based on the metric operator and the last metric value """
         previous_value = getattr(self, attr_name)
 
         if previous_value == 'N/A':
@@ -341,16 +365,22 @@ class Logger(Callback):
             raise ValueError(f'Unknowed operator {operator}')
     
     @staticmethod
-    def _get_attr_name(prefix, metric):
-        return '_'.join((prefix, metric.name, metric.operator))
-
+    def _get_attr_name(prefix, metric, agent_id=None):
+        """ Get the attribute name of a metric/agent couple """
+        if agent_id:
+            return '_'.join((prefix, "agent" + str(agent_id), metric.name))
+        else:
+            return '_'.join((prefix, metric.name))
+        
     def _get_episode_text(self, episode):
+        """ Get the display text for an episode """
         text = f"{episode+1}"
         text = " "*(self.n_digits_episodes - len(text)) + text
         text += f"/{self.params['episodes']}"
         return text
     
     def _get_time_text(self, dt, unit):
+        """ Get the display text for a time mesurment """
         unit = 'eps' if unit == 'episode' else unit
         if dt < 1e-9:
             return f'Instant'
@@ -363,7 +393,8 @@ class Logger(Callback):
         return f'{dt:.01f}s/{unit}'
 
     @staticmethod
-    def _extract_metric_from_logs(metric_name, logs, agent_id=-1):
+    def _extract_metric_from_logs(metric_name, logs, agent_id=None):
+        """ Extract the last value of a metric from logs (specified for an agent or not) """
 
         def _search_logs(metric_name, logs:dict):
             if logs is None or metric_name in logs:
@@ -378,16 +409,15 @@ class Logger(Callback):
             return _logs
     
         _logs = None
-        if agent_id != -1:
-            agent_logs = logs.get(f'agent_{agent_id}')
-            if metric_name in logs:
-                _logs = logs
-            elif agent_logs is not None:
-                _logs = _search_logs(metric_name, agent_logs)
+        if metric_name in logs:
+            _logs = logs
         else:
-            _logs = _search_logs(metric_name, _logs)
+            if agent_id is not None:
+                agent_logs = logs.get(f'agent_{agent_id}')
+                _logs = _search_logs(metric_name, agent_logs)
+            else:
+                _logs = _search_logs(metric_name, _logs)
         
         value = _logs.get(metric_name) if _logs is not None else 'N/A'
-        
         return value
 
