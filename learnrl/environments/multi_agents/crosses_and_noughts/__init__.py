@@ -14,7 +14,7 @@ class CrossesAndNoughtsGame():
 
     """Logic of the CrossesAndNoughts game"""
 
-    def __init__(self):
+    def __init__(self, penality=0.01):
         self.grid = np.zeros((3,3), dtype=np.uint8)
         self.crosses = 1
         self.nought = 2
@@ -211,11 +211,12 @@ class CrossesAndNoughtsGame():
 
 class CrossesAndNoughtsEnv(MultiEnv):
     
-    def __init__(self, frame_limit=0):
+    def __init__(self, penality=0.1, frame_limit=0):
         self.game = CrossesAndNoughtsGame()
         self.action_space = spaces.MultiDiscrete((3, 3))
         self.observation_space = spaces.MultiDiscrete(3 * np.ones((3, 3), dtype=np.int64))
         self.frame_limit = frame_limit
+        self.penality = penality
 
     def turn(self, observation):
         nb_X = np.sum(observation==1)
@@ -246,7 +247,7 @@ class CrossesAndNoughtsEnv(MultiEnv):
             if winner == player: reward, done = 1, False
             elif winner == other_player: reward, done = -1, True
             elif winner == 3: done = True
-        else: reward, done = -1, False
+        else: reward, done = -self.penality, False
 
         observation = self.game.getObservation()
 
