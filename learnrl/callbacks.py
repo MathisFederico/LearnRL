@@ -368,10 +368,10 @@ class Logger(Callback):
     
     def _reset_attr(self, attr_name, operator):
         """ Reset a metric attribute based on the metric operator """
+        setattr(self, attr_name, 'N/A')
         if operator == 'avg':
             metric_seen = attr_name + '_seen'
             setattr(self, metric_seen, 0)
-        setattr(self, attr_name, 'N/A')
 
     def _update_attr(self, attr_name, last_value, operator):
         """ Update a metric attribute based on the metric operator and the last metric value """
@@ -389,8 +389,10 @@ class Logger(Callback):
             
         elif operator == 'sum':
             setattr(self, attr_name, last_value + previous_value)
+        
         elif operator == 'last':
             setattr(self, attr_name, last_value)
+        
         else:
             raise ValueError(f'Unknowed operator {operator}')
     

@@ -292,8 +292,8 @@ class Playground():
         
         """ Let the agent(s) play on the environement for a number of episodes.
         
-        Arguments
-        ---------
+        Parameters
+        ----------
             episodes: int
                 Number of episodes to run.
             render: bool
