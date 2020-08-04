@@ -5,8 +5,7 @@ from gym import spaces
 from learnrl.core import MultiEnv, Agent
 import numpy as np
 from copy import deepcopy
-import pygame
-from pygame.transform import scale
+
 from itertools import product
 import os
 
@@ -77,6 +76,9 @@ class CrossesAndNoughtsGame():
         return 0
 
     def initPygame(self, scale_factor=5):
+        import pygame
+        from pygame.transform import scale
+        
         # pygame.quit()
         pygame.init() # pylint: disable=E1101 
                 
@@ -106,7 +108,7 @@ class CrossesAndNoughtsGame():
         pygame.display.flip()
     
     def render(self, frame_limit):
-
+        
         def getPosition(i, j):
             pos = np.array((34*self.scale_factor*i, 34*self.scale_factor*j), dtype=int)
             return tuple(pos)
@@ -118,6 +120,7 @@ class CrossesAndNoughtsGame():
             return "key doesn't exist"
 
         if not self.isPygameInit:
+            import pygame
             self.initPygame()
             self.isPygameInit = True
 
