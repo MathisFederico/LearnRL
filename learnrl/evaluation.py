@@ -4,7 +4,7 @@
 """
 Evaluation methodes to modify the value fonctions from experiences
 """
-from learnrl.core import Memory
+from learnrl.memory import Memory
 from learnrl.control import Control
 from learnrl.estimators import Estimator
 
