@@ -9,7 +9,11 @@ class Estimator():
 
     """ Estimator base object
 
-    The methods build, fit and predict must be specified.
+    The methods must be specified:
+     - build(self, **kwargs) -> None
+     - fit(self, observations, actions, Y) -> None
+     - predict(self, observations, actions) -> Y
+      
     Kwargs are passed to the build method.
 
     Arguments
