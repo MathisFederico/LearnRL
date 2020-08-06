@@ -2,7 +2,7 @@ LearnRL's Core
 ==============
 
 LearnRL is based on those core objects: :ref:`Playground`,
-:ref:`Agent`, :ref:`MultiEnv`, :ref:`Memory`.
+:ref:`Agent`, :ref:`TurnEnv`, :ref:`Memory`.
 
 They are all linked by the :ref:`Playground`, as showned by this:
 
@@ -15,7 +15,7 @@ They are all linked by the :ref:`Playground`, as showned by this:
 Playground
 ----------
 
-.. autoclass:: learnrl.core.Playground
+.. autoclass:: learnrl.playground.Playground
    :members:
 
 
@@ -24,16 +24,16 @@ Playground
 Agent
 -----
 
-.. autoclass:: learnrl.core.Agent
+.. autoclass:: learnrl.agent.Agent
    :members:
 
 
-.. _MultiEnv:
+.. _TurnEnv:
 
 MultiEnv
 --------
 
-.. autoclass:: learnrl.core.MultiEnv
+.. autoclass:: learnrl.envs.TurnEnv
    :members:
 
 
@@ -51,7 +51,7 @@ Callbacks
 Memory
 ------
 
-.. autoclass:: learnrl.core.Memory
+.. autoclass:: learnrl.memory.Memory
    :members:
 
 .. |ndarray| replace:: :class:`numpy.ndarray`

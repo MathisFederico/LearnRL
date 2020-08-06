@@ -6,18 +6,18 @@ Estimator
 Estimator API
 -------------
 
-.. autoclass:: learnrl.estimator.Estimator
+.. autoclass:: learnrl.estimators.Estimator
    :members:
    :undoc-members:
 
 Build-in estimators
 -------------------
 
-.. autoclass:: learnrl.estimator.TableEstimator
+.. autoclass:: learnrl.estimators.TableEstimator
    :members:
    :undoc-members:
 
-.. autoclass:: learnrl.estimator.KerasEstimator
+.. autoclass:: learnrl.estimators.KerasEstimator
    :members:
    :undoc-members:
 
