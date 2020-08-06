@@ -3,7 +3,11 @@
 
 __version__ = "0.2.0"
 
-from learnrl.core import *
+from learnrl.agent import Agent
+from learnrl.envs import TurnEnv
+from learnrl.playground import Playground
+from learnrl.memory import Memory
+
 from learnrl.estimators import Estimator
 from learnrl.control import Control
 from learnrl.evaluation import Evaluation

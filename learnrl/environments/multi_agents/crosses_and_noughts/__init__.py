@@ -2,12 +2,14 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 from gym import spaces
-from learnrl.core import MultiEnv, Agent
 import numpy as np
 from copy import deepcopy
 
 from itertools import product
 import os
+
+from learnrl.agent import Agent
+from learnrl.envs import TurnEnv
 
 class CrossesAndNoughtsGame():
 
@@ -212,7 +214,7 @@ class CrossesAndNoughtsGame():
         self.__init__()
 
 
-class CrossesAndNoughtsEnv(MultiEnv):
+class CrossesAndNoughtsEnv(TurnEnv):
     
     def __init__(self, penality=0.1, frame_limit=0):
         self.game = CrossesAndNoughtsGame()

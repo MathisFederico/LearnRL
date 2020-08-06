@@ -7,10 +7,10 @@ np.random.seed(42)
 
 from copy import deepcopy
 
+from learnrl import Playground, Memory
+
 from learnrl.environments import RdNimEnv
 from learnrl.agents import StandardAgent
-from learnrl.core import Playground
-from learnrl.memory import Memory
 from learnrl.evaluation import MonteCarlo, TemporalDifference, QLearning
 from learnrl.control import Greedy, Ucb, Puct
 
