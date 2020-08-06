@@ -19,13 +19,13 @@ class Estimator():
     Arguments
     ---------
         observation_space: |gym.Space|
-            The observation space of the agent
+            The observation space of the agent.
         action_space: |gym.Space|
-            The action space of the agent
+            The action space of the agent.
         learning_rate: float
-            The learning rate of the estimator
+            The learning rate of the estimator.
         learning_rate_decay: float
-            The learning rate decay of the estimator
+            The learning rate decay of the estimator.
         verbose: int
             The amount of informations to be logged by the agent, 0 is silent.
 
@@ -54,7 +54,6 @@ class Estimator():
         action_decoder: func
             The decoder of the action space (identity by default)
         
-    
     """
 
     def __init__(self, observation_space, action_space, learning_rate=0.1, learning_rate_decay=0, step_skip=0, verbose=0,**kwargs):
