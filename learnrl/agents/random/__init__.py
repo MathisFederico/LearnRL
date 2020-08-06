@@ -1,7 +1,7 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-from learnrl.core import Agent
+from learnrl import Agent
 from learnrl.control import Random
 
 class RandomAgent(Agent):
