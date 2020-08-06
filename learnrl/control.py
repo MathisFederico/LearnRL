@@ -5,7 +5,7 @@
 Control methodes to improve the policy based on value fonctions
 """
 import numpy as np
-from learnrl.agent_parts.estimator import Estimator
+from learnrl.estimators import Estimator
 
 class Control():
 
@@ -16,7 +16,7 @@ class Control():
 
     :Example:
 
-    >>> from learnrl.agent_parts.control import Control
+    >>> from learnrl.control import Control
     ...
     ... class Greedy(Control):
     ...
@@ -114,7 +114,7 @@ class Control():
         """ Update the exploration constant
 
         By default, uses exploration_decay (or self.decay) to update exploration 
-        with formula exploration *= (1 - decay).
+        with formula :math:`exploration *= (1 - decay)`.
 
         If this method is called with a float argument, exploration will update to that float.
         

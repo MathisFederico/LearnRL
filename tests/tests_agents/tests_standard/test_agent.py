@@ -4,7 +4,7 @@
 import pytest
 
 from learnrl.agents import RandomAgent, StandardAgent
-from learnrl.agent_parts.control import Greedy
+from learnrl.control import Greedy
 import numpy as np
 from gym.spaces import Discrete, MultiDiscrete
 

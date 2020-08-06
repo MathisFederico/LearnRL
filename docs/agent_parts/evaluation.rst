@@ -6,21 +6,21 @@ Evaluation
 Evaluation API
 --------------
 
-.. autoclass:: learnrl.agent_parts.evaluation.Evaluation
+.. autoclass:: learnrl.evaluation.Evaluation
    :members:
    :undoc-members:
 
 Build-in evaluations
 --------------------
 
-.. autoclass:: learnrl.agent_parts.evaluation.MonteCarlo
+.. autoclass:: learnrl.evaluation.MonteCarlo
    :members:
    :undoc-members:
 
-.. autoclass:: learnrl.agent_parts.evaluation.TemporalDifference
+.. autoclass:: learnrl.evaluation.TemporalDifference
    :members:
    :undoc-members:
 
-.. autoclass:: learnrl.agent_parts.evaluation.QLearning
+.. autoclass:: learnrl.evaluation.QLearning
    :members:
    :undoc-members:

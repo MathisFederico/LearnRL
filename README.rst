@@ -11,11 +11,11 @@ About LearnRL
 
    import learnrl as rl
    from learnrl.environments import CrossesAndNoughtsEnv
-   from learnrl.agents import TableAgent
+   from learnrl.agents import StandardAgent
 
    env = CrossesAndNoughtsEnv()
-   agent1 = TableAgent(state_space=env.observation_space, action_space=env.action_space)
-   agent2 = TableAgent(state_space=env.observation_space, action_space=env.action_space)
+   agent1 = StandardAgent(state_space=env.observation_space, action_space=env.action_space)
+   agent2 = StandardAgent(state_space=env.observation_space, action_space=env.action_space)
 
    agents = [agent1, agent2]
    pg = rl.Playground(env, agents)
@@ -41,6 +41,7 @@ Documentation
 -------------
 
 See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details
+See the `developpement documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see whats comming !
 
 Contribute
 ----------

@@ -10,8 +10,8 @@ from copy import deepcopy
 from learnrl.environments import RdNimEnv
 from learnrl.agents import StandardAgent
 from learnrl.core import Memory, Playground
-from learnrl.agent_parts.evaluation import MonteCarlo, TemporalDifference, QLearning
-from learnrl.agent_parts.control import Greedy, Ucb, Puct
+from learnrl.evaluation import MonteCarlo, TemporalDifference, QLearning
+from learnrl.control import Greedy, Ucb, Puct
 
 
 @pytest.fixture
@@ -30,7 +30,6 @@ def pertinent_observations(n_triplets):
 def expected_optimal_actions(n_triplets):
     return np.concatenate([(0, 1, 2) for _ in range(n_triplets-1)])
 
-@pytest.mark.slow
 def test_evalutations(env, pertinent_observations, expected_optimal_actions):
     evaluations = [
         (QLearning(learning_rate=0.3), True),
@@ -56,8 +55,6 @@ def test_evalutations(env, pertinent_observations, expected_optimal_actions):
         if not np.all(pertinent_actions==expected_optimal_actions):
             raise ValueError(f'Got policy {pertinent_actions} instead of {expected_optimal_actions} for evaluation {str(evaluation)}')
 
-
-@pytest.mark.slow
 def test_controls(env, pertinent_observations, expected_optimal_actions):
     controls = [
         Greedy(exploration=0.1),

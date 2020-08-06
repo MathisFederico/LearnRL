@@ -9,6 +9,7 @@ They are all linked by the :ref:`Playground`, as showned by this:
 .. raw:: html
    :file: _static/images/Playground.svg
 
+
 .. _Playground:
 
 Playground
@@ -16,6 +17,7 @@ Playground
 
 .. autoclass:: learnrl.core.Playground
    :members:
+
 
 .. _Agent:
 
@@ -25,6 +27,7 @@ Agent
 .. autoclass:: learnrl.core.Agent
    :members:
 
+
 .. _MultiEnv:
 
 MultiEnv
@@ -32,6 +35,16 @@ MultiEnv
 
 .. autoclass:: learnrl.core.MultiEnv
    :members:
+
+
+.. _Callbacks:
+
+Callbacks
+---------
+
+.. autoclass:: learnrl.callbacks.Callback
+   :members:
+
 
 .. _Memory:
 

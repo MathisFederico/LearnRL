@@ -3,8 +3,8 @@
 
 import pytest
 import numpy as np
-from learnrl.agent_parts.control import Control, Greedy, Ucb, Puct
-from learnrl.agent_parts.estimator import TableEstimator
+from learnrl.control import Control, Greedy, Ucb, Puct
+from learnrl.estimators import TableEstimator
 from gym.spaces import Discrete
 
 @pytest.fixture

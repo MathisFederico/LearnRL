@@ -6,21 +6,21 @@ Control
 Control API
 -----------
 
-.. autoclass:: learnrl.agent_parts.control.Control
+.. autoclass:: learnrl.control.Control
    :members:
    :undoc-members:
 
 Build-in controls
 -----------------
 
-.. autoclass:: learnrl.agent_parts.control.Greedy
+.. autoclass:: learnrl.control.Greedy
    :members:
    :undoc-members:
 
-.. autoclass:: learnrl.agent_parts.control.Ucb
+.. autoclass:: learnrl.control.Ucb
    :members:
    :undoc-members:
 
-.. autoclass:: learnrl.agent_parts.control.Puct
+.. autoclass:: learnrl.control.Puct
    :members:
    :undoc-members:

@@ -4,7 +4,7 @@
 import pytest
 import numpy as np
 
-from learnrl.agent_parts.evaluation import Evaluation, MonteCarlo, TemporalDifference
+from learnrl.evaluation import Evaluation, MonteCarlo, TemporalDifference
 from learnrl.core import Memory
 
 # Test basic evaluation features

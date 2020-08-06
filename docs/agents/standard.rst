@@ -20,10 +20,10 @@ TableAgent
 | Q(s,a) being the expected futur rewards given that the agent did the action a in the state s.
 | For that, they are composed of two main objects : Control and Evaluation
 
-| A :class:`~learnrl.agent_parts.control.Control` object uses the action_value to determine the policy or behavior of the agent.
-| An :class:`~learnrl.agent_parts.evaluation.Evaluation` object predicts the expected rewards from an experience given a behavior.
+| A :class:`~learnrl.control.Control` object uses the action_value to determine the policy or behavior of the agent.
+| An :class:`~learnrl.evaluation.Evaluation` object predicts the expected rewards from an experience given a behavior.
 
-| By default, when building a :class:`~learnrl.agents.StandardAgent`, it will be a TableAgent (using a :class:`~learnrl.agent_parts.esimator.TableEstimator`) 
+| By default, when building a :class:`~learnrl.agents.StandardAgent`, it will be a TableAgent (using a :class:`~learnrl.estimator.TableEstimator`) 
 | with eps-greedy control (see :ref:`Control`)
 | and QLearning evaluation (see :ref:`Evaluation`)
 
@@ -43,9 +43,9 @@ Here is an example :
 DeepRLAgent
 -----------
 
-| If we replace the :class:`~learnrl.agent_parts.esimator.TableEstimator` by any other estimator, we can build approximations of Q(s,a).
-| This is way more suitable in general because the :class:`~learnrl.agent_parts.esimator.TableEstimator` needs too much ram for real applications.
-| For example, replacing the action_value by a :class:`~learnrl.agent_parts.esimator.KerasEstimator` and completing the methods build and preprocess like so :
+| If we replace the :class:`~learnrl.estimator.TableEstimator` by any other estimator, we can build approximations of Q(s,a).
+| This is way more suitable in general because the :class:`~learnrl.estimator.TableEstimator` needs too much ram for real applications.
+| For example, replacing the action_value by a :class:`~learnrl.estimator.KerasEstimator` and completing the methods build and preprocess like so :
 
 .. code-block:: python
 
