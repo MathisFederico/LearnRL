@@ -67,11 +67,11 @@ class CallbackList():
         dt_name = f'dt_{key}'
 
         if hook == 'begin':
-            setattr(self, t_begin_name, time.time_ns())
+            setattr(self, t_begin_name, time.time())
         
         if hook == 'end':
             t_begin = getattr(self, t_begin_name)
-            dt = (time.time_ns() - t_begin) / 1e9
+            dt = time.time() - t_begin
             setattr(self, dt_name, dt)
             logs.update({dt_name: dt})
         
