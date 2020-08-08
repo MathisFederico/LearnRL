@@ -5,7 +5,7 @@ __version__ = "0.2.0"
 
 from learnrl.agent import Agent
 from learnrl.envs import TurnEnv
-from learnrl.playground import Playground
+from learnrl.playground import Playground, DoneHandler, RewardHandler
 from learnrl.memory import Memory
 
 from learnrl.estimators import Estimator
