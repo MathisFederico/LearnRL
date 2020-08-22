@@ -462,3 +462,127 @@ class Logger(Callback):
         value = _logs.get(metric_name) if _logs is not None else 'N/A'
         return value
 
+
+import tensorflow as tf
+import datetime
+class Tensorboard(Callback):
+    def __init__(self,
+                 log_dir='./logs/',
+                 episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                 ):
+        self.filepath = log_dir + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        self.writer = tf.summary.create_file_writer(self.filepath)
+
+        self.episode_metrics = MetricList(episode_metrics)
+
+    def on_step_end(self, step, logs={}):
+        agent_id = logs.get('agent_id')
+        self._update_metrics(self.episode_metrics, 'episode', logs=logs, agent_id=agent_id)
+
+    def on_episode_begin(self, episode, logs=None):
+        for agent_id in range(self.n_agents):
+            self._update_metrics(self.episode_metrics, 'episode', agent_id=agent_id, reset=True)
+
+    def on_episode_end(self, episode, logs=None):
+        with self.writer.as_default():
+            for agent_id in range(self.n_agents):
+                for metric in self.episode_metrics:
+                    name = self._get_attr_name('episode', metric, agent_id)
+                    value = getattr(self, name, 'N/A')
+
+                    if value != 'N/A': tf.summary.scalar(name, value, step=episode)
+            self.writer.flush()
+
+    def on_run_begin(self, logs=None):
+        self.n_agents = len(self.playground.agents)
+
+    def _reset_attr(self, attr_name, operator):
+        """ Reset a metric attribute based on the metric operator """
+        setattr(self, attr_name, 'N/A')
+        if operator == 'avg':
+            metric_seen = attr_name + '_seen'
+            setattr(self, metric_seen, 0)
+
+    def _update_attr(self, attr_name, last_value, operator):
+        """ Update a metric attribute based on the metric operator and the last metric value """
+        previous_value = getattr(self, attr_name)
+
+        if previous_value == 'N/A':
+            previous_value = 0
+
+        if operator == 'avg':
+            metric_seen = attr_name + '_seen'
+            seen = getattr(self, metric_seen)
+            new_seen = seen + 1
+            setattr(self, metric_seen, new_seen)
+            setattr(self, attr_name, previous_value + (last_value - previous_value) / new_seen)
+
+        elif operator == 'sum':
+            setattr(self, attr_name, last_value + previous_value)
+
+        elif operator == 'last':
+            setattr(self, attr_name, last_value)
+
+        else:
+            raise ValueError(f'Unknowed operator {operator}')
+
+    @staticmethod
+    def _get_attr_name(prefix, metric, agent_id=None):
+        """ Get the attribute name of a metric/agent couple """
+        if agent_id:
+            return '_'.join((prefix, "agent" + str(agent_id), metric.name))
+        else:
+            return '_'.join((prefix, metric.name))
+
+    @staticmethod
+    def _extract_metric_from_logs(metric_name, logs, agent_id=None):
+        """ Extract the last value of a metric from logs (specified for an agent or not) """
+
+        def _search_logs(metric_name, logs:dict):
+            if logs is None or metric_name in logs:
+                _logs = logs
+            else:
+                for _, value in logs.items():
+                    if isinstance(value, dict):
+                        _logs = _search_logs(metric_name, value)
+                        if _logs is not None:
+                            return _logs
+                _logs = None
+            return _logs
+
+        _logs = None
+        if metric_name in logs:
+            _logs = logs
+        else:
+            if agent_id is not None:
+                agent_logs = logs.get(f'agent_{agent_id}')
+                _logs = _search_logs(metric_name, agent_logs)
+            else:
+                _logs = _search_logs(metric_name, _logs)
+
+        value = _logs.get(metric_name) if _logs is not None else 'N/A'
+        return value
+
+    def _update_metrics(self, metric_list:MetricList, target_prefix, source_prefix=None, logs=None, agent_id=None, reset=False):
+        """ Update the logger attributes based on a metric list """
+        for metric in metric_list:
+            target_name = self._get_attr_name(target_prefix, metric, agent_id)
+
+            if reset:
+                self._reset_attr(target_name, metric.operator)
+                continue
+
+            # Search for source-wise attr
+            if source_prefix is not None:
+                src_name = self._get_attr_name(source_prefix, metric, agent_id)
+                src_value = getattr(self, src_name, 'N/A')
+            else:
+                src_value = 'N/A'
+
+            # If not found or no source, search in logs directly
+            if src_value == 'N/A':
+                src_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
+
+            # Update attr if a value was found
+            if src_value != 'N/A':
+                self._update_attr(target_name, src_value, metric.operator)
