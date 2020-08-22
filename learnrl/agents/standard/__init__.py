@@ -131,7 +131,7 @@ class StandardAgent(Agent):
         # Skip learning step if step_skip > 0
         skip = self._skip()
         logs.update({'skip': skip})
-        if self._skip():
+        if skip:
             return
 
         # Take a sample of experiences

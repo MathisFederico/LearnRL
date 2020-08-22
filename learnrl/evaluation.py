@@ -2,7 +2,7 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 """
-Evaluation methodes to modify the value fonctions from experiences
+Evaluation methodes to modify the value functions from experiences
 """
 from learnrl.memory import Memory
 from learnrl.control import Control
@@ -35,7 +35,7 @@ class Evaluation():
             done: bool
                 True if the environment has ended and previous step was the last.
             next_observation: np.ndarray
-                The observation made after the step, used to predict what will happend next.
+                The observation made after the step, used to predict what will happen next.
             action_values: :class:`~learnrl.estimator.Estimator`
                 The action_values approximated by the agent.
             action_visits: :class:`~learnrl.estimator.Estimator`
