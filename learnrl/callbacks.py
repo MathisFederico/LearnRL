@@ -508,6 +508,9 @@ class Logger(LoggingCallback):
 import tensorflow as tf
 import datetime
 class Tensorboard(LoggingCallback):
+
+    """ Tensorboard logger if tensorflow is installed. """
+
     def __init__(self,
                  log_dir='./logs/',
                  ):
@@ -526,5 +529,17 @@ class Tensorboard(LoggingCallback):
                     name = self._get_attr_name('episode', metric, agent_id)
                     value = getattr(self, name, 'N/A')
 
-                    if value != 'N/A': tf.summary.scalar(name, value, step=episode)
+                    if value != 'N/A': tf.summary.scalar(name, value, step=episode + 1)
             self.writer.flush()
+
+    def on_cycle_end(self, episode, logs=None):
+        super().on_cycle_end(episode, logs=logs)
+        if self.params['verbose'] > 1: return
+
+        with self.writer.as_default():
+            for agent_id in range(self.n_agents):
+                for metric in self.cycle_metrics:
+                    name = self._get_attr_name('cycle', metric, agent_id)
+                    value = getattr(self, name, 'N/A')
+
+                    if value != 'N/A': tf.summary.scalar(name, value, step=episode + 1)
