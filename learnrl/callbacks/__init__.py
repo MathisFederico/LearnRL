@@ -170,7 +170,7 @@ class LoggingCallback(Callback):
                        episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                        cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                        cycle_only_metrics=['dt_episode~'],
-                       titles_on_top=True):
+                 ):
 
         self.cycle_only_metrics = MetricList(cycle_only_metrics)
         self.cycle_metrics = MetricList(cycle_metrics)
@@ -299,9 +299,22 @@ class Logger(LoggingCallback):
 
     """ Default logger in every :class:`~learnrl.core.Playground` run """
 
-    def __init__(self,
-                 titles_on_top=True):
-        super().__init__()
+    def __init__(self, detailed_step_only_metrics=['observation', 'action', 'next_observation'],
+                       step_only_metrics=['done'],
+                       step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
+                       episode_only_metrics=['dt_episode~'], 
+                       episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                       cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                       cycle_only_metrics=['dt_episode~'],
+                       titles_on_top=True
+                 ):
+        super().__init__(detailed_step_only_metrics=detailed_step_only_metrics,
+                         step_only_metrics=step_only_metrics,
+                         step_metrics=step_metrics,
+                         episode_only_metrics=episode_only_metrics,
+                         episode_metrics=episode_metrics,
+                         cycle_metrics=cycle_metrics,
+                         cycle_only_metrics=cycle_only_metrics)
 
         self._bar_lenght = 100
         self._number_window = 9

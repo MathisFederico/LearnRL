@@ -14,8 +14,11 @@ if tensorflow_spec is not None:
 
         def __init__(self,
                      log_dir='./logs/',
+                     episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                     cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                      ):
-            super().__init__()
+            super().__init__(episode_metrics=episode_metrics,
+                             cycle_metrics=cycle_metrics)
 
             self.filepath = log_dir + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
             self.writer = tf.summary.create_file_writer(self.filepath)
