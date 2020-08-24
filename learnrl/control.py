@@ -68,22 +68,22 @@ class Control():
         self.decay = kwargs.get('exploration_decay', 0)
         self.need_action_visit = False
 
-    def policy(self, Q:np.ndarray, N:np.ndarray=None):
+    def policy(self, Q, N=None):
         """ Return the policy of the agent given an observation
         
         Arguments
         ---------
-            Q: np.ndarray
+            Q: numpy.ndarray
                 The estimator of Q(s,a), the expected futur reward if we do action 'a' in state 's'.
                 Shape is (sample_size, action_size).
 
-            N: np.ndarray, optional
+            N: numpy.ndarray, optional
                 The estimator of N(s,a), the number of times we did action 'a' in state 's'.
                 Shape is (sample_size, action_size).
         
         Return
         ------
-            policy: np.ndarray
+            policy: numpy.ndarray
                 The probabilities of choosing every actions.
 
         """
