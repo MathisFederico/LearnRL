@@ -38,15 +38,12 @@ class Control():
     ...         policy[best_action_id] += 1 - self.exploration
     ...         return policy
 
-    Arguments
-    ---------
+    Parameters
+    ----------
         exploration: float
             The initial exploration constant
         name: str
             The name of the control (mendatory)
-
-    KeywordArguments
-    ----------------
         exploration_decay: float
             The exploration_decay (default to 0)
         

@@ -19,25 +19,22 @@ class StandardAgent(Agent):
     :class:`~learnrl.agent_parts.evaluation.Evaluation` for futur rewards estimations
     and :class:`~learnrl.agent_parts.estimator.Estimator` for action_value estimation.
     
-    Arguments
-    ---------
+    Parameters
+    ----------
         observation_space: |gym.Space| 
             The observation_space of the environement that the agent will observe
         action_space: |gym.Space|
             The action_space of the environement that the agent will act on
-        control: :class:`~learnrl.agent_parts.control.Control`
+        control: :class:`~learnrl.control.Control`
             Control object to define policy from :attr:`action_value` (default is 0.1-Greedy)
-        evaluation:  :class:`~learnrl.agent_parts.evaluation.Evaluation`
+        evaluation:  :class:`~learnrl.evaluation.Evaluation`
             Evaluation object to update :attr:`action_value` from agent :class:`~learnrl.core.Memory` (default is QLearning)
-        action_values: :class:`~learnrl.agent_parts.estimator.Estimator`
+        action_values: :class:`~learnrl.estimators.Estimator`
             Known as Q(s,a), this represent the expected return (futur rewards) given that
             the agent took the action a in the state s.
-        action_visits: :class:`~learnrl.agent_parts.estimator.Estimator`
+        action_visits: :class:`~learnrl.estimators.Estimator`
             Known as N(s,a), this represent the number of times that
             the agent took the action a in the state s.
-    
-    KeywordArguments
-    ----------------
         online: bool
             If False, wait the end of the episode to learn, else learn every step.
         sample_size: int
