@@ -184,17 +184,16 @@ class Logger(Callback):
     
     This will print relevant informations in console.
 
-    You can regulate the flow of informations with the argument verbose in playground.run directly :
-
-        - 0 is silent (nothing will be printed)
-        - 1 is only cycles of episodes (aggregated metrics over multiple episodes)
-        - 2 is every episode (aggregated metrics over all steps)
-        - 3 is every step (scalar metrics of all steps)
-        - 4 is every step detailed (all metrics of all steps)
+    You can regulate the flow of informations with the argument `verbose` in :meth:`~learnrl.playground.Playground.run` directly :
+     - 0 is silent (nothing will be printed)
+     - 1 is only cycles of episodes (aggregated metrics over multiple episodes)
+     - 2 is every episode (aggregated metrics over all steps)
+     - 3 is every step (scalar metrics of all steps)
+     - 4 is every step detailed (all metrics of all steps)
     
-    You can also change the logger and replace it with you own with the argument logger in :meth:`~learnrl.core.Playground.run`.
-    To build you own logger, you have to chose what metrics will be displayed and how will metrics be aggregated over steps/episodes/cycles.
-    To do that, see the :ref:`metric_code` format.
+    You can also replace it with you own :class:`~learnrl.callbacks.Logger` with the argument `logger` in :meth:`~learnrl.playground.Playground.run`.
+     - To build you own logger, you have to chose what metrics will be displayed and how will metrics be aggregated over steps/episodes/cycles.
+       To do that, see the :ref:`metric_code` format.
     
     Parameters
     ----------
