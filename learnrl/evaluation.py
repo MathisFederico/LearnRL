@@ -21,7 +21,9 @@ class Evaluation():
     Example
     -------
 
-    >>> class MyEvaluation(Evaluation):
+    >>> from learnrl.evaluation import Evaluation
+    ...
+    ... class MyEvaluation(Evaluation):
     ... 
     ...     ''' Description '''
     ...
