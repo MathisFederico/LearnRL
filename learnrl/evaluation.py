@@ -16,7 +16,27 @@ class Evaluation():
 
     """ Evaluation base object
 
-    The method eval must be specified :
+    The method eval must be specified:
+
+    Example
+    -------
+
+    >>> class MyEvaluation(Evaluation):
+    ... 
+    ...     ''' Description '''
+    ...
+    ...     def __init__(self, **kwargs):
+    ...         super().__init__(name="my_evaluation_name", **kwargs)
+    ...
+    ...     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
+    ...         ...
+    ...         ...
+    ...         return expected_returns
+
+    Parameters
+    ----------
+        name: str
+            Name of the evaluation
 
     """
 
