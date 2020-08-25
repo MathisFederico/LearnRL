@@ -37,15 +37,6 @@ MultiEnv
    :members:
 
 
-.. _Callbacks:
-
-Callbacks
----------
-
-.. autoclass:: learnrl.callbacks.Callback
-   :members:
-
-
 .. _Memory:
 
 Memory

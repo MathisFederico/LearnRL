@@ -47,6 +47,7 @@ Table Of Content
    core
    agents
    environments
+   callbacks
 
 Contribute
 ----------
