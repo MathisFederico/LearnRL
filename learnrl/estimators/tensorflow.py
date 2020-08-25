@@ -55,7 +55,7 @@ class KerasEstimator(Estimator):
         x_train = self.preprocess(observations, actions)
         y_pred = self.model.predict_step(x_train)
 
-        actions_indices = tf.stack((tf.range(len(actions)), actions), axis=-1)
+        actions_indices = tf.stack((tf.range(len(actions), dtype=actions.dtype), actions), axis=-1)
         y_action_pred = tf.gather_nd(y_pred, actions_indices)
         y_train = tf.tensor_scatter_nd_add(y_pred, actions_indices, tf.add(Y, -y_action_pred))
 
