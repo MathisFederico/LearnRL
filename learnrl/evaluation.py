@@ -15,9 +15,9 @@ from itertools import cycle
 class Evaluation():
 
     """ Evaluation base object
-
-    The method eval must be specified:
-
+    
+    The method eval must be specified.
+    
     Example
     -------
 
@@ -34,18 +34,24 @@ class Evaluation():
     ...         ...
     ...         ...
     ...         return expected_returns
-
+    
     Parameters
     ----------
-        name: str
-            Name of the evaluation
-
+        name: :class:`str`
+            Name of the evaluation.
+        discount: :class:`float` (default is .999)
+           Discount factor.
+           
+    Attributes
+    ----------
+        All args becomes attributes.
     """
 
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name=None, discount=.999, **kwargs):
         if name is None:
             raise ValueError("The Evaluation object must have a name")
         self.name = name
+        self.discount = discount
 
     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
         """ Evaluate the expected futur rewards
@@ -84,7 +90,7 @@ class Evaluation():
 
 class MonteCarlo(Evaluation):
 
-    """ MonteCarlo methods uses experimental mean to approximate theorical mean """
+    """ MonteCarlo methods uses experimental mean to approximate theorical mean. """
 
     def __init__(self, **kwargs):
         super().__init__(name="montecarlo", **kwargs)
@@ -95,7 +101,7 @@ class MonteCarlo(Evaluation):
 
 class TemporalDifference(Evaluation):
 
-    """ TemporalDifference uses previously computed action_values to approximate the expected return at each step """
+    """ TemporalDifference uses previously computed action_values to approximate the expected return at each step. """
 
     def __init__(self, **kwargs):
         super().__init__(name="tempdiff", **kwargs)
@@ -107,17 +113,16 @@ class TemporalDifference(Evaluation):
         if len(next_observation[not_done]) > 0:
             policy = control._get_policy
             action_impact = policy(next_observation[not_done], action_values, action_visits)
-            expected_futur_reward[not_done] += np.sum(action_impact * action_values(next_observation[not_done]), axis=-1)
+            expected_futur_reward[not_done] += self.discount * np.sum(action_impact * action_values(next_observation[not_done]), axis=-1)
 
         return expected_futur_reward
 
 class QLearning(Evaluation):
 
     """
-    QLearning is just TemporalDifference with Greedy target_control
+    QLearning is just TemporalDifference with Greedy target_control.
 
-    This object is just optimized for computation speed
-    """
+    This object is just optimized for computation speed. """
 
     def __init__(self, **kwargs):
         super().__init__(name="qlearning", **kwargs)
@@ -127,7 +132,7 @@ class QLearning(Evaluation):
         not_done = np.logical_not(done)
 
         if len(next_observation[not_done]) > 0:
-            expected_futur_reward[not_done] += np.amax(action_values(next_observation[not_done]), axis=-1)
+            expected_futur_reward[not_done] += self.discount * np.amax(action_values(next_observation[not_done]), axis=-1)
         
         return expected_futur_reward
 
