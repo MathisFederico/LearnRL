@@ -19,24 +19,15 @@ class Control():
 
     >>> from learnrl.control import Control
     ...
-    ... class Greedy(Control):
+    ... class MyControl(Control):
     ...
     ...     def __init__(self, exploration=0.1, **kwargs):
-    ...         super().__init__(exploration=exploration, name="greedy", **kwargs)
-    ...         self.need_action_visit = False
+    ...         super().__init__(exploration=exploration, name="my_control_name", **kwargs)
+    ...         self.need_action_visit = False/True
     ...
-    ...     def policy(self, observations:np.ndarray,
-    ...                      action_values:Estimator,
-    ...                      action_visits:Estimator=None):
-    ...            
-    ...         if self.exploration < 0 or self.exploration > 1:
-    ...             raise ValueError(f"Exploration should be in [0, 1] for greedy control"
-    ...                              f"but was {self.exploration}")
-    ...
-    ...         Q = action_values(observations)
-    ...         best_action_id = np.argmax(Q)
-    ...         policy = np.ones_like(Q) * self.exploration / Q.size
-    ...         policy[best_action_id] += 1 - self.exploration
+    ...     def policy(self, observations:np.ndarray, action_values:Estimator, action_visits:Estimator=None):
+    ...         ...
+    ...         ...
     ...         return policy
 
     Parameters
