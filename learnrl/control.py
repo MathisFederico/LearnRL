@@ -14,39 +14,28 @@ class Control():
     This method must be specified :
     policy(self, action_values, action_visits=None).
 
-    :Example:
+    Example
+    -------
 
     >>> from learnrl.control import Control
     ...
-    ... class Greedy(Control):
+    ... class MyControl(Control):
     ...
     ...     def __init__(self, exploration=0.1, **kwargs):
-    ...         super().__init__(exploration=exploration, name="greedy", **kwargs)
-    ...         self.need_action_visit = False
+    ...         super().__init__(exploration=exploration, name="my_control_name", **kwargs)
+    ...         self.need_action_visit = False/True
     ...
-    ...     def policy(self, observations:np.ndarray,
-    ...                      action_values:Estimator,
-    ...                      action_visits:Estimator=None):
-    ...            
-    ...         if self.exploration < 0 or self.exploration > 1:
-    ...             raise ValueError(f"Exploration should be in [0, 1] for greedy control"
-    ...                              f"but was {self.exploration}")
-    ...
-    ...         Q = action_values(observations)
-    ...         best_action_id = np.argmax(Q)
-    ...         policy = np.ones_like(Q) * self.exploration / Q.size
-    ...         policy[best_action_id] += 1 - self.exploration
+    ...     def policy(self, observations:np.ndarray, action_values:Estimator, action_visits:Estimator=None):
+    ...         ...
+    ...         ...
     ...         return policy
 
-    Arguments
-    ---------
+    Parameters
+    ----------
         exploration: float
             The initial exploration constant
         name: str
             The name of the control (mendatory)
-
-    KeywordArguments
-    ----------------
         exploration_decay: float
             The exploration_decay (default to 0)
         
@@ -71,22 +60,22 @@ class Control():
         self.decay = kwargs.get('exploration_decay', 0)
         self.need_action_visit = False
 
-    def policy(self, Q:np.ndarray, N:np.ndarray=None):
+    def policy(self, Q, N=None):
         """ Return the policy of the agent given an observation
         
         Arguments
         ---------
-            Q: np.ndarray
+            Q: numpy.ndarray
                 The estimator of Q(s,a), the expected futur reward if we do action 'a' in state 's'.
                 Shape is (sample_size, action_size).
 
-            N: np.ndarray, optional
+            N: numpy.ndarray, optional
                 The estimator of N(s,a), the number of times we did action 'a' in state 's'.
                 Shape is (sample_size, action_size).
         
         Return
         ------
-            policy: np.ndarray
+            policy: numpy.ndarray
                 The probabilities of choosing every actions.
 
         """

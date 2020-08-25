@@ -15,16 +15,33 @@ from itertools import cycle
 class Evaluation():
 
     """ Evaluation base object
-
+    
     The method eval must be specified.
+    
+    Example
+    -------
 
-    Arguments
-    ---------
+    >>> from learnrl.evaluation import Evaluation
+    ...
+    ... class MyEvaluation(Evaluation):
+    ... 
+    ...     ''' Description '''
+    ...
+    ...     def __init__(self, **kwargs):
+    ...         super().__init__(name="my_evaluation_name", **kwargs)
+    ...
+    ...     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
+    ...         ...
+    ...         ...
+    ...         return expected_returns
+    
+    Parameters
+    ----------
         name: :class:`str`
-            The Evaluation's name.
+            Name of the evaluation.
         discount: :class:`float` (default is .999)
-           The discount factor.
-
+           Discount factor.
+           
     Attributes
     ----------
         All args becomes attributes.
@@ -47,9 +64,9 @@ class Evaluation():
                 True if the environment has ended and previous step was the last.
             next_observation: np.ndarray
                 The observation made after the step, used to predict what will happend next.
-            action_values: :class:`~learnrl.estimator.Estimator`
+            action_values: :class:`~learnrl.estimators.Estimator`
                 The action_values approximated by the agent.
-            action_visits: :class:`~learnrl.estimator.Estimator`
+            action_visits: :class:`~learnrl.estimators.Estimator`
                 The action_visits approximated by the agent.
             control: :class:`~learnrl.control.Control`
                 The control object used to predict agent behavior,
