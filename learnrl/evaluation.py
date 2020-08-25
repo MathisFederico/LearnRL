@@ -73,10 +73,17 @@ class MonteCarlo(Evaluation):
 
 class TemporalDifference(Evaluation):
 
-    """ TemporalDifference uses previously computed action_values to approximate the expected return at each step """
+    """ TemporalDifference uses previously computed action_values to approximate the expected return at each step
 
-    def __init__(self, **kwargs):
+    Arguments
+    ---------
+        discount: :class:`float` (default is .999)
+           The discount factor.
+    """
+
+    def __init__(self, discount=.999, **kwargs):
         super().__init__(name="tempdiff", **kwargs)
+        self.discount = discount
 
     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
         expected_futur_reward = reward.astype(np.float64)
@@ -85,7 +92,7 @@ class TemporalDifference(Evaluation):
         if len(next_observation[not_done]) > 0:
             policy = control._get_policy
             action_impact = policy(next_observation[not_done], action_values, action_visits)
-            expected_futur_reward[not_done] += np.sum(action_impact * action_values(next_observation[not_done]), axis=-1)
+            expected_futur_reward[not_done] += self.discount * np.sum(action_impact * action_values(next_observation[not_done]), axis=-1)
 
         return expected_futur_reward
 
@@ -95,17 +102,23 @@ class QLearning(Evaluation):
     QLearning is just TemporalDifference with Greedy target_control
 
     This object is just optimized for computation speed
+
+    Arguments
+    ---------
+        discount: :class:`float` (default is .999)
+           The discount factor.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, discount=.999, **kwargs):
         super().__init__(name="qlearning", **kwargs)
+        self.discount = discount
 
     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
         expected_futur_reward = reward.astype(np.float64)
         not_done = np.logical_not(done)
 
         if len(next_observation[not_done]) > 0:
-            expected_futur_reward[not_done] += np.amax(action_values(next_observation[not_done]), axis=-1)
+            expected_futur_reward[not_done] += self.discount * np.amax(action_values(next_observation[not_done]), axis=-1)
         
         return expected_futur_reward
 
