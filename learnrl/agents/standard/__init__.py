@@ -4,7 +4,8 @@
 from learnrl.evaluation import QLearning
 from learnrl.control import Greedy
 from learnrl.estimators import TableEstimator
-from learnrl.core import Agent, Memory
+from learnrl import Agent
+from learnrl.memory import Memory
 
 from gym import spaces
 import numpy as np

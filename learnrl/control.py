@@ -14,7 +14,8 @@ class Control():
     This method must be specified :
     policy(self, action_values, action_visits=None).
 
-    :Example:
+    Example
+    -------
 
     >>> from learnrl.control import Control
     ...

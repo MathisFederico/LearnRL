@@ -5,7 +5,7 @@ import pytest
 import numpy as np
 
 from copy import deepcopy
-from learnrl.core import Memory
+from learnrl.memory import Memory
 
 
 class AgentMemoryError(Exception):
