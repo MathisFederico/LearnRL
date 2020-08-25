@@ -16,14 +16,25 @@ class Evaluation():
 
     """ Evaluation base object
 
-    The method eval must be specified :
+    The method eval must be specified.
 
+    Arguments
+    ---------
+        name: :class:`str`
+            The Evaluation's name.
+        discount: :class:`float` (default is .999)
+           The discount factor.
+
+    Attributes
+    ----------
+        All args becomes attributes.
     """
 
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name=None, discount=.999, **kwargs):
         if name is None:
             raise ValueError("The Evaluation object must have a name")
         self.name = name
+        self.discount = discount
 
     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
         """ Evaluate the expected futur rewards
@@ -62,7 +73,7 @@ class Evaluation():
 
 class MonteCarlo(Evaluation):
 
-    """ MonteCarlo methods uses experimental mean to approximate theorical mean """
+    """ MonteCarlo methods uses experimental mean to approximate theorical mean. """
 
     def __init__(self, **kwargs):
         super().__init__(name="montecarlo", **kwargs)
@@ -73,17 +84,10 @@ class MonteCarlo(Evaluation):
 
 class TemporalDifference(Evaluation):
 
-    """ TemporalDifference uses previously computed action_values to approximate the expected return at each step
+    """ TemporalDifference uses previously computed action_values to approximate the expected return at each step. """
 
-    Arguments
-    ---------
-        discount: :class:`float` (default is .999)
-           The discount factor.
-    """
-
-    def __init__(self, discount=.999, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(name="tempdiff", **kwargs)
-        self.discount = discount
 
     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
         expected_futur_reward = reward.astype(np.float64)
@@ -99,19 +103,12 @@ class TemporalDifference(Evaluation):
 class QLearning(Evaluation):
 
     """
-    QLearning is just TemporalDifference with Greedy target_control
+    QLearning is just TemporalDifference with Greedy target_control.
 
-    This object is just optimized for computation speed
+    This object is just optimized for computation speed. """
 
-    Arguments
-    ---------
-        discount: :class:`float` (default is .999)
-           The discount factor.
-    """
-
-    def __init__(self, discount=.999, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(name="qlearning", **kwargs)
-        self.discount = discount
 
     def eval(self, reward, done, next_observation, action_values:Estimator, action_visits:Estimator, control:Control):
         expected_futur_reward = reward.astype(np.float64)
