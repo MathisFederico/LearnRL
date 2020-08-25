@@ -5,6 +5,20 @@ import numpy as np
 class Callback():
 
     """ An object to call functions while the :class:`~learnrl.core.Playground` is running.
+
+    You can define the custom functions `on_{position}` where position can be :
+    
+    >>> run_begin
+    ...     cycle_begin
+    ...         episode_begin
+    ...             step_begin
+    ...             # env.step()
+    ...             step_end
+    ...         # done==True
+    ...         episode_end
+    ...     cycle_end
+    ... run_end
+    
     """
 
     def set_params(self, params):
@@ -67,11 +81,11 @@ class CallbackList():
         dt_name = f'dt_{key}'
 
         if hook == 'begin':
-            setattr(self, t_begin_name, time.time_ns())
+            setattr(self, t_begin_name, time.time())
         
         if hook == 'end':
             t_begin = getattr(self, t_begin_name)
-            dt = (time.time_ns() - t_begin) / 1e9
+            dt = time.time() - t_begin
             setattr(self, dt_name, dt)
             logs.update({dt_name: dt})
         
@@ -106,6 +120,8 @@ class CallbackList():
 
 class Metric():
 
+    """ An helper object to represent a metric via a str metric_code """
+
     def __init__(self, metric_code):
         split_code = metric_code.split('.')
         self.code = metric_code
@@ -127,6 +143,8 @@ class Metric():
         return self.code
 
 class MetricList():
+
+    """ An helper object to represent a list of metrics """
 
     def __init__(self, metric_list):
         self.metric_list = [self.to_metric(m) for m in metric_list]
@@ -162,15 +180,49 @@ class MetricList():
 
 class Logger(Callback):
 
-    """ Default logger in every :class:`~learnrl.core.Playground` run """
+    """ Default logger in every :class:`~learnrl.core.Playground` run
+    
+    This will print relevant informations in console.
+
+    You can regulate the flow of informations with the argument `verbose` in :meth:`~learnrl.playground.Playground.run` directly :
+     - 0 is silent (nothing will be printed)
+     - 1 is only cycles of episodes (aggregated metrics over multiple episodes)
+     - 2 is every episode (aggregated metrics over all steps)
+     - 3 is every step (scalar metrics of all steps)
+     - 4 is every step detailed (all metrics of all steps)
+    
+    You can also replace it with you own :class:`~learnrl.callbacks.Logger` with the argument `logger` in :meth:`~learnrl.playground.Playground.run`.
+     - To build you own logger, you have to chose what metrics will be displayed and how will metrics be aggregated over steps/episodes/cycles.
+       To do that, see the :ref:`metric_code` format.
+    
+    Parameters
+    ----------
+        detailed_step_only_metrics: list(str)
+            Metrics to display only on detailed steps.
+        step_only_metrics: list(str)
+            Metrics to display only on steps.
+        step_metrics: list(str)
+            Metrics to display on steps and to aggregate in episodes
+        episode_only_metrics: list(str)
+            Metrics to display only on episodes.
+        episode_metrics: list(str)
+            Metrics to display on episodes and to aggregate in episodes_cycles.
+        cycle_only_metrics: list(str)
+            Metrics to display only on cycles.
+        cycle_metrics: list(str)
+            Metrics to display on cycles (aggregated from episodes and/or steps).
+        titles_on_top: bool
+            If true, titles will be displayed on top and not at every line in the console.
+    
+    """
 
     def __init__(self, detailed_step_only_metrics=['observation', 'action', 'next_observation'],
                        step_only_metrics=['done'],
                        step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
                        episode_only_metrics=['dt_episode~'], 
                        episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
-                       cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                        cycle_only_metrics=['dt_episode~'],
+                       cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                        titles_on_top=True):
 
         self.cycle_only_metrics = MetricList(cycle_only_metrics)

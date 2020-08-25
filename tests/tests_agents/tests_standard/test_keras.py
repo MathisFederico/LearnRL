@@ -9,8 +9,8 @@ from learnrl.agents import StandardAgent
 from gym import spaces
 import tensorflow as tf
 
+@pytest.mark.slow
 def test_fit():
-
     class MyEstimator(KerasEstimator):
 
         def build(self):
@@ -36,9 +36,8 @@ def test_fit():
     print(estimator.model.weights[0].numpy(), expected_weights)
     assert np.allclose(estimator.model.weights[0].numpy(), expected_weights)
 
-
+@pytest.mark.slow
 def test_keras_pipeline():
-    
     class MyEstimator(KerasEstimator):
 
         def build(self):

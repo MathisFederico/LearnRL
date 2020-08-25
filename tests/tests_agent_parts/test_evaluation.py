@@ -5,7 +5,7 @@ import pytest
 import numpy as np
 
 from learnrl.evaluation import Evaluation, MonteCarlo, TemporalDifference
-from learnrl.core import Memory
+from learnrl.memory import Memory
 
 # Test basic evaluation features
 def test_name():

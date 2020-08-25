@@ -2,7 +2,7 @@ Environments
 ============
 
 In LearnRL, all gym environments are supported ! (And you can import them from `learnrl.environments`)
-Moreover, you can even build environments for multiple agent using a :ref:`MultiEnv`.
+Moreover, you can even build environments for multiple agent using a :ref:`TurnEnv`.
 
 .. toctree::
    :maxdepth: 2
