@@ -1,3 +1,6 @@
+import pytest
+import sys
+
 from learnrl import Estimator
 from gym.spaces import Discrete
 
@@ -27,3 +30,8 @@ def test_update_learning_rate():
     expected_learning_rate = learning_rate*(1-learning_rate_decay)
     if evaluation.learning_rate != expected_learning_rate:
         raise ValueError(f"Learning rate is {evaluation.learning_rate} and did not decay to {expected_learning_rate}")
+
+def test_import_keras_estimator(mocker):
+    mocker.patch.dict('sys.modules', { 'tensorflow': None })
+    with pytest.raises(ImportError, match=r".*tensorflow >= 2.*"):
+        from learnrl.estimators.tensorflow import KerasEstimator

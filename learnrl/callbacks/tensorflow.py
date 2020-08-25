@@ -83,4 +83,4 @@ if tensorflow_spec is not None:
                 self.writer.flush()
 
 else:
-    raise ImportError('Tensorflow should be installed.')
+    raise ImportError('Missing dependency : tensorflow >= 2.0.0')
