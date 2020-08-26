@@ -480,7 +480,7 @@ class Logger(Callback):
             time_unit = 'ms'
         else:
             time_display = f'{dt:.01f}'
-            time_unit = 's'
+            time_unit = ' s'
         
         margin = (5 - len(time_display)) * ' '
         return margin + f'{time_display}{time_unit}/{unit}'
