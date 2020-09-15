@@ -1,16 +1,16 @@
 import pytest
 import numpy as np
 
+import learnrl as rl
+from learnrl.environments import CatchEnv
+from learnrl.estimators.tensorflow import KerasEstimator
+from learnrl.agents import StandardAgent
+
+from gym import spaces
+import tensorflow as tf
+
 @pytest.mark.slow
 def test_fit():
-    import learnrl as rl
-    from learnrl.environments import CatchEnv
-    from learnrl.estimators.tensorflow import KerasEstimator
-    from learnrl.agents import StandardAgent
-
-    from gym import spaces
-    import tensorflow as tf
-
     class MyEstimator(KerasEstimator):
 
         def build(self):
@@ -38,14 +38,6 @@ def test_fit():
 
 @pytest.mark.slow
 def test_keras_pipeline():
-    import learnrl as rl
-    from learnrl.environments import CatchEnv
-    from learnrl.estimators.tensorflow import KerasEstimator
-    from learnrl.agents import StandardAgent
-
-    from gym import spaces
-    import tensorflow as tf
-
     class MyEstimator(KerasEstimator):
 
         def build(self):
