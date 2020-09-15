@@ -554,3 +554,4 @@ else:
     class TensorboardCallback():
         def __init__(self):
             raise ImportError('Missing dependency : tensorflow >= 2.0.0')
+
