@@ -549,7 +549,7 @@ import importlib
 tensorflow_spec = importlib.util.find_spec('tensorflow')
 
 if tensorflow_spec is not None:
-    from learnrl.callbacks.tensorflow import TensorboardCallback
+    from learnrl.callbacks.tensorboard import TensorboardCallback
 else:
     class TensorboardCallback():
         def __init__(self):
