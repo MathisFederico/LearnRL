@@ -67,7 +67,7 @@ class Memory():
                 value = np.array([value])
             _remember_key(self.datas, key, value)
         
-        # Add optional suplementary parameters
+        # Add optional supplementary parameters
         for key in param:
             _remember_key(self.datas, key, param[key])
 

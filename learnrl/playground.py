@@ -154,7 +154,7 @@ class Playground():
         if not learn:
             warnings.warn("learn should be True in Playground.fit(), otherwise the agents will not improve", UserWarning)
         if render:
-            warnings.warn("rendering degrades heavely computation speed, use CycleRenderCallback to see your agent performence suring training", RuntimeWarning)
+            warnings.warn("rendering degrades heavily computation speed, use CycleRenderCallback to see your agent performance during training", RuntimeWarning)
 
         self.run(episodes, render=render, learn=learn, **kwargs)
 

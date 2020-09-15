@@ -24,7 +24,7 @@ class KerasEstimator(Estimator):
 
     def build(self, **kwargs):
         raise NotImplementedError
-    
+
     def preprocess(self, observations:tf.Tensor, actions:tf.Tensor=None):
         raise NotImplementedError
 
@@ -42,12 +42,12 @@ class KerasEstimator(Estimator):
         if self.freezed_steps > 0:
             logs.update({'freezed_update': self.step_freezed_left == 0})
             if self.step_freezed_left == 0:
-                self.model_freezed.set_weights(self.model.get_weights()) 
+                self.model_freezed.set_weights(self.model.get_weights())
                 self.step_freezed_left = self.freezed_steps
                 if self.verbose > 0:
                     print("Freezed model updated")
             self.step_freezed_left -= 1
-        
+
         return logs
 
     # @tf.function(experimental_relax_shapes=True)
@@ -61,7 +61,7 @@ class KerasEstimator(Estimator):
 
         metrics = self.model.train_step((x_train, y_train))
         return metrics
-    
+
     def predict(self, observations, actions=None):
         x = self.preprocess(observations, actions)
         x = tf.convert_to_tensor(x)

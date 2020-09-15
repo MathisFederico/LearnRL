@@ -3,7 +3,7 @@ import numpy as np
 
 import learnrl as rl
 from learnrl.environments import CatchEnv
-from learnrl.estimators import KerasEstimator
+from learnrl.estimators.tensorflow import KerasEstimator
 from learnrl.agents import StandardAgent
 
 from gym import spaces
