@@ -518,3 +518,12 @@ class Logger(LoggingCallback):
         margin = (5 - len(time_display)) * ' '
         return margin + f'{time_display}{time_unit}/{unit}'
 
+import importlib
+tensorflow_spec = importlib.util.find_spec('tensorflow')
+
+if tensorflow_spec is not None:
+    from learnrl.callbacks.tensorflow import TensorboardCallback
+else:
+    class TensorboardCallback():
+        def __init__(self):
+            raise ImportError('Missing dependency : tensorflow >= 2.0.0')

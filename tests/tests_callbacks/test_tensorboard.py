@@ -2,9 +2,11 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 import pytest
-import sys
+import learnrl
 
-def test_import(mocker):
-    mocker.patch.dict('sys.modules', { 'tensorflow': None })
+def test_instanciate_without_tensorflow(hide_tensorflow):
     with pytest.raises(ImportError, match=r".*tensorflow >= 2.*"):
-        from learnrl.callbacks.tensorflow import TensorboardCallback
+        callback = learnrl.callbacks.TensorboardCallback()
+
+def test_instanciate_with_tensorflow():
+    callback = learnrl.callbacks.TensorboardCallback()
