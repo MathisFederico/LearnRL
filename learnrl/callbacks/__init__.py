@@ -450,30 +450,6 @@ class Logger(LoggingCallback):
     def on_run_end(self, logs=None):
         pass
 
-    def _update_metrics(self, metric_list:MetricList, target_prefix, source_prefix=None, logs=None, agent_id=None, reset=False):
-        """ Update the logger attributes based on a metric list """
-        for metric in metric_list:
-            target_name = self._get_attr_name(target_prefix, metric, agent_id)
-
-            if reset:
-                self._reset_attr(target_name, metric.operator)
-                continue
-
-            # Search for source-wise attr
-            if source_prefix is not None:
-                src_name = self._get_attr_name(source_prefix, metric, agent_id)
-                src_value = getattr(self, src_name, 'N/A')
-            else:
-                src_value = 'N/A'
-
-            # If not found or no source, search in logs directly
-            if src_value == 'N/A':
-                src_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-            
-            # Update attr if a value was found
-            if src_value != 'N/A':
-                self._update_attr(target_name, src_value, metric.operator)
-
     def _print_metrics(self, metric_list:MetricList, source:str, prefix=None, agent_id=None, logs=None, sep=None, end='', titles_on_top=None):
         """ Print a metric list """
         titles_on_top = titles_on_top if titles_on_top is not None else self.titles_on_top
