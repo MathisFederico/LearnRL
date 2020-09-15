@@ -42,7 +42,7 @@ extensions = [
 ]
 master_doc = 'index'
 autoapi_dirs = ['../learnrl']
-autodoc_mock_imports = ["pygame"]
+autodoc_mock_imports = ["pygame", "tensorflow"]
 autodoc_default_options = {
     'member-order': 'bysource',
     'undoc-members': True,

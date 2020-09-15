@@ -20,34 +20,31 @@ class StandardAgent(Agent):
     :class:`~learnrl.agent_parts.evaluation.Evaluation` for futur rewards estimations
     and :class:`~learnrl.agent_parts.estimator.Estimator` for action_value estimation.
     
-    Arguments
-    ---------
+    Parameters
+    ----------
         observation_space: |gym.Space| 
             The observation_space of the environement that the agent will observe
         action_space: |gym.Space|
             The action_space of the environement that the agent will act on
-        control: :class:`~learnrl.agent_parts.control.Control`
-            Control object to define policy from :attr:`action_value` (default is 0.1-Greedy)
-        evaluation:  :class:`~learnrl.agent_parts.evaluation.Evaluation`
-            Evaluation object to update :attr:`action_value` from agent :class:`~learnrl.core.Memory` (default is QLearning)
-        action_values: :class:`~learnrl.agent_parts.estimator.Estimator`
+        control: :class:`~learnrl.control.Control`
+            Control object to define policy from :attr:`action_value` *(default is 0.1-Greedy)*
+        evaluation:  :class:`~learnrl.evaluation.Evaluation`, optional
+            Evaluation object to update :attr:`action_value` from agent :class:`~learnrl.core.Memory` *(default is QLearning)*
+        action_values: :class:`~learnrl.estimators.Estimator`, optional
             Known as Q(s,a), this represent the expected return (futur rewards) given that
-            the agent took the action a in the state s.
-        action_visits: :class:`~learnrl.agent_parts.estimator.Estimator`
+            the agent took the action a in the state s. *(default is a Table)*
+        action_visits: :class:`~learnrl.estimators.Estimator`, optional
             Known as N(s,a), this represent the number of times that
             the agent took the action a in the state s.
-    
-    KeywordArguments
-    ----------------
-        online: bool
+        online: bool, optional
             If False, wait the end of the episode to learn, else learn every step.
-        sample_size: int
+        sample_size: int, optional
             Maximum number of samples to take from memory to perform a learning step. If 0, takes all memory.
-        sample_method: str
+        sample_method: str, optional
             The sampling used, see :meth:`~learnrl.core.Memory.sample` for details.
-        forget_after_update: bool
+        forget_after_update: bool, optional
             If True, forget all past memory after a learning step.
-        step_skip: int
+        step_skip: int, optional
             The number of steps between learn calls.
     
     Attributes

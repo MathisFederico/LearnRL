@@ -50,12 +50,12 @@ class KerasEstimator(Estimator):
 
         return logs
 
-    @tf.function(experimental_relax_shapes=True)
+    # @tf.function(experimental_relax_shapes=True)
     def train_on_experience_batch(self, observations:tf.Tensor, actions:tf.Tensor, Y:tf.Tensor):
         x_train = self.preprocess(observations, actions)
         y_pred = self.model.predict_step(x_train)
 
-        actions_indices = tf.stack((tf.range(len(actions), dtype=np.int64), actions), axis=-1)
+        actions_indices = tf.stack((tf.range(len(actions), dtype=actions.dtype), actions), axis=-1)
         y_action_pred = tf.gather_nd(y_pred, actions_indices)
         y_train = tf.tensor_scatter_nd_add(y_pred, actions_indices, tf.add(Y, -y_action_pred))
 
@@ -71,7 +71,7 @@ class KerasEstimator(Estimator):
         else:
             return Y
 
-    @tf.function(experimental_relax_shapes=True)
+    # @tf.function(experimental_relax_shapes=True)
     def predict_on_experience_batch(self, x):
         if self.freezed_steps > 0:
             Y = self.model_freezed.predict_step(x)

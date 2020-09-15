@@ -29,7 +29,6 @@ setup(
     install_requires=[
         'numpy',
         'gym',
-        'pygame'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
