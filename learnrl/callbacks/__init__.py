@@ -70,7 +70,7 @@ class CallbackList():
         for callback in self.callbacks:
             callback.set_playground(playground)
         
-    def _call_key_hook(self, key, hook, value=None, logs={}):
+    def _call_key_hook(self, key, hook, value=None, logs=None):
         """ Helper func for {step|episode|cycle|run}_{begin|end} methods. """
 
         if len(self.callbacks) == 0:
@@ -87,11 +87,13 @@ class CallbackList():
             t_begin = getattr(self, t_begin_name)
             dt = time.time() - t_begin
             setattr(self, dt_name, dt)
-            logs.update({dt_name: dt})
+            if logs is not None:
+                logs.update({dt_name: dt})
         
         for callback in self.callbacks:
             step_hook = getattr(callback, hook_name)
-            step_hook(logs) if value is None else step_hook(value, logs)
+            if logs is not None:
+                step_hook(logs) if value is None else step_hook(value, logs)
     
     def on_step_begin(self, step, logs=None):
         self._call_key_hook('step', 'begin', step , logs)
@@ -290,24 +292,28 @@ class LoggingCallback(Callback):
             # Update attr if a value was found
             if src_value != 'N/A':
                 self._update_attr(target_name, src_value, metric.operator)
+    
+    def _update_metrics_all_agents(self, metric_list:MetricList, target_prefix, **kwargs):
+        if self.n_agents > 1:
+            for agent_id in range(self.n_agents):
+                self._update_metrics(metric_list, target_prefix, agent_id=agent_id, **kwargs)
+        else:
+            self._update_metrics(metric_list, target_prefix, **kwargs)
 
     def on_step_end(self, step, logs={}):
-        agent_id = logs.get('agent_id')
+        agent_id = logs.get('agent_id') if self.n_agents > 1 else None
         self._update_metrics(self.episode_metrics, 'episode', logs=logs, agent_id=agent_id)
 
     def on_episode_begin(self, episode, logs=None):
-        for agent_id in range(self.n_agents):
-            self._update_metrics(self.episode_metrics, 'episode', agent_id=agent_id, reset=True)
+        self._update_metrics_all_agents(self.episode_metrics, 'episode', logs=logs, reset=True)
 
     def on_episode_end(self, episode, logs=None):
-        verbose = self.params['verbose']
-        if verbose == 1:
-            for agent_id in range(self.n_agents):
-                self._update_metrics(self.cycle_metrics, 'cycle', 'episode', logs, agent_id)
+        if self.params['verbose'] == 1:
+            self._update_metrics_all_agents(self.cycle_metrics, 'cycle', source_prefix='episode', logs=logs)
 
     def on_cycle_begin(self, episode, logs=None):
-        for agent_id in range(self.n_agents):
-            self._update_metrics(self.cycle_metrics, 'cycle', agent_id=agent_id, reset=True)
+        if self.params['verbose'] == 1:
+            self._update_metrics_all_agents(self.cycle_metrics, 'cycle', source_prefix='episode', logs=logs, reset=True)
 
     def on_run_begin(self, logs=None):
         self.n_agents = len(self.playground.agents)
