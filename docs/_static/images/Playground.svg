@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -17,7 +15,7 @@
    height="720"
    viewBox="0 0 1280 720"
    sodipodi:docname="Playground.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><metadata
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"><metadata
      id="metadata4524"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
@@ -343,23 +341,24 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-height="1001"
      id="namedview4520"
      showgrid="false"
      inkscape:zoom="1.562264"
-     inkscape:cx="588.27144"
+     inkscape:cx="494.81732"
      inkscape:cy="366.82677"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g4526" /><g
+     inkscape:current-layer="g4526"
+     inkscape:document-rotation="0" /><g
      id="g4526"
      inkscape:groupmode="layer"
      inkscape:label="LearnRL schémas"
      transform="matrix(1.3333333,0,0,-1.3333333,0,720)"><a
        id="a5446"
-       xlink:href="#learnrl.core.Playground"
-       xlink:title="learnrl.core.Playground"><path
+       xlink:href="#learnrl.playground.Playground"
+       xlink:title="learnrl.playground.Playground"><path
          inkscape:connector-curvature="0"
          id="path4538"
          style="fill:#a5a5a5;fill-opacity:0.50196001;fill-rule:evenodd;stroke:none"
@@ -372,12 +371,12 @@
        style="fill:none;stroke:#595959;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
        id="path4540"
        inkscape:connector-curvature="0" /><a
-       xlink:href="./agents.html"
-       onmouseout="this.style.opacity=0.5"
-       onmouseover="this.style.opacity=1"
-       style="opacity:0.5"
+       xlink:href="agents.html"
+       id="a5443"
        xlink:title="agents"
-       id="a5443"><path
+       style="opacity:0.5"
+       onmouseover="this.style.opacity=1"
+       onmouseout="this.style.opacity=0.5"><path
          inkscape:connector-curvature="0"
          id="path4554"
          style="fill:#ff7e09;fill-opacity:1;fill-rule:evenodd;stroke:none"
@@ -390,8 +389,8 @@
          id="g4560"
          clip-path="url(#clipPath4564)" /></g><a
        id="a5449"
-       xlink:href="#learnrl.core.Agent"
-       xlink:title="learnrl.core.Agent"
+       xlink:href="#learnrl.agent.Agent"
+       xlink:title="learnrl.agent.Agent"
        onmouseout="this.style.opacity=0.25"
        onmouseover="this.style.opacity=1"
        style="opacity:0.25"><path
@@ -409,8 +408,8 @@
        inkscape:connector-curvature="0"
        class="svg-line" /><a
        id="a5440"
-       xlink:href="#learnrl.core.MultiEnv"
-       xlink:title="learnrl.core.MultiEnv"
+       xlink:href="#learnrl.envs.TurnEnv"
+       xlink:title="learnrl.envs.TurnEnv"
        style="opacity:0.5"
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.5"><path
@@ -428,8 +427,9 @@
      clip-path="url(#clipPath4548)"
      id="g4544"><text
    id="text4552"
-   style="font-variant:normal;font-weight:normal;font-size:36.02399826px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,81.528,466.9)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:36.024px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,81.528,466.9)"
+   y="0"><tspan
      id="tspan4550"
      sodipodi:role="line"
      y="0"
@@ -444,8 +444,9 @@
 
 </g></g><text
    id="text4568"
-   style="font-variant:normal;font-weight:normal;font-size:27.95999908px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,515.23,377.88)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:27.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,515.23,377.88)"
+   y="0"><tspan
      id="tspan4566"
      sodipodi:role="line"
      y="0"
@@ -464,11 +465,12 @@
      id="g4596"><text
    id="text4604"
    style="font-variant:normal;font-weight:normal;font-size:36px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,82.8,385.78)"><tspan
+   transform="matrix(1,0,0,-1,82.8,385.78)"
+   y="0"><tspan
      id="tspan4602"
      sodipodi:role="line"
-     y="0"
-     x="0 29.34 49.284 59.040001 71.208 81.216003 101.916 121.284">MultiEnv</tspan></text>
+     x="0"
+     y="0">TurnEnv</tspan></text>
 
 
 
@@ -479,8 +481,8 @@
 
 </g></g></g><a
        id="a4962"
-       xlink:href="#learnrl.core.MultiEnv.turn"
-       xlink:title="learnrl.core.MultiEnv.turn"
+       xlink:href="#learnrl.envs.TurnEnv.turn"
+       xlink:title="learnrl.envs.TurnEnv.turn"
        style="opacity:0.5"
        onmouseout="this.style.opacity=0.5"
        onmouseover="this.style.opacity=1"><path
@@ -497,8 +499,8 @@
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.5" /><a
        id="a4965"
-       xlink:href="#learnrl.core.MultiEnv.reset"
-       xlink:title="learnrl.core.MultiEnv.reset"
+       xlink:href="#learnrl.envs.TurnEnv.reset"
+       xlink:title="learnrl.envs.TurnEnv.reset"
        style="opacity:0.5"
        onmouseout="this.style.opacity=0.5"
        onmouseover="this.style.opacity=1"><path
@@ -513,8 +515,8 @@
        id="path4624"
        inkscape:connector-curvature="0" /><a
        id="a4959"
-       xlink:href="#learnrl.core.MultiEnv.step"
-       xlink:title="learnrl.core.MultiEnv.step"
+       xlink:href="#learnrl.envs.TurnEnv.step"
+       xlink:title="learnrl.envs.TurnEnv.step"
        style="opacity:0.5"
        onmouseout="this.style.opacity=0.5"
        onmousedown=""
@@ -535,7 +537,7 @@
            clip-path="url(#clipPath4644)"
            id="g4640"><text
    id="text4648"
-   style="font-variant:normal;font-weight:normal;font-size:27.95999908px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:27.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,292.7,189.02)"><tspan
      id="tspan4646"
      y="0"
@@ -553,7 +555,7 @@
            clip-path="url(#clipPath4656)"
            id="g4652"><text
    id="text4660"
-   style="font-variant:normal;font-weight:normal;font-size:27.95999908px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:27.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,233.35,189.86)"><tspan
      id="tspan4658"
      y="0"
@@ -571,7 +573,7 @@
            clip-path="url(#clipPath4668)"
            id="g4664"><text
    id="text4672"
-   style="font-variant:normal;font-weight:normal;font-size:27.95999908px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:27.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,261.89,189.77)"><tspan
      id="tspan4670"
      y="0"
@@ -589,7 +591,7 @@
            clip-path="url(#clipPath4680)"
            id="g4676"><text
    id="text4684"
-   style="font-variant:normal;font-weight:normal;font-size:27.98399925px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:27.984px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,202.63,189.67)"><tspan
      id="tspan4682"
      y="0"
@@ -608,8 +610,9 @@
              id="g4612"
              clip-path="url(#clipPath4616)"><text
    transform="matrix(1,0,0,-1,224.57,95.784)"
-   style="font-variant:normal;font-weight:normal;font-size:20.04000092px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4620"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:20.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text4620"
+   y="0"><tspan
      x="0 6.8136001 17.875681 26.172239 37.294441 45.611038 58.697159"
      y="0"
      sodipodi:role="line"
@@ -627,8 +630,9 @@
              id="g4628"
              clip-path="url(#clipPath4632)"><text
    transform="matrix(1,0,0,-1,91.272,189.67)"
-   style="font-variant:normal;font-weight:normal;font-size:20.04000092px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4636"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:20.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text4636"
+   y="0"><tspan
      x="0 8.0360403 17.815559 26.43276 36.11208 42.925678 51.242279"
      y="0"
      sodipodi:role="line"
@@ -646,8 +650,9 @@
              id="g4700"
              clip-path="url(#clipPath4704)"><text
    transform="matrix(1,0,0,-1,220.3,307.63)"
-   style="font-variant:normal;font-weight:normal;font-size:20.04000092px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4708"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:20.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text4708"
+   y="0"><tspan
      x="0 8.6171999 15.39072 25.07004 36.21228 44.528881 57.013802"
      y="0"
      sodipodi:role="line"
@@ -682,8 +687,9 @@
            clip-path="url(#clipPath4762)"
            id="g4758"><text
    id="text4766"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,381.53,98.592)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,381.53,98.592)"
+   y="0"><tspan
      id="tspan4764"
      sodipodi:role="line"
      y="0"
@@ -701,8 +707,9 @@
            clip-path="url(#clipPath4778)"
            id="g4774"><text
    id="text4782"
-   style="font-variant:normal;font-weight:normal;font-size:9.96000004px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,380.66,67.2)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:9.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,380.66,67.2)"
+   y="0"><tspan
      id="tspan4780"
      sodipodi:role="line"
      y="0"
@@ -768,7 +775,8 @@
          clip-path="url(#clipPath4796)"><text
    transform="matrix(1,0,0,-1,94.656,260.78)"
    style="font-variant:normal;font-weight:normal;font-size:18px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#385723;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4800"><tspan
+   id="text4800"
+   y="0"><tspan
      x="0 11.916 21.474001 31.518 40.301998 44.153999"
      y="0"
      sodipodi:role="line"
@@ -787,8 +795,9 @@
          id="g4806"
          clip-path="url(#clipPath4810)"><text
    transform="matrix(1,0,0,-1,773.66,351.74)"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4814"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text4814"
+   y="0"><tspan
      x="0 7.8062401 13.32396 20.04912 27.12528 32.292 39.017159 45.840599 53.646839 60.49836 66.240723 70.185959 77.037483 84.829681 91.0494"
      y="0"
      sodipodi:role="line"
@@ -843,7 +852,8 @@
            id="g4822"><text
    id="text4830"
    style="font-variant:normal;font-weight:normal;font-size:24px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,776.93,284.69)"><tspan
+   transform="matrix(1,0,0,-1,776.93,284.69)"
+   y="0"><tspan
      id="tspan4828"
      sodipodi:role="line"
      y="0"
@@ -862,7 +872,8 @@
            id="g4838"><text
    id="text4846"
    style="font-variant:normal;font-weight:normal;font-size:24px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,776.93,199.3)"><tspan
+   transform="matrix(1,0,0,-1,776.93,199.3)"
+   y="0"><tspan
      id="tspan4844"
      sodipodi:role="line"
      y="0"
@@ -881,7 +892,8 @@
            id="g4854"><text
    id="text4862"
    style="font-variant:normal;font-weight:normal;font-size:24px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,776.93,113.88)"><tspan
+   transform="matrix(1,0,0,-1,776.93,113.88)"
+   y="0"><tspan
      id="tspan4860"
      sodipodi:role="line"
      y="0"
@@ -922,8 +934,8 @@
        id="path4890"
        inkscape:connector-curvature="0" /><a
        id="a5968"
-       xlink:href="#learnrl.core.Memory"
-       xlink:title="learnrl.core.Memory"
+       xlink:href="#learnrl.memory.Memory"
+       xlink:title="learnrl.memory.Memory"
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.5"
        style="opacity:0.5"><path
@@ -939,8 +951,8 @@
          style="fill:none;stroke:#1f4e79;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:8;stroke-dasharray:none;stroke-opacity:1"
          d="m 523.8,288.44 c 0,3.14 2.54,5.68 5.68,5.68 h 167.2 c 3.14,0 5.68,-2.54 5.68,-5.68 v -22.72 c 0,-3.14 -2.54,-5.68 -5.68,-5.68 h -167.2 c -3.14,0 -5.68,2.54 -5.68,5.68 z" /></a><a
        id="a4982"
-       xlink:href="#learnrl.core.Memory.remember"
-       xlink:title="learnrl.core.Memory.remember"
+       xlink:href="#learnrl.memory.Memory.remember"
+       xlink:title="learnrl.memory.Memory.remember"
        style="opacity:0.5"><path
          onmouseout="this.style.opacity=0.5"
          onmouseover="this.style.opacity=1"
@@ -1075,8 +1087,8 @@
          style="fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
          d="m 469.86,101.72 h 24.54 v 17.98 l -1.5,-1.5 h 20.07 v 3 H 491.4 v -17.98 l 1.5,1.5 h -23.04 z m 34.86,11.43 11.22,6.55 -11.22,6.55 c -0.71,0.41 -1.63,0.17 -2.05,-0.54 -0.42,-0.72 -0.17,-1.64 0.54,-2.06 l 9,-5.25 v 2.6 l -9,-5.25 c -0.71,-0.42 -0.96,-1.34 -0.54,-2.06 0.42,-0.71 1.34,-0.95 2.05,-0.54 z" /></g><a
        id="a5452"
-       xlink:href="#learnrl.core.Agent"
-       xlink:title="learnrl.core.Agent"
+       xlink:href="#learnrl.agent.Agent"
+       xlink:title="learnrl.agent.Agent"
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.25"
        style="opacity:0.25"><path
@@ -1117,8 +1129,8 @@
        id="path5024"
        inkscape:connector-curvature="0" /><a
        id="a5461"
-       xlink:href="#learnrl.core.Memory"
-       xlink:title="learnrl.core.Memory"
+       xlink:href="#learnrl.memory.Memory"
+       xlink:title="learnrl.memory.Memory"
        onmouseout="this.style.opacity=0.5"
        onmouseover="this.style.opacity=1"
        style="opacity:0.5"><path
@@ -1131,8 +1143,8 @@
        id="path5040"
        inkscape:connector-curvature="0" /><a
        id="a4975"
-       xlink:href="#learnrl.core.Memory.remember"
-       xlink:title="learnrl.core.Memory.remember"
+       xlink:href="#learnrl.memory.Memory.remember"
+       xlink:title="learnrl.memory.Memory.remember"
        style="opacity:0.5"><path
          onmouseout="this.style.opacity=0.5"
          onmouseover="this.style.opacity=1"
@@ -1161,8 +1173,8 @@
        id="path5112"
        inkscape:connector-curvature="0" /><a
        id="a5455"
-       xlink:href="#learnrl.core.Agent"
-       xlink:title="learnrl.core.Agent"
+       xlink:href="#learnrl.agent.Agent"
+       xlink:title="learnrl.agent.Agent"
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.25"
        style="opacity:0.25"><path
@@ -1205,8 +1217,8 @@
        onmouseover=""
        onmouseout="" /><a
        id="a5464"
-       xlink:href="#learnrl.core.Memory"
-       xlink:title="learnrl.core.Memory"
+       xlink:href="#learnrl.memory.Memory"
+       xlink:title="learnrl.memory.Memory"
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.5"
        style="opacity:0.5"><path
@@ -1219,8 +1231,8 @@
        id="path5164"
        inkscape:connector-curvature="0" /><a
        id="a4978"
-       xlink:href="#learnrl.core.Memory.remember"
-       xlink:title="learnrl.core.Memory.remember"
+       xlink:href="#learnrl.memory.Memory.remember"
+       xlink:title="learnrl.memory.Memory.remember"
        style="opacity:0.5"><path
          onmouseover="this.style.opacity=1"
          onmouseout="this.style.opacity=0.5"
@@ -1240,8 +1252,9 @@
                clip-path="url(#clipPath4580)"
                id="g4576"><text
    id="text4584"
-   style="font-variant:normal;font-weight:normal;font-size:15.96000004px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,525.24,311.35)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:15.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,525.24,311.35)"
+   y="0"><tspan
      id="tspan4582"
      sodipodi:role="line"
      y="0"
@@ -1260,8 +1273,9 @@
                  id="g4878"
                  clip-path="url(#clipPath4882)"><text
    transform="matrix(1,0,0,-1,652.13,306.5)"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4886"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text4886"
+   y="0"><tspan
      x="0 6.8515201 13.04316 17.872919 23.74164 32.867641"
      y="0"
      sodipodi:role="line"
@@ -1279,8 +1293,9 @@
                  id="g4894"
                  clip-path="url(#clipPath4898)"><text
    transform="matrix(1,0,0,-1,583.56,306.5)"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4902"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text4902"
+   y="0"><tspan
      x="0 3.8048401 10.65636 17.507879 23.32044 31.08456 36.953281"
      y="0"
      sodipodi:role="line"
@@ -1299,8 +1314,9 @@
                clip-path="url(#clipPath4914)"
                id="g4910"><text
    id="text4918"
-   style="font-variant:normal;font-weight:normal;font-size:15.96000004px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,528.55,273.55)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:15.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,528.55,273.55)"
+   y="0"><tspan
      id="tspan4916"
      sodipodi:role="line"
      y="0"
@@ -1320,7 +1336,8 @@
                  clip-path="url(#clipPath4930)"><text
    transform="matrix(1,0,0,-1,622.42,279.74)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4934"><tspan
+   id="text4934"
+   y="0"><tspan
      x="0 4.8000002 10.656 20.639999 26.496 36.48 43.043999 48.948002"
      y="0"
      sodipodi:role="line"
@@ -1339,7 +1356,8 @@
                  clip-path="url(#clipPath4942)"><text
    transform="matrix(1,0,0,-1,609.94,265.34)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text4946"><tspan
+   id="text4946"
+   y="0"><tspan
      x="0 5.0279999 12.588 15.096 17.736 25.176001 27.684 30.323999 37.776001 40.271999 42.911999 50.591999 53.099998 55.740002 63.540001 64.860001 67.367996 70.008003 73.848"
      y="0"
      sodipodi:role="line"
@@ -1359,8 +1377,9 @@
                clip-path="url(#clipPath5000)"
                id="g4996"><text
    id="text5004"
-   style="font-variant:normal;font-weight:normal;font-size:15.96000004px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,525.24,226.56)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:15.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,525.24,226.56)"
+   y="0"><tspan
      id="tspan5002"
      sodipodi:role="line"
      y="0"
@@ -1379,8 +1398,9 @@
                  id="g5012"
                  clip-path="url(#clipPath5016)"><text
    transform="matrix(1,0,0,-1,652.13,221.71)"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5020"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text5020"
+   y="0"><tspan
      x="0 6.8515201 13.04316 17.872919 23.74164 32.867641"
      y="0"
      sodipodi:role="line"
@@ -1398,8 +1418,9 @@
                  id="g5028"
                  clip-path="url(#clipPath5032)"><text
    transform="matrix(1,0,0,-1,583.56,221.71)"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5036"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text5036"
+   y="0"><tspan
      x="0 3.8048401 10.65636 17.507879 23.32044 31.08456 36.953281"
      y="0"
      sodipodi:role="line"
@@ -1418,8 +1439,9 @@
                clip-path="url(#clipPath5048)"
                id="g5044"><text
    id="text5052"
-   style="font-variant:normal;font-weight:normal;font-size:15.96000004px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,528.55,188.76)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:15.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,528.55,188.76)"
+   y="0"><tspan
      id="tspan5050"
      sodipodi:role="line"
      y="0"
@@ -1439,7 +1461,8 @@
                  clip-path="url(#clipPath5064)"><text
    transform="matrix(1,0,0,-1,622.42,194.95)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5068"><tspan
+   id="text5068"
+   y="0"><tspan
      x="0 4.8000002 10.656 20.639999 26.496 36.48 43.043999 48.948002"
      y="0"
      sodipodi:role="line"
@@ -1458,7 +1481,8 @@
                  clip-path="url(#clipPath5076)"><text
    transform="matrix(1,0,0,-1,609.94,180.55)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5080"><tspan
+   id="text5080"
+   y="0"><tspan
      x="0 5.0279999 12.588 15.096 17.736 25.176001 27.684"
      y="0"
      sodipodi:role="line"
@@ -1477,7 +1501,8 @@
                  clip-path="url(#clipPath5088)"><text
    transform="matrix(1,0,0,-1,640.3,180.55)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5092"><tspan
+   id="text5092"
+   y="0"><tspan
      x="0 7.4520001 9.948"
      y="0"
      sodipodi:role="line"
@@ -1496,7 +1521,8 @@
                  clip-path="url(#clipPath5100)"><text
    transform="matrix(1,0,0,-1,652.9,180.55)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5104"><tspan
+   id="text5104"
+   y="0"><tspan
      x="0 7.6799998 10.188 12.828 20.628 21.948 24.455999 27.096001 30.936001"
      y="0"
      sodipodi:role="line"
@@ -1516,8 +1542,9 @@
                clip-path="url(#clipPath5124)"
                id="g5120"><text
    id="text5128"
-   style="font-variant:normal;font-weight:normal;font-size:15.96000004px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,525.14,141.77)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:15.96px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,525.14,141.77)"
+   y="0"><tspan
      id="tspan5126"
      sodipodi:role="line"
      y="0"
@@ -1536,8 +1563,9 @@
                  id="g5136"
                  clip-path="url(#clipPath5140)"><text
    transform="matrix(1,0,0,-1,652.01,136.92)"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5144"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text5144"
+   y="0"><tspan
      x="0 6.8515201 13.04316 17.872919 23.74164 32.867641"
      y="0"
      sodipodi:role="line"
@@ -1555,8 +1583,9 @@
                  id="g5152"
                  clip-path="url(#clipPath5156)"><text
    transform="matrix(1,0,0,-1,583.44,136.92)"
-   style="font-variant:normal;font-weight:normal;font-size:14.03999996px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5160"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.04px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#843c0c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   id="text5160"
+   y="0"><tspan
      x="0 3.8048401 10.65636 17.507879 23.32044 31.08456 36.953281"
      y="0"
      sodipodi:role="line"
@@ -1575,8 +1604,9 @@
                clip-path="url(#clipPath5172)"
                id="g5168"><text
    id="text5176"
-   style="font-variant:normal;font-weight:normal;font-size:15.98400021px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,528.43,103.99)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:15.984px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,528.43,103.99)"
+   y="0"><tspan
      id="tspan5174"
      sodipodi:role="line"
      y="0"
@@ -1596,7 +1626,8 @@
                  clip-path="url(#clipPath5188)"><text
    transform="matrix(1,0,0,-1,622.3,110.18)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5192"><tspan
+   id="text5192"
+   y="0"><tspan
      x="0 4.8000002 10.656 20.639999 26.496 36.48 43.043999 48.948002"
      y="0"
      sodipodi:role="line"
@@ -1615,7 +1646,8 @@
                  clip-path="url(#clipPath5200)"><text
    transform="matrix(1,0,0,-1,609.82,95.76)"
    style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#002060;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   id="text5204"><tspan
+   id="text5204"
+   y="0"><tspan
      x="0 5.0279999 12.588 15.096 17.736 25.176001 27.684 30.323999 37.776001 40.271999 42.911999 50.591999 53.099998 55.740002 63.540001 64.860001 67.367996 70.008003 73.848"
      y="0"
      sodipodi:role="line"
@@ -1665,7 +1697,7 @@
            clip-path="url(#clipPath5224)"
            id="g5220"><text
    id="text5228"
-   style="font-variant:normal;font-weight:normal;font-size:20.06399918px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:20.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,467.76,431.11)"><tspan
      id="tspan5226"
      y="0"
@@ -1683,8 +1715,9 @@
            clip-path="url(#clipPath5236)"
            id="g5232"><text
    id="text5240"
-   style="font-variant:normal;font-weight:normal;font-size:14.06400013px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,480.84,431.11)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,480.84,431.11)"
+   y="0"><tspan
      id="tspan5238"
      sodipodi:role="line"
      y="0"
@@ -1702,7 +1735,7 @@
            clip-path="url(#clipPath5248)"
            id="g5244"><text
    id="text5252"
-   style="font-variant:normal;font-weight:normal;font-size:20.06399918px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:20.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,553.94,431.11)"><tspan
      id="tspan5250"
      y="0"
@@ -1720,8 +1753,9 @@
            clip-path="url(#clipPath5260)"
            id="g5256"><text
    id="text5264"
-   style="font-variant:normal;font-weight:normal;font-size:14.06400013px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,566.42,431.11)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,566.42,431.11)"
+   y="0"><tspan
      id="tspan5262"
      sodipodi:role="line"
      y="0"
@@ -1739,7 +1773,7 @@
            clip-path="url(#clipPath5272)"
            id="g5268"><text
    id="text5276"
-   style="font-variant:normal;font-weight:normal;font-size:20.06399918px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:20.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,605.9,431.11)"><tspan
      id="tspan5274"
      y="0"
@@ -1757,8 +1791,9 @@
            clip-path="url(#clipPath5284)"
            id="g5280"><text
    id="text5288"
-   style="font-variant:normal;font-weight:normal;font-size:14.06400013px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,618.38,431.11)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,618.38,431.11)"
+   y="0"><tspan
      id="tspan5286"
      sodipodi:role="line"
      y="0"
@@ -1776,7 +1811,7 @@
            clip-path="url(#clipPath5296)"
            id="g5292"><text
    id="text5300"
-   style="font-variant:normal;font-weight:normal;font-size:20.06399918px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:20.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,665.3,431.11)"><tspan
      id="tspan5298"
      y="0"
@@ -1794,8 +1829,9 @@
            clip-path="url(#clipPath5308)"
            id="g5304"><text
    id="text5312"
-   style="font-variant:normal;font-weight:normal;font-size:14.06400013px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,678.5,431.11)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,678.5,431.11)"
+   y="0"><tspan
      id="tspan5310"
      sodipodi:role="line"
      y="0"
@@ -1813,7 +1849,7 @@
            clip-path="url(#clipPath5320)"
            id="g5316"><text
    id="text5324"
-   style="font-variant:normal;font-weight:normal;font-size:20.06399918px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   style="font-variant:normal;font-weight:normal;font-size:20.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
    transform="matrix(1,0,0,-1,710.09,431.11)"><tspan
      id="tspan5322"
      y="0"
@@ -1831,8 +1867,9 @@
            clip-path="url(#clipPath5332)"
            id="g5328"><text
    id="text5336"
-   style="font-variant:normal;font-weight:normal;font-size:14.06400013px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   transform="matrix(1,0,0,-1,716.57,431.11)"><tspan
+   style="font-variant:normal;font-weight:normal;font-size:14.064px;font-family:'Cambria Math';-inkscape-font-specification:CambriaMath;writing-mode:lr-tb;fill:#595959;fill-opacity:1;fill-rule:nonzero;stroke:none"
+   transform="matrix(1,0,0,-1,716.57,431.11)"
+   y="0"><tspan
      id="tspan5334"
      sodipodi:role="line"
      y="0"
