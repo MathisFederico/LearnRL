@@ -68,7 +68,7 @@ class TensorboardCallback(LoggingCallback):
                 If set to None, metrics value will be searched in attributes, otherwise they will be searched in logs.
 
             """
-        with self.writer.as_default():
+        with self.writer.as_default(): #pylint: disable=all
             for agent_id in range(self.n_agents):
                 for metric in metrics_list:
                     name = self._get_attr_name(prefix, metric, agent_id)
