@@ -24,7 +24,7 @@ class KerasEstimator(Estimator):
 
     def build(self, **kwargs):
         raise NotImplementedError
-    
+
     def preprocess(self, observations:tf.Tensor, actions:tf.Tensor=None):
         raise NotImplementedError
 
@@ -42,26 +42,26 @@ class KerasEstimator(Estimator):
         if self.freezed_steps > 0:
             logs.update({'freezed_update': self.step_freezed_left == 0})
             if self.step_freezed_left == 0:
-                self.model_freezed.set_weights(self.model.get_weights()) 
+                self.model_freezed.set_weights(self.model.get_weights())
                 self.step_freezed_left = self.freezed_steps
                 if self.verbose > 0:
                     print("Freezed model updated")
             self.step_freezed_left -= 1
-        
+
         return logs
 
-    @tf.function(experimental_relax_shapes=True)
+    # @tf.function(experimental_relax_shapes=True)
     def train_on_experience_batch(self, observations:tf.Tensor, actions:tf.Tensor, Y:tf.Tensor):
         x_train = self.preprocess(observations, actions)
         y_pred = self.model.predict_step(x_train)
 
-        actions_indices = tf.stack((tf.range(len(actions)), actions), axis=-1)
+        actions_indices = tf.stack((tf.range(len(actions), dtype=actions.dtype), actions), axis=-1)
         y_action_pred = tf.gather_nd(y_pred, actions_indices)
         y_train = tf.tensor_scatter_nd_add(y_pred, actions_indices, tf.add(Y, -y_action_pred))
 
         metrics = self.model.train_step((x_train, y_train))
         return metrics
-    
+
     def predict(self, observations, actions=None):
         x = self.preprocess(observations, actions)
         x = tf.convert_to_tensor(x)
@@ -71,7 +71,7 @@ class KerasEstimator(Estimator):
         else:
             return Y
 
-    @tf.function(experimental_relax_shapes=True)
+    # @tf.function(experimental_relax_shapes=True)
     def predict_on_experience_batch(self, x):
         if self.freezed_steps > 0:
             Y = self.model_freezed.predict_step(x)

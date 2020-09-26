@@ -154,7 +154,7 @@ class Playground():
         if not learn:
             warnings.warn("learn should be True in Playground.fit(), otherwise the agents will not improve", UserWarning)
         if render:
-            warnings.warn("rendering degrades heavely computation speed, use CycleRenderCallback to see your agent performence suring training", RuntimeWarning)
+            warnings.warn("rendering degrades heavily computation speed, use CycleRenderCallback to see your agent performance during training", RuntimeWarning)
 
         self.run(episodes, render=render, learn=learn, **kwargs)
 
@@ -172,6 +172,15 @@ class Playground():
 
 class DoneHandler():
 
+    """ Helper to modify the done given by the environmen
+
+    You need to specify the method:
+     - `done(self, observation, action, reward, done, info, next_observation) -> done`
+    
+    You can also define __init__ and reset() if you want to store anything.
+
+    """
+
     def done(self, observation, action, reward, done, info, next_observation):
         raise NotImplementedError
 
@@ -188,6 +197,15 @@ class DoneHandler():
         return self._done(*args)
 
 class RewardHandler():
+
+    """ Helper to modify the rewards given by the environment
+    
+    You need to specify the method:
+     - `reward(self, observation, action, reward, done, info, next_observation) -> reward`
+    
+    You can also define __init__ and reset() if you want to store anything.
+    
+    """
 
     def reward(self, observation, action, reward, done, info, next_observation):
         raise NotImplementedError
