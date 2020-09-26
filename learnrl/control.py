@@ -35,7 +35,7 @@ class Control():
         exploration: float
             The initial exploration constant
         name: str
-            The name of the control (mendatory)
+            The name of the control (mandatory)
         exploration_decay: float
             The exploration_decay (default to 0)
         

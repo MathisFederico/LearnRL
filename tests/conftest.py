@@ -2,6 +2,8 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 import pytest
+import importlib
+import learnrl
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -21,3 +23,18 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "slow" in item.keywords:
             item.add_marker(skip_slow)
+
+@pytest.fixture
+def reload_tensorflow():
+    yield
+    importlib.reload(learnrl.callbacks)
+    importlib.reload(learnrl.estimators)
+    importlib.reload(learnrl)
+
+@pytest.fixture
+def hide_tensorflow(reload_tensorflow, mocker):
+    mocker.patch.dict('sys.modules', { 'tensorflow': None })
+    importlib.reload(learnrl.callbacks)
+    importlib.reload(learnrl.estimators)
+    importlib.reload(learnrl)
+
