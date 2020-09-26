@@ -4,9 +4,16 @@
 import pytest
 import learnrl
 
-def test_instanciate_without_tensorflow(hide_tensorflow):
-    with pytest.raises(ImportError, match=r".*tensorflow >= 2.*"):
-        callback = learnrl.callbacks.TensorboardCallback()
+import importlib
+tensorflow_spec = importlib.util.find_spec('tensorflow')
 
-def test_instanciate_with_tensorflow():
-    callback = learnrl.callbacks.TensorboardCallback()
+if tensorflow_spec is not None:
+    def test_instanciate_without_tensorflow(hide_tensorflow):
+        with pytest.raises(ImportError, match=r".*tensorflow >= 2.*"):
+            callback = learnrl.callbacks.TensorboardCallback()
+
+    def test_instanciate_with_tensorflow():
+        callback = learnrl.callbacks.TensorboardCallback()
+else:
+    pass
+
