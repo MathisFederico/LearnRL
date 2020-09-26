@@ -79,7 +79,7 @@ html_theme_options = {
     'style_external_links': '#ff9900',
     'style_nav_header_background': '#ff9900',
     # Toc options
-    'collapse_navigation': True,
+    'collapse_navigation': False,
     'sticky_navigation': True,
     'navigation_depth': 4,
     'includehidden': True,
