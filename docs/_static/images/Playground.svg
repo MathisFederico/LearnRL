@@ -345,7 +345,7 @@
      id="namedview4520"
      showgrid="false"
      inkscape:zoom="1.562264"
-     inkscape:cx="494.81732"
+     inkscape:cx="509.2195"
      inkscape:cy="366.82677"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
@@ -372,11 +372,11 @@
        id="path4540"
        inkscape:connector-curvature="0" /><a
        xlink:href="agents.html"
-       id="a5443"
-       xlink:title="agents"
-       style="opacity:0.5"
+       onmouseout="this.style.opacity=0.5"
        onmouseover="this.style.opacity=1"
-       onmouseout="this.style.opacity=0.5"><path
+       style="opacity:0.5"
+       xlink:title="agents"
+       id="a5443"><path
          inkscape:connector-curvature="0"
          id="path4554"
          style="fill:#ff7e09;fill-opacity:1;fill-rule:evenodd;stroke:none"
@@ -908,8 +908,8 @@
 
 </g></g></g><a
        id="a5004"
-       xlink:href="#learnrl.core.Agent.act"
-       xlink:title="learnrl.core.Agent.act"><path
+       xlink:href="#learnrl.agent.Agent.act"
+       xlink:title="learnrl.agent.Agent.act"><path
          onmouseover="this.style.opacity=1"
          onmouseout="this.style.opacity=0.5"
          inkscape:connector-curvature="0"
@@ -921,8 +921,8 @@
        id="path4874"
        inkscape:connector-curvature="0" /><a
        id="a5000"
-       xlink:href="#learnrl.core.Agent.learn"
-       xlink:title="learnrl.core.Agent.learn"><path
+       xlink:href="#learnrl.agent.Agent.learn"
+       xlink:title="learnrl.agent.Agent.learn"><path
          onmouseout="this.style.opacity=0.5"
          onmouseover="this.style.opacity=1"
          inkscape:connector-curvature="0"
@@ -1101,8 +1101,8 @@
        id="path4992"
        inkscape:connector-curvature="0" /><a
        id="a4988"
-       xlink:href="#learnrl.core.Agent.act"
-       xlink:title="learnrl.core.Agent.act"
+       xlink:href="#learnrl.agent.Agent.act"
+       xlink:title="learnrl.agent.Agent.act"
        onmouseover=""
        onmouseout=""><path
          inkscape:connector-curvature="0"
@@ -1116,8 +1116,8 @@
        id="path5008"
        inkscape:connector-curvature="0" /><a
        id="a4997"
-       xlink:href="#learnrl.core.Agent.learn"
-       xlink:title="learnrl.core.Agent.learn"><path
+       xlink:href="#learnrl.agent.Agent.learn"
+       xlink:title="learnrl.agent.Agent.learn"><path
          onmouseout="this.style.opacity=0.5"
          onmouseover="this.style.opacity=1"
          inkscape:connector-curvature="0"
@@ -1187,8 +1187,8 @@
        id="path5116"
        inkscape:connector-curvature="0" /><a
        id="a4991"
-       xlink:href="#learnrl.core.Agent.act"
-       xlink:title="learnrl.core.Agent.act"
+       xlink:href="#learnrl.agent.Agent.act"
+       xlink:title="learnrl.agent.Agent.act"
        onmouseover="this.style.opacity=1"
        onmouseout="this.style.opacity=0.5"><path
          onmouseout="this.style.opacity=0.5"
@@ -1202,8 +1202,8 @@
        id="path5132"
        inkscape:connector-curvature="0" /><a
        id="a4972"
-       xlink:href="#learnrl.core.Agent.learn"
-       xlink:title="learnrl.core.Agent.learn"><path
+       xlink:href="#learnrl.agent.Agent.learn"
+       xlink:title="learnrl.agent.Agent.learn"><path
          onmouseout="this.style.opacity=0.5"
          onmouseover="this.style.opacity=1"
          inkscape:connector-curvature="0"
