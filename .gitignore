@@ -135,6 +135,9 @@ dmypy.json
 # ROMS
 /ROMs
 
+# Tensorboard
+logs
+
 # Main
 main.py
 
