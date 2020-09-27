@@ -3,7 +3,6 @@
 
 import pytest
 import learnrl
-
 import importlib
 tensorflow_spec = importlib.util.find_spec('tensorflow')
 
