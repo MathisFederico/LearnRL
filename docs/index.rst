@@ -4,7 +4,7 @@ Welcome to LearnRL's documentation!
 About LearnRL
 -------------
 
-| LearnRL is a librairie to use and learn reinforcement learning.
+| LearnRL is a library to use and learn reinforcement learning.
 | Look how easy it is to use:
 
 .. code-block:: python
