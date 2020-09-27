@@ -1,10 +1,19 @@
 /* Improve autodoc */
 
+/* Changes for svg images */
+svg {
+    width: 100%;
+    height: 50%;
+}
+
+svg .svg-line,
+svg .svg-text {
+    pointer-events: none;
+}
+
 
 /* Change navbar color */
-.wy-nav-top {
-    background:hsl(35, 100%, 55%) !important;
-}
+.wy-nav-top,
 .wy-side-nav-search {
     background:hsl(35, 100%, 55%) !important;
 }
@@ -37,6 +46,18 @@
     border-radius: .3em;
 }
 
+.rst-content li.toctree-l3 > a {
+    background: hsla(34, 100%, 92%, 0.5) !important;
+    position: relative;
+    display: block;
+    font-size: x-small;
+    width: 30%;
+    padding: .1em .1em .1em 2em;
+    margin-top: .3em;
+    margin-bottom: .3em;
+    border-radius: .3em;
+}
+
 .rst-content li > a:hover {
     background: hsla(35, 100%, 60%, 1) !important;
 }
@@ -45,14 +66,10 @@
     list-style-type: none !important;
 }
 
+.rst-content li a,
 .rst-content li a:visited {
     color: rgb(0, 0, 0);
 }
-
-.rst-content li a {
-    color: rgb(0, 0, 0);
-}
-
 
 /* Show reference in a box */
 dl.class,
@@ -75,6 +92,12 @@ dl.attribute > dt {
     background-color: hsla(135, 35%, 75%, 20%) !important;
     border-left-color: hsl(135, 50%, 50%) !important;
 }
+
+/* Remove attributes with no ids */
+dl.attribute > dt:not([id]){
+    display: none !important;
+}
+
 dl.method > dt {
     background-color: hsla(200, 35%, 75%, 20%) !important;
     border-left-color: hsl(200, 50%, 50%) !important;

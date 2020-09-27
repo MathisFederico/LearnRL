@@ -4,10 +4,11 @@ Welcome to LearnRL's documentation!
 About LearnRL
 -------------
 
-| LearnRL is a librairie to use and learn reinforcement learning.
+| LearnRL is a library to use and learn reinforcement learning.
 | Look how easy it is to use:
 
 .. code-block:: python
+   :linenos:
 
    import learnrl as rl
    from learnrl.environments import CrossesAndNoughtsEnv
@@ -33,21 +34,26 @@ Features
 Installation
 ------------
 
-Install LearnRL by running::
+Install LearnRL by running:
 
-   pip install learnrl
+>>> $pip install learnrl
 
-Documentation
--------------
+Table Of Content
+----------------
 
-See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details
-See the `developpement documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see whats comming !
+.. toctree::
+   :maxdepth: 2
+
+   core
+   agents
+   environments
+   callbacks
 
 Contribute
 ----------
 
-- `Issue Tracker <https://github.com/MathisFederico/LearnRL/issues>`_
-- `Projects <https://github.com/MathisFederico/LearnRL/projects>`_
+- Issue Tracker : github.com/MathisFederico/LearnRL/issues
+- Source Code : github.com/MathisFederico/LearnRL
 
 Support
 -------
@@ -58,8 +64,6 @@ License
 -------
 
 | The project is licensed under the GNU LGPLv3 license.
+| This means that you can use this software for commercial application as long
+| as you mention using LearnRL and does not allow to reproduce LearnRL in your application.
 | See LICENCE, COPYING and COPYING.LESSER for more details.
-
-.. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
-.. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
-.. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__

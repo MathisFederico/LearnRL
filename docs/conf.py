@@ -40,9 +40,9 @@ extensions = [
     'sphinx.ext.napoleon',
     'autoapi.sphinx'
 ]
-master_doc = 'README'
+master_doc = 'index'
 autoapi_dirs = ['../learnrl']
-autodoc_mock_imports = ["pygame"]
+autodoc_mock_imports = ["pygame", "tensorflow"]
 autodoc_default_options = {
     'member-order': 'bysource',
     'undoc-members': True,
@@ -79,7 +79,7 @@ html_theme_options = {
     'style_external_links': '#ff9900',
     'style_nav_header_background': '#ff9900',
     # Toc options
-    'collapse_navigation': True,
+    'collapse_navigation': False,
     'sticky_navigation': True,
     'navigation_depth': 4,
     'includehidden': True,
@@ -98,5 +98,5 @@ html_context = {
 
 html_static_path = ['_static']
 def setup(app):
-    app.add_stylesheet('styles/custom.css')
+    app.add_css_file('styles/custom.css')
  
