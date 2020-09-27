@@ -46,6 +46,18 @@ svg .svg-text {
     border-radius: .3em;
 }
 
+.rst-content li.toctree-l3 > a {
+    background: hsla(34, 100%, 92%, 0.5) !important;
+    position: relative;
+    display: block;
+    font-size: x-small;
+    width: 30%;
+    padding: .1em .1em .1em 2em;
+    margin-top: .3em;
+    margin-bottom: .3em;
+    border-radius: .3em;
+}
+
 .rst-content li > a:hover {
     background: hsla(35, 100%, 60%, 1) !important;
 }
