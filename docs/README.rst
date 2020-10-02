@@ -51,8 +51,8 @@ Table Of Content
 Contribute
 ----------
 
-- Issue Tracker : github.com/MathisFederico/LearnRL/issues
-- Source Code : github.com/MathisFederico/LearnRL
+- `Issue Tracker <https://github.com/MathisFederico/LearnRL/issues>`_
+- `Source Code : <https://github.com/MathisFederico/LearnRL>`_
 
 Support
 -------
