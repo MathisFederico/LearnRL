@@ -1,4 +1,3 @@
-from learnrl import Agent
 from learnrl.memory import Memory
 
 class Agent():
