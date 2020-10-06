@@ -27,9 +27,9 @@ class StandardAgent(Agent):
         action_space: |gym.Space|
             The action_space of the environement that the agent will act on
         control: :class:`~learnrl.control.Control`
-            Control object to define policy from :attr:`learnrl.agents.standard.StandardAgent.action_values` *(default is 0.1-Greedy)*
+            Control object to define policy from :attr:`~learnrl.agents.standard.StandardAgent.action_values` *(default is 0.1-Greedy)*
         evaluation:  :class:`~learnrl.evaluation.Evaluation`, optional
-            Evaluation object to update :attr:`learnrl.agents.standard.StandardAgent.action_values` from agent :class:`~learnrl.memory.Memory` *(default is QLearning)*
+            Evaluation object to update :attr:`~learnrl.agents.standard.StandardAgent.action_values` from agent :class:`~learnrl.memory.Memory` *(default is QLearning)*
         action_values: :class:`~learnrl.estimators.Estimator`, optional
             Known as Q(s,a), this represent the expected return (futur rewards) given that
             the agent took the action a in the state s. *(default is a Table)*
