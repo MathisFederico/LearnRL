@@ -1,8 +1,7 @@
 import numpy as np
 from copy import copy
 import collections.abc as collections
-from learnrl.agent import Agent
-from learnrl.memory import Memory
+from learnrl import Agent
 
 class Memory():
 
@@ -10,12 +9,12 @@ class Memory():
     A general memory for reinforcement learning agents
 
     Using the methods :meth:`remember` and :meth:`forget`
-    any :class:`~learnrl.agent.Agent` have a standardized :class:`~learnrl.memory.Memory` !
+    any :class:`Agent` have a standardized :class:`Memory` !
     
     Attributes
     ----------
         max_memory_len: :class:`int`
-            Max number of experiences stocked by the :class:`~learnrl.memory.Memory`
+            Max number of experiences stocked by the :class:`Memory`
         datas: :class:`dict`
             The dictionary of experiences as :class:`numpy.ndarray`
         MEMORY_KEYS:
@@ -42,7 +41,7 @@ class Memory():
             done: :class:`bool`
                 Whether the |gym.Env| had ended after the action
             next_observation:
-                The next_observation given by the |gym.Env| or transformed by the :class:`~learnrl.agent.Agent` hash function
+                The next_observation given by the |gym.Env| or transformed by the :class:`Agent` hash function
             info: :class:`dict`
                 Additional informations given by the |gym.Env|
             **kwargs:
