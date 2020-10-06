@@ -1,6 +1,6 @@
 from learnrl import Agent
 from learnrl.memory import Memory
-:class:`~learnrl.estimators.Estimator`
+
 class Agent():
 
     """ A general structure for reinforcement learning agents    
