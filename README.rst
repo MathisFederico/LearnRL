@@ -6,7 +6,7 @@ We would love to see what projects you made with LearnRL, so don't hesitate to j
 About LearnRL
 -------------
 
-| LearnRL is a librairie to use and learn reinforcement learning.
+| LearnRL is a library to use and learn reinforcement learning.
 | Look how easy it is to use:
 
 .. code-block:: python
@@ -28,9 +28,9 @@ And boom you made two QLearning AIs training against each other on crosses and n
 Features
 --------
 
-- Build highly configurable classic reinforcement learning agents in few lines of code
-- Train your Agents on any Gym environments
-- Use this API to create your own agents and environments (even multiplayer!) with great compatibility
+- Build highly configurable classic reinforcement learning agents in few lines of code.
+- Train your Agents on any Gym environments.
+- Use this API to create your own agents and environments (even multiplayer!) with great compatibility.
 
 Installation
 ------------
@@ -42,19 +42,19 @@ Install LearnRL by running::
 Documentation
 -------------
 
-See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details
-See the `developpement documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see whats comming !
+| See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details.
+| See the `development documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see what's coming !
 
 Contribute
 ----------
 
-- `Issue Tracker <https://github.com/MathisFederico/LearnRL/issues>`_
-- `Projects <https://github.com/MathisFederico/LearnRL/projects>`_
+- `Issue Tracker <https://github.com/MathisFederico/LearnRL/issues>`_.
+- `Projects <https://github.com/MathisFederico/LearnRL/projects>`_.
 
 Support
 -------
 
-If you are having issues, please let me know at mathfederico@gmail.com
+If you are having issues, please let me know at mathfederico@gmail.com.
 
 License
 -------
