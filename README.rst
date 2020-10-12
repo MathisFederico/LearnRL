@@ -54,7 +54,7 @@ Contribute
 Support
 -------
 
-If you are having issues, please let me know at mathfederico@gmail.com.
+If you are having issues, please contact us `on Discord <https://discord.gg/z9dd4s5>`_.
 
 License
 -------
