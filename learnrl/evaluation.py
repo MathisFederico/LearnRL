@@ -64,7 +64,11 @@ class Evaluation():
                 True if the environment has ended and previous step was the last.
             next_observation: np.ndarray
                 The observation made after the step, used to predict what will happen next.
+<<<<<<< HEAD
             action_values: :class:`~learnrl.estimators.Estimator`
+=======
+            action_values: :class:`~learnrl.estimator.Estimator`
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
                 The action_values approximated by the agent.
             action_visits: :class:`~learnrl.estimators.Estimator`
                 The action_visits approximated by the agent.

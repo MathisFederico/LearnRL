@@ -2,13 +2,21 @@ import numpy as np
 from copy import copy
 import collections.abc as collections
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
 class Memory():
 
     """
     A general memory for reinforcement learning agents
 
     Using the methods :meth:`remember` and :meth:`forget`
+<<<<<<< HEAD
     any :class:`~learnrl.agent.Agent` have a standardized :class:`Memory` !
+=======
+    any :Class:`Agent` have a standardized :class:`Memory` !
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
     
     Attributes
     ----------
@@ -32,9 +40,15 @@ class Memory():
         Parameters
         ----------
             observation:
+<<<<<<< HEAD
                 The observation given by the |gym.Env| or transformed by an :class:`~learnrl.agent.Agent` hash function
             action:
                 The action given by to |gym.Env| or transformed by an :class:`~learnrl.agent.Agent` hash function
+=======
+                The observation given by the |gym.Env| or transformed by an :class:`Agent` hash function
+            action:
+                The action given by to |gym.Env| or transformed by an :class:`Agent` hash function
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
             reward: :class:`float`
                 The reward given by the |gym.Env|
             done: :class:`bool`

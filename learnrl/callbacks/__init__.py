@@ -1,11 +1,18 @@
 import time
 import sys
 import numpy as np
+<<<<<<< HEAD
 from learnrl.playground import Playground
 
 class Callback():
 
     """ An object to call functions while the :class:`~learnrl.playground.Playground` is running.
+=======
+
+class Callback():
+
+    """ An object to call functions while the :class:`~learnrl.core.Playground` is running.
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
 
     You can define the custom functions `on_{position}` where position can be :
     
@@ -53,7 +60,11 @@ class Callback():
         pass
 
 class CallbackList():
+<<<<<<< HEAD
     """ An wrapper to use a list of :class:`Callback` while the :class:`~learnrl.playground.Playground` is running.
+=======
+    """ An wrapper to use a list of :class:`Callback` while the :class:`~learnrl.core.Playground` is running.
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
     """
     
     def __init__(self, callbacks=[]):
@@ -321,7 +332,11 @@ class LoggingCallback(Callback):
 
 class Logger(LoggingCallback):
 
+<<<<<<< HEAD
     """ Default logger in every :class:`~learnrl.playground.Playground` run
+=======
+    """ Default logger in every :class:`~learnrl.core.Playground` run
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
     
     This will print relevant informations in console.
 

@@ -7,3 +7,4 @@ Agents
 .. toctree::
 
    agents/learnrl.agents.table
+

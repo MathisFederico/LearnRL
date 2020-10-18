@@ -4,7 +4,11 @@ Welcome to LearnRL's documentation!
 About LearnRL
 -------------
 
+<<<<<<< HEAD
 | LearnRL is a librairie to use and learn reinforcement learning.
+=======
+| LearnRL is a library to use and learn reinforcement learning.
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
 | Look how easy it is to use:
 
 .. code-block:: python
@@ -52,8 +56,13 @@ Table Of Content
 Contribute
 ----------
 
+<<<<<<< HEAD
 - `Issue Tracker <https://github.com/MathisFederico/LearnRL/issues>`_
 - `Source Code : <https://github.com/MathisFederico/LearnRL>`_
+=======
+- Issue Tracker : github.com/MathisFederico/LearnRL/issues
+- Source Code : github.com/MathisFederico/LearnRL
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
 
 Support
 -------

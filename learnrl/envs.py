@@ -1,5 +1,8 @@
 from gym import Env
+<<<<<<< HEAD
 from learnrl.agent import Agent
+=======
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
 
 class TurnEnv(Env):
 
@@ -43,9 +46,15 @@ class TurnEnv(Env):
         Return
         ------
             observation: 
+<<<<<<< HEAD
                 The observation to give to the :class:`~learnrl.agent.Agent`.
             reward: :class:`float`
                 The reward given to the :class:`~learnrl.agent.Agent` for this step.
+=======
+                The observation to give to the :class:`Agent`.
+            reward: :class:`float`
+                The reward given to the :class:`Agent` for this step.
+>>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
             done: :class:`bool`
                 Is the environement done after this step ?
             info: :class:`dict`
