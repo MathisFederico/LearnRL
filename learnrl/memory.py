@@ -1,7 +1,6 @@
 import numpy as np
 from copy import copy
 import collections.abc as collections
-from learnrl import Agent
 
 class Memory():
 
@@ -9,7 +8,7 @@ class Memory():
     A general memory for reinforcement learning agents
 
     Using the methods :meth:`remember` and :meth:`forget`
-    any :class:`Agent` have a standardized :class:`Memory` !
+    any :class:`~learnrl.agent.Agent` have a standardized :class:`Memory` !
     
     Attributes
     ----------
@@ -33,9 +32,9 @@ class Memory():
         Parameters
         ----------
             observation:
-                The observation given by the |gym.Env| or transformed by an :class:`Agent` hash function
+                The observation given by the |gym.Env| or transformed by an :class:`~learnrl.agent.Agent` hash function
             action:
-                The action given by to |gym.Env| or transformed by an :class:`Agent` hash function
+                The action given by to |gym.Env| or transformed by an :class:`~learnrl.agent.Agent` hash function
             reward: :class:`float`
                 The reward given by the |gym.Env|
             done: :class:`bool`
