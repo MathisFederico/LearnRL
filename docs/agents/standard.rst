@@ -23,7 +23,7 @@ TableAgent
 | A :class:`~learnrl.control.Control` object uses the action_value to determine the policy or behavior of the agent.
 | An :class:`~learnrl.evaluation.Evaluation` object predicts the expected rewards from an experience given a behavior.
 
-| By default, when building a :class:`~learnrl.agents.StandardAgent`, it will not use DeepLearning (using a :class:`~learnrl.estimator.TableEstimator`) 
+| By default, when building a :class:`~learnrl.agents.StandardAgent`, it will not use DeepLearning (using a :class:`~learnrl.estimators.TableEstimator`) 
 | with :class:`~learnrl.control.Greedy` control and :class:`~learnrl.evaluation.QLearning` evaluation.
 
 Here is an example :
