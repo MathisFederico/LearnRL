@@ -1,11 +1,7 @@
 import datetime
 import tensorflow as tf
 
-<<<<<<< HEAD
 from learnrl.callbacks import LoggingCallback, MetricList
-=======
-from learnrl.callbacks import LoggingCallback
->>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
 
 class TensorboardCallback(LoggingCallback):
 

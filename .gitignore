@@ -142,8 +142,3 @@ logs
 main.py
 
 # cProfile stats
-<<<<<<< HEAD
-stats*
-=======
-stats*
->>>>>>> e8418a7ba8405219567800c97244293b9e6df5a5
