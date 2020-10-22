@@ -51,7 +51,6 @@ class Callback():
         pass
 
 class CallbackList():
-<<<<<<< HEAD
     """ An wrapper to use a list of :class:`Callback` while the :class:`~learnrl.playground.Playground` is running.
     """
     
@@ -320,7 +319,6 @@ class LoggingCallback(Callback):
 
 class Logger(LoggingCallback):
 
-<<<<<<< HEAD
     """ Default logger in every :class:`~learnrl.playground.Playground` run
     
     This will print relevant informations in console.

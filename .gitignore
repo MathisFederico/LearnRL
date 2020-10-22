@@ -142,3 +142,4 @@ logs
 main.py
 
 # cProfile stats
+stats*
