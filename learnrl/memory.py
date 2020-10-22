@@ -2,19 +2,18 @@ import numpy as np
 from copy import copy
 import collections.abc as collections
 
-
 class Memory():
 
     """
     A general memory for reinforcement learning agents
 
     Using the methods :meth:`remember` and :meth:`forget`
-    any :Class:`Agent` have a standardized :class:`Memory` !
+    any :class:`~learnrl.agent.Agent` have a standardized :class:`~learnrl.memory.Memory` !
     
     Attributes
     ----------
         max_memory_len: :class:`int`
-            Max number of experiences stocked by the :class:`Memory`
+            Max number of experiences stocked by the :class:`~learnrl.memory.Memory`
         datas: :class:`dict`
             The dictionary of experiences as :class:`numpy.ndarray`
         MEMORY_KEYS:
@@ -33,15 +32,15 @@ class Memory():
         Parameters
         ----------
             observation:
-                The observation given by the |gym.Env| or transformed by an :class:`Agent` hash function
+                The observation given by the |gym.Env| or transformed by an :class:`~learnrl.agent.Agent` hash function
             action:
-                The action given by to |gym.Env| or transformed by an :class:`Agent` hash function
+                The action given by to |gym.Env| or transformed by an :class:`~learnrl.agent.Agent` hash function
             reward: :class:`float`
                 The reward given by the |gym.Env|
             done: :class:`bool`
                 Whether the |gym.Env| had ended after the action
             next_observation:
-                The next_observation given by the |gym.Env| or transformed by the :class:`Agent` hash function
+                The next_observation given by the |gym.Env| or transformed by the :class:`~learnrl.agent.Agent` hash function
             info: :class:`dict`
                 Additional informations given by the |gym.Env|
             **kwargs:

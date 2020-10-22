@@ -18,14 +18,13 @@ TableAgent
 | Table agents are the simplest form of RL Agents.
 | With experience, we build an action_value array (Q in literature).
 | Q(s,a) being the expected futur rewards given that the agent did the action a in the state s.
-| For that, they are composed of two main objects : Control and Evaluation
+| For that, they are composed of two main objects : :ref:`Control` and :ref:`Evaluation`.
 
 | A :class:`~learnrl.control.Control` object uses the action_value to determine the policy or behavior of the agent.
 | An :class:`~learnrl.evaluation.Evaluation` object predicts the expected rewards from an experience given a behavior.
 
-| By default, when building a :class:`~learnrl.agents.StandardAgent`, it will be a TableAgent (using a :class:`~learnrl.estimator.TableEstimator`) 
-| with eps-greedy control (see :ref:`Control`)
-| and QLearning evaluation (see :ref:`Evaluation`)
+| By default, when building a :class:`~learnrl.agents.StandardAgent`, it will not use DeepLearning (using a :class:`~learnrl.estimators.TableEstimator`) 
+| with :class:`~learnrl.control.Greedy` control and :class:`~learnrl.evaluation.QLearning` evaluation.
 
 Here is an example :
 
@@ -43,9 +42,9 @@ Here is an example :
 DeepRLAgent
 -----------
 
-| If we replace the :class:`~learnrl.estimator.TableEstimator` by any other estimator, we can build approximations of Q(s,a).
-| This is way more suitable in general because the :class:`~learnrl.estimator.TableEstimator` needs too much ram for real applications.
-| For example, replacing the action_value by a :class:`~learnrl.estimator.KerasEstimator` and completing the methods build and preprocess like so :
+| If we replace the :class:`~learnrl.estimators.TableEstimator` by any other estimator, we can build approximations of Q(s,a).
+| This is way more suitable in general because the :class:`~learnrl.estimators.TableEstimator` needs too much ram for real applications.
+| For example, replacing the action_value by a :class:`~learnrl.estimators.KerasEstimator` and completing the methods build and preprocess like so :
 
 .. code-block:: python
 

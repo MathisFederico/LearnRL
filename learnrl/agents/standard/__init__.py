@@ -16,9 +16,9 @@ class StandardAgent(Agent):
 
     """  A standard structure of RL agents
 
-    Build with parts :class:`~learnrl.agent_parts.control.Control` for policy,
-    :class:`~learnrl.agent_parts.evaluation.Evaluation` for futur rewards estimations
-    and :class:`~learnrl.agent_parts.estimator.Estimator` for action_value estimation.
+    Build with parts :class:`~learnrl.control.Control` for policy,
+    :class:`~learnrl.evaluation.Evaluation` for future rewards estimations
+    and :class:`~learnrl.estimators.Estimator` for action_value estimation.
     
     Parameters
     ----------
@@ -27,9 +27,9 @@ class StandardAgent(Agent):
         action_space: |gym.Space|
             The action_space of the environement that the agent will act on
         control: :class:`~learnrl.control.Control`
-            Control object to define policy from :attr:`action_value` *(default is 0.1-Greedy)*
+            Control object to define policy from :attr:`~learnrl.agents.standard.StandardAgent.action_values` *(default is 0.1-Greedy)*
         evaluation:  :class:`~learnrl.evaluation.Evaluation`, optional
-            Evaluation object to update :attr:`action_value` from agent :class:`~learnrl.core.Memory` *(default is QLearning)*
+            Evaluation object to update :attr:`~learnrl.agents.standard.StandardAgent.action_values` from agent :class:`~learnrl.memory.Memory` *(default is QLearning)*
         action_values: :class:`~learnrl.estimators.Estimator`, optional
             Known as Q(s,a), this represent the expected return (futur rewards) given that
             the agent took the action a in the state s. *(default is a Table)*
@@ -41,7 +41,7 @@ class StandardAgent(Agent):
         sample_size: int, optional
             Maximum number of samples to take from memory to perform a learning step. If 0, takes all memory.
         sample_method: str, optional
-            The sampling used, see :meth:`~learnrl.core.Memory.sample` for details.
+            The sampling used, see :meth:`~learnrl.memory.Memory.sample` for details.
         forget_after_update: bool, optional
             If True, forget all past memory after a learning step.
         step_skip: int, optional

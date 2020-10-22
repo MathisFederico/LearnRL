@@ -4,8 +4,7 @@ import numpy as np
 
 class Callback():
 
-    """ An object to call functions while the :class:`~learnrl.core.Playground` is running.
-
+    """ An object to call functions while the :class:`~learnrl.playground.Playground` is running.
     You can define the custom functions `on_{position}` where position can be :
     
     >>> run_begin
@@ -52,7 +51,7 @@ class Callback():
         pass
 
 class CallbackList():
-    """ An wrapper to use a list of :class:`Callback` while the :class:`~learnrl.core.Playground` is running.
+    """ An wrapper to use a list of :class:`Callback` while the :class:`~learnrl.playground.Playground` is running.
     """
     
     def __init__(self, callbacks=[]):
@@ -320,7 +319,7 @@ class LoggingCallback(Callback):
 
 class Logger(LoggingCallback):
 
-    """ Default logger in every :class:`~learnrl.core.Playground` run
+    """ Default logger in every :class:`~learnrl.playground.Playground` run
     
     This will print relevant informations in console.
 

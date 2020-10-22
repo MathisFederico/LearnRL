@@ -1,17 +1,14 @@
-
-
 class Agent():
 
     """ A general structure for reinforcement learning agents    
     
-    It uses by default a :class:`Memory`
+    It uses by default a :class:`~learnl.memory.Memory`
 
     Attributes
     ----------
 
         name: :class:`str`
-            The Agent's name
-        memory: :class:`Memory`
+        memory: :class:`~learnl.memory.Memory`
             The Agent's memory
     
     """
@@ -41,7 +38,7 @@ class Agent():
         raise NotImplementedError
 
     def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
-        """ Uses the agent's :class:`Memory` to remember experiences
+        """ Uses the agent's :class:`~learnl.memory.Memory` to remember experiences
         
         Often, the agent will use a |hash| to store observations efficiently
 
@@ -54,4 +51,3 @@ class Agent():
             ...                       info, **param)
         """
         raise NotImplementedError
-    
