@@ -35,10 +35,10 @@ class Agent():
                 The agent learning logs.
 
         """
-        raise NotImplementedError
+        return {}
 
     def remember(self, observation, action, reward, done, next_observation=None, info={}, **param):
-        """ Uses the agent's :class:`~learnl.memory.Memory` to remember experiences
+        """ How the :ref:`Agent` will remember experiences
         
         Often, the agent will use a |hash| to store observations efficiently
 
@@ -49,5 +49,7 @@ class Agent():
             ...                       reward, done, 
             ...                       self.observation_encoder(next_observation), 
             ...                       info, **param)
+
+            Where self.memory is an instance of :class:`~learnl.memory.Memory`.
         """
-        raise NotImplementedError
+        pass
