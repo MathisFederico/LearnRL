@@ -61,6 +61,13 @@ class StandardAgent(Agent):
         self.memory = Memory(memory_len)
 
         self.online = kwargs.pop('online', True)
+
+        self.sample_size = kwargs.pop('sample_size', 128)
+        default_sample_method = 'naive_uniform' if self.online else 'last'
+        self.sample_method = kwargs.pop('sample_method', default_sample_method)
+
+        self.step_skip = kwargs.pop('step_skip', 0)
+
         self.control = control if control is not None else Greedy(**kwargs)
         self.evaluation = evaluation if evaluation is not None else QLearning(online=self.online, **kwargs)
 
@@ -72,15 +79,10 @@ class StandardAgent(Agent):
             if self.control.need_action_visit:
                 self.action_visits = TableEstimator(observation_space, action_space, learning_rate=1, dtype=np.uint64)
 
-        self.sample_size = kwargs.pop('sample_size', 128)
         self.forget_after_update = kwargs.pop('forget_after_update', isinstance(self.action_values, TableEstimator))
-        default_sample_method = 'naive_uniform' if self.online else 'last'
-        self.sample_method = kwargs.pop('sample_method', default_sample_method)
 
         self.observation_space = observation_space
         self.action_space = action_space
-
-        self.step_skip = kwargs.pop('step_skip', 0)
         self._step_to_skip = self.step_skip
     
     def act(self, observation, greedy=False):
