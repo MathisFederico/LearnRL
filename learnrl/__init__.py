@@ -11,3 +11,4 @@ from learnrl.memory import Memory
 from learnrl.estimators import Estimator
 from learnrl.control import Control
 from learnrl.evaluation import Evaluation
+from learnrl.callbacks import Callback
