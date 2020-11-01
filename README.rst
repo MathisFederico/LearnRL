@@ -1,7 +1,7 @@
 Welcome to LearnRL's documentation!
 ===================================
 
-We would love to see what projects you made with LearnRL, so don't hesitate to join us `on Discord <https://discord.gg/z9dd4s5>`_ !
+We would love to help you make projects with LearnRL, so join us `on Discord <https://discord.gg/z9dd4s5>`_ !
 
 About LearnRL
 -------------
