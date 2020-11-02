@@ -121,9 +121,11 @@ class Playground():
                 next_observation, reward, done, info = self.env.step(action)
 
                 if reward_handler is not None:
+                    logs.update({'real_reward': reward})
                     reward = reward_handler(observation, action, reward, done, info, next_observation)
                 
                 if done_handler is not None:
+                    logs.update({'real_done': done})
                     done = done_handler(observation, action, reward, done, info, next_observation)
 
                 if learn:
