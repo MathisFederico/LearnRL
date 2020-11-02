@@ -10,10 +10,10 @@ class TensorboardCallback(LoggingCallback):
 
     Parameters
     ---------
+        log_dir: :class:`str`
+            Directory to store runs logs.
         run_name: :class:`str`
             Specify a run name for Tensorboard, default is a datetime.
-        log_dir: :class:`str`
-            Logs directory, default is './logs/'.
         step_metrics: list(str)
             Metrics to log on steps and to aggregate in episodes.
         episode_metrics: list(str)
