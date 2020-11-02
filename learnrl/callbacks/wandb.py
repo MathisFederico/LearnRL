@@ -3,7 +3,7 @@ import wandb
 from learnrl.callbacks import LoggingCallback, MetricList
 
 
-class WandbCallback(LoggingCallback):
+class WandbLogger(LoggingCallback):
     
     def __init__(self, project, entity,
                  step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
