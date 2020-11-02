@@ -81,9 +81,6 @@ class DummyPlayground():
         callbacks.on_run_end(logs)
 
 
-def test_logging_multiagent():
-    pass
-
 def test_logging_avg_sum():
 
     for eps_operator in ['avg', 'sum']:
