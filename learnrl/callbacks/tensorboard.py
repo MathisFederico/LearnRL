@@ -27,9 +27,12 @@ class TensorboardCallback(LoggingCallback):
                  episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
                  cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
                  ):
-        super().__init__(step_metrics=step_metrics,
-                         episode_metrics=episode_metrics,
-                         cycle_metrics=cycle_metrics)
+        
+        super().__init__(
+            step_metrics=step_metrics,
+            episode_metrics=episode_metrics,
+            cycle_metrics=cycle_metrics
+        )
 
         if run_name is None:
             run_name = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -67,16 +70,10 @@ class TensorboardCallback(LoggingCallback):
 
             """
         with self.writer.as_default(): #pylint: disable=all
-
             for agent_id in range(self.n_agents):
                 for metric in metrics_list:
                     name = self._get_attr_name(prefix, metric, agent_id)
-
-                    if logs is None:
-                        value = getattr(self, name, 'N/A')
-                    else:
-                        value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-
+                    value = self._get_value(metric, prefix, agent_id, logs)
                     if value != 'N/A':
                         tf.summary.scalar(name, value, step=step)
                     
