@@ -50,6 +50,7 @@ class Callback():
     def on_run_end(self, logs=None):
         pass
 
+
 class CallbackList():
     """ An wrapper to use a list of :class:`Callback` while the :class:`~learnrl.playground.Playground` is running.
     """
@@ -143,6 +144,7 @@ class Metric():
     def __repr__(self):
         return self.code
 
+
 class MetricList():
 
     """ An helper object to represent a list of metrics """
@@ -177,6 +179,7 @@ class MetricList():
             return metric
         else:
             return Metric(metric)
+
 
 class LoggingCallback(Callback):
 
@@ -316,6 +319,7 @@ class LoggingCallback(Callback):
 
     def on_run_begin(self, logs=None):
         self.n_agents = len(self.playground.agents)
+
 
 class Logger(LoggingCallback):
 
@@ -560,3 +564,11 @@ else:
         def __init__(self):
             raise ImportError('Missing dependency : tensorflow >= 2.0.0')
 
+wandb_spec = importlib.util.find_spec('wandb')
+
+if wandb_spec is not None:
+    from learnrl.callbacks.wandb import WandbCallback
+else:
+    class WandbCallback():
+        def __init__(self):
+            raise ImportError('Missing dependency : wandb >= 0.10')
