@@ -120,12 +120,12 @@ class Playground():
                 action = agent.act(observation, greedy=not learn)
                 next_observation, reward, done, info = self.env.step(action)
 
+                logs.update({'env_reward': reward})
                 if reward_handler is not None:
-                    logs.update({'real_reward': reward})
                     reward = reward_handler(observation, action, reward, done, info, next_observation)
                 
+                logs.update({'env_done': done})
                 if done_handler is not None:
-                    logs.update({'real_done': done})
                     done = done_handler(observation, action, reward, done, info, next_observation)
 
                 if learn:
