@@ -135,7 +135,8 @@ dmypy.json
 # ROMS
 /ROMs
 
-# Tensorboard
+# Logs
+wandb
 logs
 
 # Main
@@ -143,3 +144,5 @@ main.py
 
 # cProfile stats
 stats*
+
+
