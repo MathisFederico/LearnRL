@@ -50,6 +50,7 @@ class Callback():
     def on_run_end(self, logs=None):
         pass
 
+
 class CallbackList():
     """ An wrapper to use a list of :class:`Callback` while the :class:`~learnrl.playground.Playground` is running.
     """
@@ -143,6 +144,7 @@ class Metric():
     def __repr__(self):
         return self.code
 
+
 class MetricList():
 
     """ An helper object to represent a list of metrics """
@@ -177,6 +179,7 @@ class MetricList():
             return metric
         else:
             return Metric(metric)
+
 
 class LoggingCallback(Callback):
 
@@ -268,6 +271,20 @@ class LoggingCallback(Callback):
         value = _logs.get(metric_name) if _logs is not None else 'N/A'
         return value
 
+    def _get_value(self, metric:Metric, prefix=None, agent_id=None, logs=None):
+        # Search for prefix-wise attr
+        if prefix is not None:
+            src_name = self._get_attr_name(prefix, metric, agent_id)
+            src_value = getattr(self, src_name, 'N/A')
+        else:
+            src_value = 'N/A'
+
+        # If not found or no source, search in logs directly
+        if src_value == 'N/A':
+            src_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
+        
+        return src_value
+
     def _update_metrics(self, metric_list:MetricList, target_prefix, source_prefix=None, logs=None, agent_id=None, reset=False):
         """ Update the logger attributes based on a metric list """
         for metric in metric_list:
@@ -277,16 +294,7 @@ class LoggingCallback(Callback):
                 self._reset_attr(target_name, metric.operator)
                 continue
 
-            # Search for source-wise attr
-            if source_prefix is not None:
-                src_name = self._get_attr_name(source_prefix, metric, agent_id)
-                src_value = getattr(self, src_name, 'N/A')
-            else:
-                src_value = 'N/A'
-
-            # If not found or no source, search in logs directly
-            if src_value == 'N/A':
-                src_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
+            src_value = self._get_value(metric, source_prefix, agent_id, logs)
 
             # Update attr if a value was found
             if src_value != 'N/A':
@@ -316,6 +324,7 @@ class LoggingCallback(Callback):
 
     def on_run_begin(self, logs=None):
         self.n_agents = len(self.playground.agents)
+
 
 class Logger(LoggingCallback):
 
@@ -557,6 +566,14 @@ if tensorflow_spec is not None:
     from learnrl.callbacks.tensorboard import TensorboardCallback
 else:
     class TensorboardCallback():
-        def __init__(self):
+        def __init__(self, log_dir):
             raise ImportError('Missing dependency : tensorflow >= 2.0.0')
 
+wandb_spec = importlib.util.find_spec('wandb')
+
+if wandb_spec is not None:
+    from learnrl.callbacks.wandb import WandbLogger
+else:
+    class WandbLogger():
+        def __init__(self):
+            raise ImportError('Missing dependency : wandb >= 0.10')
