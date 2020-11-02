@@ -561,7 +561,7 @@ if tensorflow_spec is not None:
     from learnrl.callbacks.tensorboard import TensorboardCallback
 else:
     class TensorboardCallback():
-        def __init__(self):
+        def __init__(self, log_dir):
             raise ImportError('Missing dependency : tensorflow >= 2.0.0')
 
 wandb_spec = importlib.util.find_spec('wandb')
