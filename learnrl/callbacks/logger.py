@@ -41,15 +41,16 @@ class Logger(LoggingCallback):
     
     """
 
-    def __init__(self, detailed_step_only_metrics=['observation', 'action', 'next_observation'],
-                       step_only_metrics=['done'],
-                       step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
-                       episode_only_metrics=['dt_episode~'], 
-                       episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
-                       cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
-                       cycle_only_metrics=['dt_episode~'],
-                       titles_on_top=True
-                 ):
+    def __init__(self, 
+                detailed_step_only_metrics=['observation', 'action', 'next_observation'],
+                step_only_metrics=['done'],
+                step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
+                episode_only_metrics=['dt_episode~'], 
+                episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                cycle_only_metrics=['dt_episode~'],
+                titles_on_top=True
+                ):
         
         super().__init__(
             detailed_step_only_metrics=detailed_step_only_metrics,
