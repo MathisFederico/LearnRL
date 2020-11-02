@@ -5,7 +5,7 @@ from learnrl.callbacks import LoggingCallback, MetricList
 
 class WandbLogger(LoggingCallback):
     
-    def __init__(self, project, entity,
+    def __init__(self,
                  step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
                  episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
                  cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
@@ -13,8 +13,6 @@ class WandbLogger(LoggingCallback):
         super().__init__(step_metrics=step_metrics,
                     episode_metrics=episode_metrics,
                     cycle_metrics=cycle_metrics)
-        
-        wandb.init(project=project, entity=entity)
         self.step = 1 # Internal step counter
         
     def on_step_end(self, step, logs={}):
