@@ -280,7 +280,7 @@ class LoggingCallback(Callback):
             src_value = 'N/A'
 
         # If not found or no source, search in logs directly
-        if src_value == 'N/A':
+        if src_value == 'N/A' and logs is not None:
             src_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
         
         return src_value
@@ -468,12 +468,8 @@ class Logger(LoggingCallback):
         """ Print a metric list """
         titles_on_top = titles_on_top if titles_on_top is not None else self.titles_on_top
         for metric in metric_list:
-            if source.startswith('attr'):
-                name = self._get_attr_name(prefix, metric, agent_id)
-                value = getattr(self, name, 'N/A')
-            elif source.startswith('log'):
-                value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-            
+            value = self._get_value(metric, prefix, agent_id, logs)
+
             pass_metric = isinstance(value, str) and value == 'N/A'
             if not pass_metric:
                 self._print_metric(metric, value, titles_on_top, end=sep)
