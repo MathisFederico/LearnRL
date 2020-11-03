@@ -1,6 +1,6 @@
 import wandb
 
-from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
+from learnrl.callbacks import LoggingCallback, MetricList
 
 
 class WandbLogger(LoggingCallback):
