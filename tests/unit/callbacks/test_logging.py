@@ -1,7 +1,7 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-import pytest
+import pytest, sys
 
 from learnrl.callbacks import LoggingCallback, Callback, CallbackList
 
@@ -12,13 +12,15 @@ class DummyPlayground():
 
     def run(self, callbacks, eps_end_func=None, verbose=0):
 
+        n_episodes = 10
+
         callbacks = CallbackList(callbacks)
-        callbacks.set_params({'verbose':verbose, 'param':'foo'})
+        callbacks.set_params({'verbose':verbose, 'param':'foo', 'episodes': n_episodes})
         callbacks.set_playground(self)
 
         logs = {}
         callbacks.on_run_begin(logs)
-        n_episodes = 10
+        
         cycle_len = 3
 
         for episode in range(n_episodes):
@@ -44,7 +46,7 @@ class DummyPlayground():
 
                 value = step + 10 * episode
                 value_sum += value
-                logs.update({'value': value})
+                logs.update({'value': value, 'loss': 1/(value+1)**1.7})
                 callbacks.on_step_begin(step, logs)
 
                 ## Step ##
@@ -99,3 +101,30 @@ def test_logging_avg_sum():
             pg = DummyPlayground()
             pg.run([logging_callback], eps_end_func=check_function, verbose=1)
 
+
+def test_display():
+
+    from learnrl.callbacks import Logger
+
+    for verbose in range(5):
+        for titles_on_top in (False, True):
+
+            logging_callback = Logger(
+                detailed_step_only_metrics=[],
+                step_only_metrics=[],
+                step_metrics=['value', 'loss'],
+                episode_only_metrics=[], 
+                episode_metrics=['value', 'loss'],
+                cycle_metrics=['value', 'loss'],
+                cycle_only_metrics=[],
+                titles_on_top=titles_on_top
+            )
+
+            print(f'Verbose {verbose}, Title_on_top {titles_on_top}\n')
+
+            pg = DummyPlayground()
+            pg.run([logging_callback], verbose=verbose)
+
+            print()
+            
+    assert True
