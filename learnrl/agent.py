@@ -3,11 +3,7 @@ class Agent():
     """ A general structure for reinforcement learning agents    
     
     It uses by default a :class:`~learnl.memory.Memory`
-
     Attributes
-    ----------
-
-        name: :class:`str`
         memory: :class:`~learnl.memory.Memory`
             The Agent's memory
     
@@ -49,7 +45,6 @@ class Agent():
             ...                       reward, done, 
             ...                       self.observation_encoder(next_observation), 
             ...                       info, **param)
-
             Where self.memory is an instance of :class:`~learnl.memory.Memory`.
         """
         pass
