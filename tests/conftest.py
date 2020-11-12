@@ -38,3 +38,15 @@ def hide_tensorflow(reload_tensorflow, mocker):
     importlib.reload(learnrl.estimators)
     importlib.reload(learnrl)
 
+@pytest.fixture
+def reload_wandb():
+    yield
+    importlib.reload(learnrl.callbacks)
+    importlib.reload(learnrl)
+
+@pytest.fixture
+def hide_wandb(reload_wandb, mocker):
+    mocker.patch.dict('sys.modules', { 'wandb': None })
+    importlib.reload(learnrl.callbacks)
+    importlib.reload(learnrl)
+

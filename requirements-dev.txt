@@ -1,2 +1,4 @@
 pytest
 pytest-mock
+tensorflow >= 2.1.0
+wandb >= 0.10.0
