@@ -1,3 +1,6 @@
+# LearnRL a python library to learn and use reinforcement learning
+# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+
 from learnrl.callbacks.callback import Callback, CallbackList
 
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList, Metric
