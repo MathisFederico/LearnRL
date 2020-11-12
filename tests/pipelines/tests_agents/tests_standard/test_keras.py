@@ -56,9 +56,9 @@ if tensorflow_spec is not None:
             def preprocess(self, observations, actions):
                 return observations
 
-        env = CatchEnv()
+        env = CatchEnv(n_apples=1)
         custom_action_value = MyEstimator(observation_space=env.observation_space, action_space=env.action_space, batch_size=64, freezed_steps=20)
         agent = StandardAgent(observation_space=env.observation_space, action_space=env.action_space, action_values=custom_action_value)
 
         pg = rl.Playground(env, agent)
-        pg.fit(1)
+        pg.fit(2)

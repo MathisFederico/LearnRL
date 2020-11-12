@@ -67,7 +67,6 @@ class LoggingCallback(Callback):
 
     def __init__(self,
                 detailed_step_only_metrics=['observation', 'action', 'next_observation'],
-                step_only_metrics=['done'],
                 step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
                 episode_only_metrics=['dt_episode~'], 
                 episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
@@ -75,16 +74,14 @@ class LoggingCallback(Callback):
                 cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                 ):
 
-        self.cycle_only_metrics = MetricList(cycle_only_metrics)
-        self.cycle_metrics = MetricList(cycle_metrics)
+        self.detailed_step_only_metrics = MetricList(detailed_step_only_metrics)
+        self.step_metrics = MetricList(step_metrics)
 
         self.episode_only_metrics = MetricList(episode_only_metrics)
         self.episode_metrics = MetricList(episode_metrics)
 
-        self.step_only_metrics = MetricList(step_only_metrics)
-        self.step_metrics = MetricList(step_metrics)
-
-        self.detailed_step_only_metrics = MetricList(detailed_step_only_metrics)
+        self.cycle_only_metrics = MetricList(cycle_only_metrics)
+        self.cycle_metrics = MetricList(cycle_metrics)
 
     def _reset_attr(self, attr_name, operator):
         """ Reset a metric attribute based on the metric operator """
@@ -102,8 +99,7 @@ class LoggingCallback(Callback):
 
         if operator == 'avg':
             metric_seen = attr_name + '_seen'
-            seen = getattr(self, metric_seen)
-            new_seen = seen + 1
+            new_seen = getattr(self, metric_seen) + 1
             setattr(self, metric_seen, new_seen)
             setattr(self, attr_name, previous_value + (last_value - previous_value) / new_seen)
 
@@ -141,14 +137,16 @@ class LoggingCallback(Callback):
             return _logs
 
         _logs = None
-        if metric_name in logs:
-            _logs = logs
+        if agent_id is not None:
+            agent_logs = logs.get(f'agent_{agent_id}')
+            _logs = _search_logs(metric_name, agent_logs)
+            if _logs is None:
+                _logs = _search_logs(metric_name, logs)
         else:
-            if agent_id is not None:
-                agent_logs = logs.get(f'agent_{agent_id}')
-                _logs = _search_logs(metric_name, agent_logs)
+            if metric_name in logs:
+                _logs = logs
             else:
-                _logs = _search_logs(metric_name, _logs)
+                _logs = _search_logs(metric_name, logs)
 
         value = _logs.get(metric_name) if _logs is not None else 'N/A'
         return value
@@ -187,7 +185,7 @@ class LoggingCallback(Callback):
             for agent_id in range(self.n_agents):
                 self._update_metrics(metric_list, target_prefix, agent_id=agent_id, **kwargs)
         else:
-            self._update_metrics(metric_list, target_prefix, **kwargs)
+            self._update_metrics(metric_list, target_prefix, agent_id=0, **kwargs)
 
     def on_step_end(self, step, logs={}):
         agent_id = logs.get('agent_id') if self.n_agents > 1 else None
