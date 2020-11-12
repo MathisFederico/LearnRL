@@ -70,6 +70,7 @@ class TensorboardCallback(LoggingCallback):
 
             """
         with self.writer.as_default(): #pylint: disable=all
+
             for agent_id in range(self.n_agents):
                 for metric in metrics_list:
                     name = self._get_attr_name(prefix, metric, agent_id)

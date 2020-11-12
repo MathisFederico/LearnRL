@@ -122,11 +122,15 @@ class Playground():
                 action = agent.act(observation, greedy=not learn)
                 next_observation, reward, done, info = self.env.step(action)
 
+                logs.update({'reward': reward})
                 if reward_handler is not None:
                     reward = reward_handler(observation, action, reward, done, info, next_observation)
+                    logs.update({'handled_reward': reward})
                 
+                logs.update({'done': done})
                 if done_handler is not None:
                     done = done_handler(observation, action, reward, done, info, next_observation)
+                    logs.update({'handled_done': done})
 
                 if learn:
                     for key, value in zip(prev, [observation, action, reward, done, info]):
@@ -136,7 +140,7 @@ class Playground():
                         agent_logs = agent.learn()
                         logs.update({f'agent_{agent_id}': agent_logs})
                 
-                logs.update({'action': action, 'reward': reward, 'done': done, 'next_observation': next_observation})
+                logs.update({'action': action, 'next_observation': next_observation})
                 logs.update(info)
 
                 callbacks.on_step_end(step, logs)
