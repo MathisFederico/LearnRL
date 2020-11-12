@@ -36,7 +36,7 @@ class Playground():
         self.agents = agents
 
     def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0,
-                  callbacks=[], logger=None, reward_handler=None, done_handler=None, titles_on_top=False):
+                  callbacks=[], logger=None, reward_handler=None, done_handler=None, titles_on_top=True):
         
         """ Let the agent(s) play on the environement for a number of episodes.
         
@@ -60,6 +60,8 @@ class Playground():
                 A callable to redifine rewards of the environement.
             done_handler: func or :class:`DoneHandler`
                 A callable to redifine the environement end.
+            titles_on_top: bool
+                Whether to print titles on top, if false display titles in each line. Default True.
         
         """
         cycle_len = cycle_len or max(1, int(cycle_prop*episodes))
@@ -134,15 +136,17 @@ class Playground():
                         agent_logs = agent.learn()
                         logs.update({f'agent_{agent_id}': agent_logs})
                 
-                logs.update({'action': action, 'reward':reward, 'done':done, 'next_observation':next_observation})
+                logs.update({'action': action, 'reward': reward, 'done': done, 'next_observation': next_observation})
                 logs.update(info)
 
                 callbacks.on_step_end(step, logs)
-                step += 1               
+                
+                step += 1
                 observation = next_observation
             
             callbacks.on_episode_end(episode, logs)
-            if (episode+1) % cycle_len == 0 or episode == episodes - 1:
+
+            if (episode + 1) % cycle_len == 0 or episode == episodes - 1:
                 callbacks.on_cycle_end(episode, logs)
         
         callbacks.on_run_end(logs)
@@ -154,7 +158,7 @@ class Playground():
         if not learn:
             warnings.warn("learn should be True in Playground.fit(), otherwise the agents will not improve", UserWarning)
         if render:
-            warnings.warn("rendering degrades heavily computation speed, use CycleRenderCallback to see your agent performance during training", RuntimeWarning)
+            warnings.warn("rendering degrades heavily computation speed", RuntimeWarning)
 
         self.run(episodes, render=render, learn=learn, **kwargs)
 
