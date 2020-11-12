@@ -165,10 +165,15 @@ class Logger(LoggingCallback):
         titles_on_top = titles_on_top if titles_on_top is not None else self.titles_on_top
         for metric in metric_list:
             value = self._get_value(metric, prefix, agent_id, logs)
-            pass_metric = isinstance(value, str) and value == 'N/A' and not titles_on_top
+            
+            pass_metric = False
+            if isinstance(value, str) and value == 'N/A':
+                pass_metric = not titles_on_top
+                value = ''
+            
             if not pass_metric:
-                if value == 'N/A': value == ''
                 self._print_metric(metric, value, titles_on_top, end=sep)
+
         print(end=end)
 
     def _print_metric(self, metric:Metric, metric_value, titles_on_top, **kwargs):
