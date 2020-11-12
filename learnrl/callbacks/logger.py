@@ -43,18 +43,16 @@ class Logger(LoggingCallback):
 
     def __init__(self, 
                 detailed_step_only_metrics=['observation', 'action', 'next_observation'],
-                step_only_metrics=['done'],
-                step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
-                episode_only_metrics=['dt_episode~'], 
-                episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
-                cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
-                cycle_only_metrics=['dt_episode~'],
+                step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
+                episode_only_metrics=[], 
+                episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
+                cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
+                cycle_only_metrics=[],
                 titles_on_top=True
                 ):
         
         super().__init__(
             detailed_step_only_metrics=detailed_step_only_metrics,
-            step_only_metrics=step_only_metrics,
             step_metrics=step_metrics,
             episode_only_metrics=episode_only_metrics,
             episode_metrics=episode_metrics,
@@ -82,7 +80,7 @@ class Logger(LoggingCallback):
             sep, end = (' | ', '\n') if self.verbose == 3 else (None, '')
             if self.n_agents > 1:
                 print(f"Agent {agent_id}", end=sep)
-            self._print_metrics(self.step_only_metrics + self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end)                
+            self._print_metrics(self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end)                
 
         if self.verbose == 4:
             self._print_metrics(self.detailed_step_only_metrics, 'logs', logs=logs)
@@ -99,7 +97,7 @@ class Logger(LoggingCallback):
                 self._print_bar('=', text)
                 if self.verbose == 3 and self.titles_on_top:
                     step_text = self._get_step_text(0)
-                    self._print_titles(self.step_only_metrics + self.step_metrics, offset=' ' * len(step_text) + ' |', end='\n')
+                    self._print_titles(self.step_metrics, offset=' ' * len(step_text) + ' |', end='\n')
 
     def on_episode_end(self, episode, logs=None):
         super().on_episode_end(episode, logs=logs)
@@ -109,8 +107,6 @@ class Logger(LoggingCallback):
             print("Episode " + self._get_episode_text(episode), end=' | ')                
         
         if self.verbose >= 2:
-            self._print_metrics(self.episode_only_metrics, 'logs', logs=logs, sep=' | ', titles_on_top=False)
-
             if self.titles_on_top and self.n_agents > 1:
                 self._print_titles(self.episode_metrics, prefix='\n', offset=' '*12 + '|')
             
@@ -123,6 +119,8 @@ class Logger(LoggingCallback):
                 self._print_metrics(self.episode_metrics, 'attrs', prefix='episode',
                     agent_id=agent_id, sep=' | ', titles_on_top=titles_on_top
                 )
+            
+            self._print_metrics(self.episode_only_metrics, 'logs', logs=logs, sep=' | ', titles_on_top=False)
 
         if self.verbose > 1:
             print()
@@ -167,7 +165,7 @@ class Logger(LoggingCallback):
         titles_on_top = titles_on_top if titles_on_top is not None else self.titles_on_top
         for metric in metric_list:
             value = self._get_value(metric, prefix, agent_id, logs)
-            pass_metric = isinstance(value, str) and value == 'N/A'
+            pass_metric = isinstance(value, str) and value == 'N/A' and not titles_on_top
             if not pass_metric:
                 self._print_metric(metric, value, titles_on_top, end=sep)
         print(end=end)
