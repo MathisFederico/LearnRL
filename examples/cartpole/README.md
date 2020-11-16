@@ -83,6 +83,8 @@ for i in range(n_episodes):
 
 This piece of code is quite common in reinforcement learning and doesn't depend of the environment or the agent. Hence, LearnRL provides the `Playground` class.
 
+[Full code](https://gist.github.com/Cr4zySheep/c0b0a9d079feaaca1cf0fa228450268f#file-random_agent-py)
+
 The previous code can be replaced by :
 
 ```python
@@ -97,6 +99,8 @@ playground.test(5, verbose=1)
 - `fit(episodes, ...)` : Train the agent (calling its learn method) for a number of episodes.
 
 The `verbose` argument allows to set logging level : 0 (Silent, no logging), 1 (Episode cycles), 2 (Episodes), 3 (Steps), 4 (Detailed steps).
+
+[Full code](https://gist.github.com/Cr4zySheep/c0b0a9d079feaaca1cf0fa228450268f#file-random_agent_playground-py)
 
 ## Deep Q Learning
 
@@ -141,6 +145,8 @@ playground.test(5, verbose=1)
 
 There should be no render during training, but we will see how well our agent performs using `test`.
 
+[Full code](https://gist.github.com/Cr4zySheep/c0b0a9d079feaaca1cf0fa228450268f#file-standard_agent-py)
+
 ## Normalization
 
 Our agent can access very high rewards, the maximum being 500 in the cartpole environment. But high values are harder to predict for a neural network, hence we are going to normalize the reward with `learnrl.RewardHandler`.
@@ -162,6 +168,8 @@ playground.fit(500, verbose=1, reward_handler=reward_handler)
 ```
 
 Now, our agent performs better than before ! But is there a way to evaluate that without looking at some demo run ? Of course, let's log a few data to compare !
+
+[Full code](https://gist.github.com/Cr4zySheep/c0b0a9d079feaaca1cf0fa228450268f#file-standard_agent_normalization-py)
 
 ## Logging
 
@@ -214,6 +222,8 @@ playground.fit(500, verbose=1, reward_handler=reward_handler, callbacks=[tensorb
 ```
 
 We do both agents in one run here, but logs are saved between runs. So, it is also possible to run the program two times : one with normalization and the other one without.
+
+[Full code](https://gist.github.com/Cr4zySheep/c0b0a9d079feaaca1cf0fa228450268f#file-standard_agent_logging-py)
 
 You can see the results with the following command in your browser.
 
