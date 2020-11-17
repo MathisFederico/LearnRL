@@ -114,6 +114,11 @@ Install LearnRL by running::
 
    pip install learnrl
 
+Get started
+----------
+
+You can have a look at the cartpole example in the `examples` folder.
+
 Documentation
 -------------
 
