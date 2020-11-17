@@ -36,9 +36,11 @@ class Playground():
         self.agents = agents
 
     def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0,
-                  callbacks=[], logger=None, reward_handler=None, done_handler=None, titles_on_top=True):
+                  callbacks=[], logger=None, reward_handler=None, done_handler=None, **kwargs):
         
         """ Let the agent(s) play on the environement for a number of episodes.
+
+        Additional arguments will be passed to the default logger if none is given, see :class:`~learnrl.callbacks.logger.Logger`.
         
         Parameters
         ----------
@@ -60,8 +62,8 @@ class Playground():
                 A callable to redifine rewards of the environement.
             done_handler: func or :class:`DoneHandler`
                 A callable to redifine the environement end.
-            titles_on_top: bool
-                Whether to print titles on top, if false display titles in each line. Default True.
+            logger: :class:`~learnrl.callbacks.logging_callback.LoggingCallback`
+                Logging callback to use, if none use the default :class:`~learnrl.callbacks.logger.Logger`.
         
         """
         cycle_len = cycle_len or max(1, int(cycle_prop*episodes))
@@ -74,7 +76,8 @@ class Playground():
             'learn': learn
         }
 
-        logger = logger if logger else Logger(titles_on_top=titles_on_top)
+        logger = logger if logger else Logger(**kwargs)
+        
         callbacks = CallbackList(callbacks + [logger])
         callbacks.set_params(params)
         callbacks.set_playground(self)
