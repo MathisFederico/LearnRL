@@ -1,18 +1,17 @@
 import gym
-import numpy as np
 
 import learnrl as rl
 from learnrl.agents import StandardAgent
 
+import tensorflow as tf
 from tensorflow.keras import layers, models, optimizers
-from tensorflow.keras.models import Sequential
 
 # Load the environment
 env = gym.make('CartPole-v1')
 
 # Define the model for our action-value estimator
 class MyEstimator(rl.estimators.KerasEstimator):
-    def preprocess(self, observations, actions):
+    def preprocess(self, observations:tf.Tensor, actions:tf.Tensor=None):
         return observations
 
     def build(self, **kwargs):

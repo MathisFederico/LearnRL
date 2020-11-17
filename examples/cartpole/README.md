@@ -15,8 +15,8 @@ More information for installing TensorFlow, [here](https://www.tensorflow.org/in
 In Reinforcement Learning, Gym environments are often used since they offer a simple and common framework to work with and introduce reproducibility.
 
 Don't hesitate to check :
-- [Available Gym environments](https://gym.openai.com/envs/#classic_control)
-- [Gym Documentation](https://gym.openai.com/docs/)
+-   [Available Gym environments](https://gym.openai.com/envs/#classic_control)
+-   [Gym Documentation](https://gym.openai.com/docs/)
 
 In this example, we will be workig with the `CartPole-v1` environment. Let's create the environment :
 
@@ -34,9 +34,9 @@ env.close()
 ```
 
 `env = gym.make('CartPole-v1')` creates the environment. `env` have the following methods, which are pretty straightforward :
-- `env.render()` : Render the environment.
-- `env.reset()` : Reset it.
-- `env.step(<action>)` : Update the environment when the agent does `<action>`. Here we use `env.action_space.sample()` to do a random action each step.
+-   `env.render()` : Render the environment.
+-   `env.reset()` : Reset it.
+-   `env.step(<action>)` : Update the environment when the agent does `<action>`. Here we use `env.action_space.sample()` to do a random action each step.
 
 `env` also offers the following attributes : `env.observation_space` and `env.action_space`, which describe the observation and action space (`Discrete` and `Box` are the main types of space).
 
@@ -46,10 +46,10 @@ For now, we are lacking some information to write our agent, such as the observa
 observation, reward, done, info = env.step(action)
 ```
 
-- `observation` : data representing our environment, whose shape is given by `env.observation_space`.
-- `reward` (*float*) : the reward achieved by the last action.
-- `done` (*boolean*) : `True` if the episode has terminated and if it is time to reset.
-- `info` (*dist*) : More information, mainly for debugging or logging.
+-   `observation` : data representing our environment, whose shape is given by `env.observation_space`.
+-   `reward` (*float*) : the reward achieved by the last action.
+-   `done` (*boolean*) : `True` if the episode has terminated and if it is time to reset.
+-   `info` (*dist*) : More information, mainly for debugging or logging.
 
 ## Our first agent
 
@@ -95,8 +95,8 @@ playground.test(5, verbose=1)
 ```
 
 `Playground` provides the following methods :
-- `test(episodes, ...)` : Test the agent on the environment for a number of episodes.
-- `fit(episodes, ...)` : Train the agent (calling its learn method) for a number of episodes.
+-   `test(episodes, ...)` : Test the agent on the environment for a number of episodes.
+-   `fit(episodes, ...)` : Train the agent (calling its learn method) for a number of episodes.
 
 The `verbose` argument allows to set logging level : 0 (Silent, no logging), 1 (Episode cycles), 2 (Episodes), 3 (Steps), 4 (Detailed steps).
 
