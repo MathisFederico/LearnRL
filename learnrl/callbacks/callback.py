@@ -35,10 +35,10 @@ class Callback():
     def on_step_end(self, step, logs=None):
         pass
     
-    def on_steps_cycle_begin(self, episode, logs=None):
+    def on_steps_cycle_begin(self, step, logs=None):
         pass
 
-    def on_steps_cycle_end(self, episode, logs=None):
+    def on_steps_cycle_end(self, step, logs=None):
         pass
 
     def on_episode_begin(self, episode, logs=None):
@@ -110,11 +110,11 @@ class CallbackList():
     def on_step_end(self, step, logs=None):
         self._call_key_hook('step', 'end', step , logs)
 
-    def on_steps_cycle_begin(self, episode, logs=None):
-        self._call_key_hook('steps_cycle', 'begin', episode , logs)
+    def on_steps_cycle_begin(self, step, logs=None):
+        self._call_key_hook('steps_cycle', 'begin', step , logs)
 
-    def on_steps_cycle_end(self, episode, logs=None):
-        self._call_key_hook('steps_cycle', 'end', episode , logs)
+    def on_steps_cycle_end(self, step, logs=None):
+        self._call_key_hook('steps_cycle', 'end', step , logs)
 
     def on_episode_begin(self, episode, logs=None):
         self._call_key_hook('episode', 'begin', episode , logs)
