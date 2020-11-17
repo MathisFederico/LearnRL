@@ -46,10 +46,10 @@ class Logger(LoggingCallback):
 
     def __init__(self, 
                 detailed_step_only_metrics=['observation', 'action', 'next_observation'],
-                step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
+                step_metrics=['reward'],
                 episode_only_metrics=[], 
-                episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
-                cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
+                episode_metrics=['reward.sum'],
+                cycle_metrics=['reward'],
                 cycle_only_metrics=[],
                 titles_on_top=True
                 ):
