@@ -14,10 +14,11 @@ class Logger(LoggingCallback):
 
     You can regulate the flow of informations with the argument `verbose` in :meth:`~learnrl.playground.Playground.run` directly :
      - 0 is silent (nothing will be printed)
-     - 1 is only cycles of episodes (aggregated metrics over multiple episodes)
+     - 1 is cycles of episodes (aggregated metrics over multiple episodes)
      - 2 is every episode (aggregated metrics over all steps)
-     - 3 is every step (scalar metrics of all steps)
-     - 4 is every step detailed (all metrics of all steps)
+     - 3 is cycles of steps (aggregated metrics over some steps)
+     - 4 is every step
+     - 5 is every step detailed (all metrics of all steps)
     
     You can also replace it with you own :class:`~learnrl.callbacks.Logger` with the argument `logger` in :meth:`~learnrl.playground.Playground.run`.
      - To build you own logger, you have to chose what metrics will be displayed and how will metrics be aggregated over steps/episodes/cycles.
@@ -25,20 +26,20 @@ class Logger(LoggingCallback):
     
     Parameters
     ----------
-        detailed_step_only_metrics: list(str)
+        detailed_step_metrics: list(str)
             Metrics to display only on detailed steps.
-        step_only_metrics: list(str)
-            Metrics to display only on steps.
         step_metrics: list(str)
-            Metrics to display on steps and to aggregate in episodes
-        episode_only_metrics: list(str)
-            Metrics to display only on episodes.
+            Metrics to display on steps and to aggregate in episodes and steps_cycle.
+        steps_cycle_metrics: list(str)
+            Metrics to display on steps cycles (aggregated from steps).
         episode_metrics: list(str)
             Metrics to display on episodes and to aggregate in episodes_cycles.
-        cycle_only_metrics: list(str)
+        episode_only_metrics: list(str)
+            Metrics to display only on episodes.
+        episodes_cycle_metrics: list(str)
+            Metrics to display on episodes cycles (aggregated from episodes).
+        episodes_cycle_only_metrics: list(str)
             Metrics to display only on cycles.
-        cycle_metrics: list(str)
-            Metrics to display on cycles (aggregated from episodes and/or steps).
         titles_on_top: bool
             If true, titles will be displayed on top and not at every line in the console.
     
@@ -260,7 +261,8 @@ class Logger(LoggingCallback):
         text += f"/{self.params['episodes']}"
         return text
 
-    def _get_step_text(self, step, step_end=None, pad=True):
+    @staticmethod
+    def _get_step_text(step, step_end=None, pad=True):
         text = f'Step {step+1}'
         if step_end is not None:
             text += f'-{step_end+1}'
