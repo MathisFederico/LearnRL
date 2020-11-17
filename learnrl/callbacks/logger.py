@@ -45,22 +45,24 @@ class Logger(LoggingCallback):
     """
 
     def __init__(self, 
-                detailed_step_only_metrics=['observation', 'action', 'next_observation'],
+                detailed_step_metrics=['observation', 'action', 'next_observation'],
                 step_metrics=['reward'],
-                episode_only_metrics=[], 
+                steps_cycle_metrics=['reward.sum'],
+                episode_only_metrics=[],
                 episode_metrics=['reward.sum'],
-                cycle_metrics=['reward'],
-                cycle_only_metrics=[],
+                episodes_cycle_metrics=['reward'],
+                episodes_cycle_only_metrics=[],
                 titles_on_top=True
                 ):
         
         super().__init__(
-            detailed_step_only_metrics=detailed_step_only_metrics,
+            detailed_step_metrics=detailed_step_metrics,
             step_metrics=step_metrics,
+            steps_cycle_metrics=steps_cycle_metrics,
             episode_only_metrics=episode_only_metrics,
             episode_metrics=episode_metrics,
-            cycle_metrics=cycle_metrics,
-            cycle_only_metrics=cycle_only_metrics
+            episodes_cycle_metrics=episodes_cycle_metrics,
+            episodes_cycle_only_metrics=episodes_cycle_only_metrics
         )
 
         self._bar_lenght = 100
@@ -68,10 +70,12 @@ class Logger(LoggingCallback):
         self.titles_on_top = titles_on_top
 
     def on_step_begin(self, step, logs=None):
+        super().on_step_begin(step, logs=logs)
+
         text = self._get_step_text(step, pad=self.verbose == 3)
-        if self.verbose == 3:
+        if self.verbose == 4:
             print(text, end=' | ')
-        elif self.verbose == 4:
+        elif self.verbose == 5:
             self._print_bar('-', text)
     
     def on_step_end(self, step, logs={}):
@@ -79,15 +83,35 @@ class Logger(LoggingCallback):
 
         agent_id = logs.get('agent_id')
 
-        if self.verbose > 2:
-            sep, end = (' | ', '\n') if self.verbose == 3 else (None, '')
+        if self.verbose >= 4:
+            sep, end = (' | ', '\n') if self.verbose == 4 else (None, '')
             if self.n_agents > 1:
                 print(f"Agent {agent_id}", end=sep)
-            self._print_metrics(self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end)                
+            self._print_metrics(self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end)
 
-        if self.verbose == 4:
-            self._print_metrics(self.detailed_step_only_metrics, 'logs', logs=logs)
+        if self.verbose == 5:
+            self._print_metrics(self.detailed_step_metrics, 'logs', logs=logs)
             self._print_bar('-')
+
+    def on_steps_cycle_begin(self, step, logs=None):
+        super().on_steps_cycle_begin(step, logs=logs)
+
+        if self.verbose == 3:
+            self.step_start_cycle = step
+
+    def on_steps_cycle_end(self, step, logs=None):
+        super().on_steps_cycle_end(step, logs=logs)
+
+        if self.verbose == 3:
+            text = self._get_step_text(self.step_start_cycle, step_end=step, pad=True)
+            print(text, end=' | ')
+
+            agent_id = logs.get('agent_id')
+            sep, end = (' | ', '\n')
+            if self.n_agents > 1:
+                print(f"Agent {agent_id}", end=sep)
+            self._print_metrics(self.steps_cycle_metrics, 'attrs', prefix='steps_cycle',
+                                agent_id=agent_id, logs=logs, sep=sep, end=end)
 
     def on_episode_begin(self, episode, logs=None):
         super().on_episode_begin(episode, logs=logs)
@@ -131,20 +155,23 @@ class Logger(LoggingCallback):
         if self.verbose > 2:
             self._print_bar('=')
 
-    def on_cycle_end(self, episode, logs=None):
-         if self.verbose == 1:
+    def on_episodes_cycle_end(self, episode, logs=None):
+        super().on_episodes_cycle_begin(episode, logs=logs)
+
+        if self.verbose == 1:
             print("Episode " + self._get_episode_text(episode), end=' | ')
             
-            self._print_metrics(self.cycle_only_metrics, 'logs', logs=logs, sep=' | ')
+            self._print_metrics(self.episodes_cycle_only_metrics, 'logs', logs=logs, sep=' | ')
 
             if self.titles_on_top and self.n_agents > 1:
-                self._print_titles(self.cycle_metrics, prefix='\n', offset=' '*12 + '|')
+                self._print_titles(self.episodes_cycle_metrics, prefix='\n', offset=' '*12 + '|')
             
             for agent_id in range(self.n_agents):
                 if self.n_agents > 1: print(end=f'\n    Agent {agent_id} | ')
-                self._print_metrics(self.cycle_metrics, 'attrs', prefix='cycle', agent_id=agent_id, sep=' | ')
-            
-            print()
+                self._print_metrics(self.episodes_cycle_metrics, 'attrs', prefix='episodes_cycle',
+                                    agent_id=agent_id, sep=' | ')
+        
+        print()
 
     def on_run_begin(self, logs=None):
         super().on_run_begin(logs=logs)
@@ -156,7 +183,7 @@ class Logger(LoggingCallback):
 
         if self.titles_on_top and self.n_agents == 1 and self.verbose in (1, 2):
             offset_len = len("Episode " + self._get_episode_text(0))
-            metrics_to_print = self.cycle_metrics if self.verbose == 1 else self.episode_metrics
+            metrics_to_print = self.episodes_cycle_metrics if self.verbose == 1 else self.episode_metrics
             self._print_titles(metrics_to_print, prefix='', offset=' ' * offset_len + ' |', end='\n')
 
     def on_run_end(self, logs=None):
@@ -233,10 +260,13 @@ class Logger(LoggingCallback):
         text += f"/{self.params['episodes']}"
         return text
 
-    def _get_step_text(self, step, pad=True):
+    def _get_step_text(self, step, step_end=None, pad=True):
         text = f'Step {step+1}'
-        if pad and len(text) < 11:
-            text += ' ' * (11 - len(text))
+        if step_end is not None:
+            text += f'-{step_end+1}'
+
+        if pad and len(text) < 13:
+            text += ' ' * (13 - len(text))
         return text
     
     def _get_time_text(self, dt, unit):

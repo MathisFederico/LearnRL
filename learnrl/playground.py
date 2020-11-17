@@ -31,11 +31,11 @@ class Playground():
             agents = [agents]
         for agent in agents:
             assert isinstance(agent, Agent)
-        
+
         self.env = environement
         self.agents = agents
 
-    def run(self, episodes, render=True, learn=True, cycle_len=None, cycle_prop=0.05, verbose=0,
+    def run(self, episodes, render=True, learn=True, steps_cycle_len=1, episodes_cycle_len=None, episodes_cycle_prop=0.05, verbose=0,
                   callbacks=[], logger=None, reward_handler=None, done_handler=None, **kwargs):
         
         """ Let the agent(s) play on the environement for a number of episodes.
@@ -50,12 +50,14 @@ class Playground():
                 If True, call :meth:`TurnEnv.render` every step.
             learn: bool
                 If True, call :meth:`Agent.learn` every step.
-            cycle_len: int
-                Number of episodes that compose a cycle, used in :class:`~learnrl.callbacks.Callback`.
-            cycle_prop: float
-                Propotion of total episodes to compose a cycle, used if cycle_len is not set.
+            steps_cycle_len: int
+                Number of steps that compose a cycle.
+            episode_cycle_len: int
+                Number of episodes that compose a cycle.
+            episode_cycle_prop: float
+                Propotion of total episodes to compose a cycle, used if episode_cycle_len is not set.
             verbose: int
-                The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step), 4 (detailed step).
+                The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step_cycle), 4 (step), 5 (detailed step).
             callbacks: list
                 List of :class:`~learnrl.callbacks.Callback` to use in runs.
             reward_handler: func or :class:`RewardHandler`
@@ -66,18 +68,20 @@ class Playground():
                 Logging callback to use, if none use the default :class:`~learnrl.callbacks.logger.Logger`.
         
         """
-        cycle_len = cycle_len or max(1, int(cycle_prop*episodes))
+        episodes_cycle_len = episodes_cycle_len or max(1, int(episodes_cycle_prop*episodes))
+        steps_cycle_len = steps_cycle_len
 
         params = {
             'episodes': episodes,
-            'cycle_len': cycle_len,
+            'episodes_cycle_len': episodes_cycle_len,
+            'steps_cycle_len': steps_cycle_len,
             'verbose': verbose,
             'render': render,
             'learn': learn
         }
 
         logger = logger if logger else Logger(**kwargs)
-        
+
         callbacks = CallbackList(callbacks + [logger])
         callbacks.set_params(params)
         callbacks.set_playground(self)
@@ -88,8 +92,8 @@ class Playground():
 
         for episode in range(episodes):
 
-            if episode % cycle_len == 0:
-                callbacks.on_cycle_begin(episode, logs)
+            if episode % episodes_cycle_len == 0:
+                callbacks.on_episodes_cycle_begin(episode, logs)
 
             observation = self.env.reset()
             if isinstance(reward_handler, RewardHandler):
@@ -118,8 +122,12 @@ class Playground():
                     agent.remember(prev['observation'], prev['action'], prev['reward'], prev['done'], observation, prev['info'])
                     agent_logs = agent.learn()
                     logs.update({f'agent_{agent_id}': agent_logs})
-                
+
                 logs.update({'step':step, 'agent_id':agent_id, 'observation':observation})
+
+                if step % steps_cycle_len == 0:
+                    callbacks.on_steps_cycle_begin(step, logs)
+
                 callbacks.on_step_begin(step, logs)
 
                 action = agent.act(observation, greedy=not learn)
@@ -129,7 +137,7 @@ class Playground():
                 if reward_handler is not None:
                     reward = reward_handler(observation, action, reward, done, info, next_observation)
                     logs.update({'handled_reward': reward})
-                
+
                 logs.update({'done': done})
                 if done_handler is not None:
                     done = done_handler(observation, action, reward, done, info, next_observation)
@@ -142,20 +150,23 @@ class Playground():
                         agent.remember(observation, action, reward, done, next_observation, info)
                         agent_logs = agent.learn()
                         logs.update({f'agent_{agent_id}': agent_logs})
-                
+
                 logs.update({'action': action, 'next_observation': next_observation})
                 logs.update(info)
 
                 callbacks.on_step_end(step, logs)
-                
+
                 step += 1
                 observation = next_observation
-            
+
+                if (step + 1) % steps_cycle_len == 0 or done:
+                    callbacks.on_steps_cycle_end(step, logs)
+
             callbacks.on_episode_end(episode, logs)
 
-            if (episode + 1) % cycle_len == 0 or episode == episodes - 1:
-                callbacks.on_cycle_end(episode, logs)
-        
+            if (episode + 1) % episodes_cycle_len == 0 or episode == episodes - 1:
+                callbacks.on_episodes_cycle_end(episode, logs)
+
         callbacks.on_run_end(logs)
 
     def fit(self, episodes, **kwargs):
