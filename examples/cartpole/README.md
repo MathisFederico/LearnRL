@@ -238,13 +238,13 @@ The metric `'reward'` corresponds to the reward returned by `env.step(...)`, tha
 Another logging tool has a built-in support in LearnRL, it is [Weights and Biaises](https://www.wandb.com/). In order to use it, you need a wandb account and to create a project for this example. Once that is done, you just have to add the following lines to your file :
 
 ```python
-from learnrl.callbacks import WandbLogger
+from learnrl.callbacks import WandbCallback
 import wandb
 wandb.init(project='your-project-name')
 
 ...
 
-playground.fit(200, verbose=1, callbacks=[WandbLogger()])
+playground.fit(200, verbose=1, callbacks=[WandbCallback()])
 ```
 
 Here, replace `'your-project-name'` by the name of your project on wandb. You can now run your script and you will see your runs on your project dashboard.
