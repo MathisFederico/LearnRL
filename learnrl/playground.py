@@ -35,7 +35,7 @@ class Playground():
         self.env = environement
         self.agents = agents
 
-    def run(self, episodes, render=True, learn=True, steps_cycle_len=5, episodes_cycle_len=None, episodes_cycle_prop=0.05,
+    def run(self, episodes, render=True, learn=True, steps_cycle_len=10, episodes_cycle_len=0.05,
                   verbose=0, callbacks=[], logger=None, reward_handler=None, done_handler=None, **kwargs):
         
         """ Let the agent(s) play on the environement for a number of episodes.
@@ -52,10 +52,8 @@ class Playground():
                 If True, call :meth:`Agent.learn` every step.
             steps_cycle_len: int
                 Number of steps that compose a cycle.
-            episode_cycle_len: int
-                Number of episodes that compose a cycle.
-            episode_cycle_prop: float
-                Propotion of total episodes to compose a cycle, used if episode_cycle_len is not set.
+            episode_cycle_len: int or float
+                Number of episodes that compose a cycle. If between 0 and 1, this in understood as a proportion.
             verbose: int
                 The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step_cycle), 4 (step), 5 (detailed step).
             callbacks: list
@@ -68,8 +66,11 @@ class Playground():
                 Logging callback to use, if none use the default :class:`~learnrl.callbacks.logger.Logger`.
         
         """
-        episodes_cycle_len = episodes_cycle_len or max(1, int(episodes_cycle_prop*episodes))
-        steps_cycle_len = steps_cycle_len
+        if episodes_cycle_len < 1 and episodes_cycle_len > 0:
+            episodes_cycle_len = max(1, int(episodes_cycle_len*episodes))
+        else:
+            assert episodes_cycle_len > 0, 'episodes_cycle_len must be > 0'
+            episodes_cycle_len = int(episodes_cycle_len)
 
         params = {
             'episodes': episodes,
