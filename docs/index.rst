@@ -122,8 +122,6 @@ Table Of Content
    :maxdepth: 2
 
    core
-   agents
-   environments
    callbacks
 
 Contribute

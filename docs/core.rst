@@ -30,8 +30,8 @@ Agent
 
 .. _TurnEnv:
 
-MultiEnv
---------
+TurnEnv
+-------
 
 .. autoclass:: learnrl.envs.TurnEnv
    :members:

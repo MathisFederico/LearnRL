@@ -28,14 +28,12 @@ def pytest_collection_modifyitems(config, items):
 def reload_tensorflow():
     yield
     importlib.reload(learnrl.callbacks)
-    importlib.reload(learnrl.estimators)
     importlib.reload(learnrl)
 
 @pytest.fixture
 def hide_tensorflow(reload_tensorflow, mocker):
     mocker.patch.dict('sys.modules', { 'tensorflow': None })
     importlib.reload(learnrl.callbacks)
-    importlib.reload(learnrl.estimators)
     importlib.reload(learnrl)
 
 @pytest.fixture
