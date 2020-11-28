@@ -19,9 +19,9 @@ else:
 wandb_spec = importlib.util.find_spec('wandb')
 
 if wandb_spec is not None:
-    from learnrl.callbacks.wandb import WandbLogger
+    from learnrl.callbacks.wandb import WandbCallback
 else:
-    class WandbLogger():
+    class WandbCallback():
         def __init__(self):
             raise ImportError('Missing dependency : wandb >= 0.10')
 
