@@ -6,7 +6,7 @@ import wandb
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
 
 
-class WandbLogger(LoggingCallback):
+class WandbCallback(LoggingCallback):
     
     def __init__(self,
                  step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
@@ -18,21 +18,22 @@ class WandbLogger(LoggingCallback):
             episode_metrics=episode_metrics,
         )
 
-        self.step = 1 # Internal step counter
+        self.episode = 0
         
     def on_step_end(self, step, logs={}):
         super().on_step_end(step, logs=logs)
-        self._update_wandb(self.step, 'step', self.step_metrics, logs)
-        self.step += 1
+        self._update_wandb('step', self.step_metrics, logs)
 
     def on_episode_end(self, episode, logs=None):
         super().on_episode_end(episode, logs=logs)
-        self._update_wandb(episode + 1, 'episode', self.episode_metrics)
+        self.episode = episode
+        self._update_wandb('episode', self.episode_metrics)
 
-    def _update_wandb(self, step, prefix, metrics_list:MetricList, logs=None):
+    def _update_wandb(self, prefix, metrics_list:MetricList, logs=None):
         for agent_id in range(self.n_agents):
             for metric in metrics_list:
                 name = self._get_attr_name(prefix, metric, agent_id)
                 value = self._get_value(metric, prefix, agent_id, logs)
-                if value != 'N/A': wandb.log({name: value})
+                if value != 'N/A': wandb.log({name: value}, commit=False)
+        wandb.log({ 'episode': self.episode })
 
