@@ -69,22 +69,25 @@ class LoggingCallback(Callback):
     """ Generic class for tracking metrics """
 
     def __init__(self,
-                detailed_step_only_metrics=['observation', 'action', 'next_observation'],
+                detailed_step_metrics=['observation', 'action', 'next_observation'],
                 step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
+                steps_cycle_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr', 'dt_step~'],
                 episode_only_metrics=['dt_episode~'], 
                 episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
-                cycle_only_metrics=['dt_episode~'],
-                cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
+                episodes_cycle_only_metrics=['dt_episode~'],
+                episodes_cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last', 'dt_step~'],
                 ):
 
-        self.detailed_step_only_metrics = MetricList(detailed_step_only_metrics)
+        self.detailed_step_metrics = MetricList(detailed_step_metrics)
+
         self.step_metrics = MetricList(step_metrics)
+        self.steps_cycle_metrics = MetricList(steps_cycle_metrics)
 
         self.episode_only_metrics = MetricList(episode_only_metrics)
         self.episode_metrics = MetricList(episode_metrics)
 
-        self.cycle_only_metrics = MetricList(cycle_only_metrics)
-        self.cycle_metrics = MetricList(cycle_metrics)
+        self.episodes_cycle_only_metrics = MetricList(episodes_cycle_only_metrics)
+        self.episodes_cycle_metrics = MetricList(episodes_cycle_metrics)
 
     def _reset_attr(self, attr_name, operator):
         """ Reset a metric attribute based on the metric operator """
@@ -193,17 +196,23 @@ class LoggingCallback(Callback):
     def on_step_end(self, step, logs={}):
         agent_id = logs.get('agent_id') if self.n_agents > 1 else None
         self._update_metrics(self.episode_metrics, 'episode', logs=logs, agent_id=agent_id)
+        if self.params['verbose'] == 3:
+            self._update_metrics_all_agents(self.steps_cycle_metrics, 'steps_cycle', logs=logs)
+
+    def on_steps_cycle_begin(self, step, logs=None):
+        if self.params['verbose'] == 3:
+            self._update_metrics_all_agents(self.steps_cycle_metrics, 'steps_cycle', logs=logs, reset=True)
 
     def on_episode_begin(self, episode, logs=None):
         self._update_metrics_all_agents(self.episode_metrics, 'episode', logs=logs, reset=True)
 
     def on_episode_end(self, episode, logs=None):
         if self.params['verbose'] == 1:
-            self._update_metrics_all_agents(self.cycle_metrics, 'cycle', source_prefix='episode', logs=logs)
+            self._update_metrics_all_agents(self.episodes_cycle_metrics, 'episodes_cycle', source_prefix='episode', logs=logs)
 
-    def on_cycle_begin(self, episode, logs=None):
+    def on_episodes_cycle_begin(self, episode, logs=None):
         if self.params['verbose'] == 1:
-            self._update_metrics_all_agents(self.cycle_metrics, 'cycle', source_prefix='episode', logs=logs, reset=True)
+            self._update_metrics_all_agents(self.episodes_cycle_metrics, 'episodes_cycle', source_prefix='episode', logs=logs, reset=True)
 
     def on_run_begin(self, logs=None):
         self.n_agents = len(self.playground.agents)

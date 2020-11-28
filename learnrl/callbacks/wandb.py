@@ -11,13 +11,11 @@ class WandbCallback(LoggingCallback):
     def __init__(self,
                  step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
                  episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
-                 cycle_metrics=['reward', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
                  ):
         
         super().__init__(
             step_metrics=step_metrics,
             episode_metrics=episode_metrics,
-            cycle_metrics=cycle_metrics
         )
 
         self.episode = 0
@@ -30,11 +28,6 @@ class WandbCallback(LoggingCallback):
         super().on_episode_end(episode, logs=logs)
         self.episode = episode
         self._update_wandb('episode', self.episode_metrics)
-
-    def on_cycle_end(self, episode, logs=None):
-        super().on_cycle_end(episode, logs=logs)
-        if self.params['verbose'] == 1:
-            self._update_wandb('cycle', self.cycle_metrics)
 
     def _update_wandb(self, prefix, metrics_list:MetricList, logs=None):
         for agent_id in range(self.n_agents):

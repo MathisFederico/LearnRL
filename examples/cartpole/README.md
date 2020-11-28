@@ -98,7 +98,7 @@ playground.test(5, verbose=1)
 -   `test(episodes, ...)` : Test the agent on the environment for a number of episodes.
 -   `fit(episodes, ...)` : Train the agent (calling its learn method) for a number of episodes.
 
-The `verbose` argument allows to set logging level : 0 (Silent, no logging), 1 (Episode cycles), 2 (Episodes), 3 (Steps), 4 (Detailed steps).
+The `verbose` argument allows to set logging level : 0 (Silent, no logging), 1 (Episodes cycles), 2 (Episodes), 3 (Steps cycles), 4 (Steps), 5 (Detailed steps).
 
 [Full code](https://gist.github.com/Cr4zySheep/c0b0a9d079feaaca1cf0fa228450268f#file-random_agent_playground-py)
 
