@@ -25,7 +25,7 @@ class Playground():
 
     """
 
-    def __init__(self, environement:Env, agents:Agent):
+    def __init__(self, environement:Env, agents):
         assert isinstance(environement, Env)
         if isinstance(agents, Agent):
             agents = [agents]
