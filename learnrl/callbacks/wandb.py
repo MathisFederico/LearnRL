@@ -9,13 +9,16 @@ from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
 class WandbCallback(LoggingCallback):
     
     def __init__(self,
-                 step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
-                 episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
-                 ):
+                detailed_step_metrics=['observation', 'action', 'next_observation'],
+                episode_only_metrics=['dt_episode~'],
+                metrics=[
+                    ('reward', {'steps': 'sum', 'episode': 'sum'}),
+                ]):
         
         super().__init__(
-            step_metrics=step_metrics,
-            episode_metrics=episode_metrics,
+            detailed_step_metrics=detailed_step_metrics,
+            episode_only_metrics=episode_only_metrics,
+            metrics=metrics
         )
 
         self.episode = 0
