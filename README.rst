@@ -63,16 +63,19 @@ Of course, you can logs any custom metrics that your Agent/Env gives you and eve
 
 The Playground will allow you to have clean logs adapted to your will with the verbose parameter:
   - Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
+   .. image:: docs\_static\images\logs-verbose-1.png
 
   - Verbose 2 : episode - To log each individual episode.
    .. image:: docs\_static\images\logs-verbose-2.png
-      :width: 100
 
   - Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
+   .. image:: docs\_static\images\logs-verbose-3.png
 
   - Verbose 4 : step - To log each individual step.
+   .. image:: docs\_static\images\logs-verbose-4.png
 
   - Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
+   .. image:: docs\_static\images\logs-verbose-5.png
 
 See the `metric codes <https://learnrl.readthedocs.io/en/latest/callbacks.html#metric-codes>`_ for more details.
 
