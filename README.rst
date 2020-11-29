@@ -65,9 +65,8 @@ The Playground will allow you to have clean logs adapted to your will with the v
   - Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
 
   - Verbose 2 : episode - To log each individual episode.
-
-.. image::
-   :file: docs\_static\images\logs-verbose-2.png
+   .. image::
+      :file: docs\_static\images\logs-verbose-2.png
 
   - Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
 
