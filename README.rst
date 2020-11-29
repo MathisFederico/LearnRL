@@ -13,8 +13,8 @@ Our motto is clean, sharable and readable Agents !
 As such, you can plug and play agents on any environment, but also look how agents are built to learn !
 
 Also, LearnRL is cross platform compatible ! That's why no agents are built-in learnrl itself, but you can check:
-   - learnrl-tensorflow
-   - learnrl-pytorch
+   - `LearnRL for Tensorflow <https://github.com/MathisFederico/LearnRL-Tensorflow>`_
+   - `LearnRL for Pytorch <https://github.com/MathisFederico/LearnRL-Pytorch>`_
 
 TODO: Show console logging
 TODO: Show wandb logging
