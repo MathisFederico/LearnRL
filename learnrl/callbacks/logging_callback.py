@@ -68,13 +68,9 @@ class LoggingCallback(Callback):
 
     """ Generic class for tracking metrics """
 
-    def __init__(self,
+    def __init__(self, metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
                 detailed_step_metrics=['observation', 'action', 'next_observation'],
-                episode_only_metrics=['dt_episode~'],
-                metrics=[
-                    ('reward', {'steps': 'sum', 'episode': 'sum'}),
-                    'dt_step~',
-                ]):
+                episode_only_metrics=['dt_episode~']):
 
         self.detailed_step_metrics = MetricList(detailed_step_metrics)
         self.episode_only_metrics = MetricList(episode_only_metrics)

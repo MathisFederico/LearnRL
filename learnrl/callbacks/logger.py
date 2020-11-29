@@ -26,37 +26,26 @@ class Logger(LoggingCallback):
     
     Parameters
     ----------
+        metrics: list(str) or list(tuple)
+            Metrics to display and how to aggregate them.
         detailed_step_metrics: list(str)
             Metrics to display only on detailed steps.
-        step_metrics: list(str)
-            Metrics to display on steps and to aggregate in episodes and steps_cycle.
-        steps_cycle_metrics: list(str)
-            Metrics to display on steps cycles (aggregated from steps).
-        episode_metrics: list(str)
-            Metrics to display on episodes and to aggregate in episodes_cycles.
         episode_only_metrics: list(str)
             Metrics to display only on episodes.
-        episodes_cycle_metrics: list(str)
-            Metrics to display on episodes cycles (aggregated from episodes).
-        episodes_cycle_only_metrics: list(str)
-            Metrics to display only on cycles.
         titles_on_top: bool
             If true, titles will be displayed on top and not at every line in the console.
     
     """
 
-    def __init__(self,
-                titles_on_top=True,
+    def __init__(self, metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
                 detailed_step_metrics=['observation', 'action', 'next_observation'],
                 episode_only_metrics=['dt_episode~'],
-                metrics=[
-                    ('reward', {'steps': 'sum', 'episode': 'sum'}),
-                ]):
+                titles_on_top=True):
 
         super().__init__(
+            metrics=metrics,
             detailed_step_metrics=detailed_step_metrics,
             episode_only_metrics=episode_only_metrics,
-            metrics=metrics,
         )
 
         self._bar_lenght = 100
@@ -91,6 +80,9 @@ class Logger(LoggingCallback):
 
         if self.verbose == 3:
             self.step_start_cycle = step
+        if self.verbose == 4 and self.titles_on_top:
+            step_text = self._get_step_text(0)
+            self._print_titles(self.step_metrics, offset=' ' * len(step_text) + ' |', end='\n')
 
     def on_steps_cycle_end(self, step, logs=None):
         super().on_steps_cycle_end(step, logs=logs)
@@ -115,7 +107,7 @@ class Logger(LoggingCallback):
                 print(text, end=' | ')
             else:
                 self._print_bar('=', text)
-                if self.verbose in (3, 4) and self.titles_on_top:
+                if self.verbose == 3 and self.titles_on_top:
                     step_text = self._get_step_text(0)
                     self._print_titles(self.step_metrics, offset=' ' * len(step_text) + ' |', end='\n')
 
@@ -147,6 +139,16 @@ class Logger(LoggingCallback):
 
         if self.verbose > 2:
             self._print_bar('=')
+    
+    def on_episodes_cycle_begin(self, episode, logs=None):
+        super().on_episodes_cycle_begin(episode, logs=logs)
+
+        if self.verbose == 2 and self.titles_on_top:
+            eps_text = "Episode " + self._get_episode_text(episode)
+            self._print_titles(self.episode_metrics,
+                               prefix='\n',
+                               offset=len(eps_text) * ' ' + ' |',
+                               end='\n')
 
     def on_episodes_cycle_end(self, episode, logs=None):
         super().on_episodes_cycle_end(episode, logs=logs)
@@ -164,7 +166,7 @@ class Logger(LoggingCallback):
                 self._print_metrics(self.episodes_cycle_metrics, 'attrs', prefix='episodes_cycle',
                                     agent_id=agent_id, sep=' | ')
 
-        print()
+            print()
 
     def on_run_begin(self, logs=None):
         super().on_run_begin(logs=logs)
@@ -174,7 +176,7 @@ class Logger(LoggingCallback):
         if self.verbose == 5:
             self.titles_on_top = False
 
-        if self.titles_on_top and self.n_agents == 1 and self.verbose in (1, 2):
+        if self.titles_on_top and self.n_agents == 1 and self.verbose == 1:
             offset_len = len("Episode " + self._get_episode_text(0))
             metrics_to_print = self.episodes_cycle_metrics if self.verbose == 1 else self.episode_metrics
             self._print_titles(metrics_to_print, prefix='', offset=' ' * offset_len + ' |', end='\n')

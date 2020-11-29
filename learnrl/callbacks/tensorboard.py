@@ -17,25 +17,23 @@ class TensorboardCallback(LoggingCallback):
             Directory to store runs logs.
         run_name: :class:`str`
             Specify a run name for Tensorboard, default is a datetime.
-        step_metrics: list(str)
-            Metrics to log on steps and to aggregate in episodes.
-        episode_metrics: list(str)
-            Metrics to log on episodes and to aggregate in episodes_cycles.
-        cycle_metrics: list(str)
-            Metrics to log on cycles (aggregated from episodes and/or steps).
+        metrics: list(str) or list(tuple)
+            Metrics to display and how to aggregate them.
+        detailed_step_metrics: list(str)
+            Metrics to display only on detailed steps.
+        episode_only_metrics: list(str)
+            Metrics to display only on episodes.
     """
 
     def __init__(self, log_dir, run_name=None,
+                metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
                 detailed_step_metrics=['observation', 'action', 'next_observation'],
-                episode_only_metrics=['dt_episode~'],
-                metrics=[
-                    ('reward', {'steps': 'sum', 'episode': 'sum'}),
-                ]):
+                episode_only_metrics=['dt_episode~']):
         
         super().__init__(
+            metrics=metrics,
             detailed_step_metrics=detailed_step_metrics,
-            episode_only_metrics=episode_only_metrics,
-            metrics=metrics
+            episode_only_metrics=episode_only_metrics
         )
 
         if run_name is None:

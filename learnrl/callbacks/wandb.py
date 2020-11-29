@@ -7,18 +7,27 @@ from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
 
 
 class WandbCallback(LoggingCallback):
+
+    """ WandbCallback logger if wandb is installed.
+
+    Parameters
+    ---------
+        metrics: list(str) or list(tuple)
+            Metrics to display and how to aggregate them.
+        detailed_step_metrics: list(str)
+            Metrics to display only on detailed steps.
+        episode_only_metrics: list(str)
+            Metrics to display only on episodes.
+    """
     
-    def __init__(self,
+    def __init__(self, metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
                 detailed_step_metrics=['observation', 'action', 'next_observation'],
-                episode_only_metrics=['dt_episode~'],
-                metrics=[
-                    ('reward', {'steps': 'sum', 'episode': 'sum'}),
-                ]):
+                episode_only_metrics=['dt_episode~'],):
         
         super().__init__(
+            metrics=metrics,
             detailed_step_metrics=detailed_step_metrics,
-            episode_only_metrics=episode_only_metrics,
-            metrics=metrics
+            episode_only_metrics=episode_only_metrics
         )
 
         self.episode = 0
