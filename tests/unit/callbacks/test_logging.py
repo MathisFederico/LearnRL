@@ -195,14 +195,27 @@ def test_extract_from_logs():
     step = extract_from_logs('step', logs, agent_id=0)
     assert step == 2
 
+def test_extract_lists():
+
+    extract_lists = LoggingCallback._extract_lists
+
+    metrics = [
+        ('reward~rwd', {'steps': 'sum', 'episode': 'sum'}),
+        ('loss', {'episodes': 'last'}),
+    ]
+
+    step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics = extract_lists(metrics)
+    assert step_metrics == ['reward~rwd', 'loss']
+    assert steps_cycle_metrics == ['reward~rwd.sum', 'loss.avg']
+    assert episode_metrics == ['reward~rwd.sum', 'loss.avg']
+    assert episodes_cycle_metrics == ['reward~rwd.avg', 'loss.last']
 
 def test_logging_steps_avg_sum():
     for cycle_operator in ['avg', 'sum']:
         print(cycle_operator, '\n')
 
         logging_callback = LoggingCallback(
-            step_metrics=['reward', 'loss'],
-            steps_cycle_metrics=[f'reward.{cycle_operator}', f'loss.{cycle_operator}']
+            metrics=[('reward', {'steps':cycle_operator}), ('loss', {'steps':cycle_operator})],
         )
 
         def check_function(callbacks, logs):
@@ -230,11 +243,8 @@ def test_logging_episodes_avg_sum():
 
             logging_callback = LoggingCallback(
                 detailed_step_metrics=[],
-                step_metrics=['reward', 'loss'],
-                episode_only_metrics=[], 
-                episode_metrics=[f'reward.{eps_operator}', f'loss.{eps_operator}'],
-                episodes_cycle_only_metrics=[],
-                episodes_cycle_metrics=[f'reward.{cycle_operator}', f'loss.{cycle_operator}'],
+                metrics=[('reward', {'episode': eps_operator, 'episodes': cycle_operator}),
+                         ('loss', {'episode': eps_operator, 'episodes': cycle_operator})],
             )
 
             def check_function(callbacks, logs):
@@ -264,7 +274,7 @@ def test_display():
     from learnrl.callbacks import Logger
 
     for titles_on_top in (False, True):
-        for verbose in range(4):
+        for verbose in range(5):
 
             logging_callback = Logger(
                 titles_on_top=titles_on_top
