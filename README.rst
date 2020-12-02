@@ -48,6 +48,7 @@ You can build and run your own Agent in a clear and sharable manner !
 Note that 'learn' and 'remember' are optional, so this framework can also be used for baselines !
 
 Of course, you can logs any custom metrics that your Agent/Env gives you and even chose how to aggregate them through episodes or cycles:
+See the `metric codes <https://learnrl.readthedocs.io/en/latest/callbacks.html#metric-codes>`_ for more details.
 
 .. code-block:: python
 
@@ -77,11 +78,8 @@ The Playground will allow you to have clean logs adapted to your will with the v
   - Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
    .. image:: docs\_static\images\logs-verbose-5.png
 
-See the `metric codes <https://learnrl.readthedocs.io/en/latest/callbacks.html#metric-codes>`_ for more details.
-
 The Playground also allows you to add Callbacks with ease, for example the WandbCallback to have a nice dashboard !
 TODO: Show wandb logging
-
 
 Features
 --------
