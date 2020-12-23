@@ -161,6 +161,8 @@ class Playground():
 
                 if (step + 1) % steps_cycle_len == 0 or done:
                     callbacks.on_steps_cycle_end(step, logs)
+                
+                if done and render: self.env.render()
 
             callbacks.on_episode_end(episode, logs)
 
