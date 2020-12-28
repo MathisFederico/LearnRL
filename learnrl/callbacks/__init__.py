@@ -22,6 +22,6 @@ if wandb_spec is not None:
     from learnrl.callbacks.wandb import WandbCallback
 else:
     class WandbCallback():
-        def __init__(self):
+        def __init__(self, run=None):
             raise ImportError('Missing dependency : wandb >= 0.10')
 
