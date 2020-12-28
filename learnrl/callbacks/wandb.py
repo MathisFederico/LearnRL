@@ -9,7 +9,7 @@ def construct_panel_configs(metric_name:str, title:str=None):
         histories = [
             {
                 "name": "history",
-                "args": [{"name": "keys", 
+                "args": [{"name": "keys",
                             "value": [
                                 "step",
                                 "steps_cycle",
@@ -60,23 +60,23 @@ def construct_panel_configs(metric_name:str, title:str=None):
         }
 
 class WandbCallback(LoggingCallback):
-
-    """ WandbCallback logger if wandb is installed.
-
-    Parameters
-    ---------
-        metrics: list(str) or list(tuple)
-            Metrics to display and how to aggregate them.
-        detailed_step_metrics: list(str)
-            Metrics to display only on detailed steps.
-        episode_only_metrics: list(str)
-            Metrics to display only on episodes.
-    """
     
     def __init__(self, run, 
                 metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
                 detailed_step_metrics=['observation', 'action', 'next_observation'],
-                episode_only_metrics=['dt_episode~'],):
+                episode_only_metrics=['dt_episode~']):
+
+        """ WandbCallback logger if wandb is installed.
+
+        Parameters
+        ----------
+            metrics: list(str) or list(tuple)
+                Metrics to display and how to aggregate them.
+            detailed_step_metrics: list(str)
+                Metrics to display only on detailed steps.
+            episode_only_metrics: list(str)
+                Metrics to display only on episodes.
+        """
 
         super().__init__(
             metrics=metrics,
