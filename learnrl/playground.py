@@ -34,7 +34,7 @@ class Playground():
 
         self.env = environement
         self.agents = agents
-        self.set_agent_order(agents_order)
+        self.set_agents_order(agents_order)
 
     def run(self, episodes, render=True, learn=True, steps_cycle_len=10, episodes_cycle_len=0.05,
                   verbose=0, callbacks=[], logger=None, reward_handler=None, done_handler=None, **kwargs):
@@ -195,16 +195,16 @@ class Playground():
             warnings.warn("you should set verbose > 0 or render=True to have any feedback ...", UserWarning)
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
     
-    def set_agent_order(self, agents_order) -> list:
-        """
-        Change the agents_order.
+    def set_agents_order(self, agents_order) -> list:
+        """ Change the agents_order.
+
         This will change what agent is described by the results of `env.turn`
         if the environment is subclassing :class:`~learnrl.envs.TurnEnv`.
 
         Args
         ----
         agents_order: list
-            New agents order.
+            New agents order. Default is range(n_agents).
 
         Return
         ------
