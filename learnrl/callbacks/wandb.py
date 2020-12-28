@@ -2,8 +2,9 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 import wandb
-
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
+
+
 def construct_panel_configs(metric_name:str, title:str=None):
         histories = [
             {
