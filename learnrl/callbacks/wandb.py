@@ -119,7 +119,6 @@ class WandbCallback(LoggingCallback):
 
     def on_steps_cycle_end(self, step, logs=None):
         super().on_steps_cycle_end(step, logs=logs)
-        
         self.steps_cycle += 1
 
     def on_episode_end(self, episode, logs=None):
