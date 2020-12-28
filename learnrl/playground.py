@@ -118,7 +118,7 @@ class Playground():
 
     """
 
-    def __init__(self, environement:Env, agents:Union[Agent, List[Agent]]):
+    def __init__(self, environement:Env, agents:Union[Agent, List[Agent]], agents_order=None):
         """A playground is used to run agent(s) on an environement
 
         Args:
@@ -136,6 +136,7 @@ class Playground():
 
         self.env = environement
         self.agents = agents
+        self.set_agent_order(agents_order)
 
     @staticmethod
     def _get_episodes_cycle_len(episodes_cycle_len, episodes):
@@ -366,3 +367,42 @@ class Playground():
                 UserWarning
             )
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
+
+    def set_agent_order(self, agents_order) -> list:
+        """
+        Change the agents_order.
+        This will change what agent is described by the results of `env.turn`
+        if the environment is subclassing :class:`~learnrl.envs.TurnEnv`.
+
+        Args
+        ----
+        agents_order: list
+            New agents order.
+
+        Return
+        ------
+        list:
+            The updated agents order.
+
+        """
+        if agents_order is None:
+            self.agents_order = list(range(len(self.agents)))
+        else:
+            if len(agents_order) != len(self.agents):
+                raise ValueError(
+                    f"Not every agents have an order number.\n"
+                    f"Custom order: {agents_order} for {len(self.agents)} agents\n"
+                )
+            
+            valid_order = True
+            for place in range(len(self.agents)):
+                if not place in agents_order:
+                    valid_order = False
+            
+            if not valid_order:
+                raise ValueError(
+                    f"Custom order is not taking every index in [0, n_agents-1].\n"
+                    f"Custom order: {agents_order}"
+                )
+            self.agents_order = agents_order
+        return self.agents_order
