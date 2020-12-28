@@ -9,9 +9,9 @@ wandb_spec = importlib.util.find_spec('wandb')
 if wandb_spec is not None:
     def test_instanciate_without_wandb(hide_wandb):
         with pytest.raises(ImportError, match=r".*wandb >= 0.10.*"):
-            learnrl.callbacks.WandbCallback()
+            learnrl.callbacks.WandbCallback(run=None)
 
     def test_instanciate_with_wandb():
-        learnrl.callbacks.WandbCallback()
+        learnrl.callbacks.WandbCallback(run=None)
 else:
     pass
