@@ -61,7 +61,7 @@ def construct_panel_configs(metric_name:str, title:str=None):
 
 class WandbCallback(LoggingCallback):
     
-    def __init__(self, run, 
+    def __init__(self, run,
                 metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
                 detailed_step_metrics=['observation', 'action', 'next_observation'],
                 episode_only_metrics=['dt_episode~']):
