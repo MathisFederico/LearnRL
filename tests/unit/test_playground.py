@@ -42,7 +42,7 @@ def test_agent_order():
     # Missing indexes in custom order
     with pytest.raises(ValueError, match=r".*not taking every index*"):
         pg = Playground(env, agents, agents_order=[4, 6, 1, 2, 0])
-    
+
     # Custom order after init
     custom_order = [4, 3, 1, 2, 0]
     pg = Playground(env, agents, agents_order=custom_order)
