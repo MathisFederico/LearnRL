@@ -25,7 +25,7 @@ class Playground():
 
     """
 
-    def __init__(self, environement:Env, agents:Agent):
+    def __init__(self, environement:Env, agents:Agent, agents_order=None):
         assert isinstance(environement, Env)
         if isinstance(agents, Agent):
             agents = [agents]
@@ -34,6 +34,7 @@ class Playground():
 
         self.env = environement
         self.agents = agents
+        self.set_agent_order(agents_order)
 
     def run(self, episodes, render=True, learn=True, steps_cycle_len=10, episodes_cycle_len=0.05,
                   verbose=0, callbacks=[], logger=None, reward_handler=None, done_handler=None, **kwargs):
@@ -112,8 +113,9 @@ class Playground():
 
                 if render: self.env.render()
 
-                agent_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
-                if agent_id >= len(previous):
+                turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
+                agent_id = self.agents_order[turn_id]
+                if agent_id >= len(self.agents):
                     raise ValueError(f'Not enough agents to play environement {self.env}')
                 agent = self.agents[agent_id]
 
@@ -193,7 +195,44 @@ class Playground():
             warnings.warn("you should set verbose > 0 or render=True to have any feedback ...", UserWarning)
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
     
+    def set_agent_order(self, agents_order) -> list:
+        """
+        Change the agents_order.
+        This will change what agent is described by the results of `env.turn`
+        if the environment is subclassing :class:`~learnrl.envs.TurnEnv`.
 
+        Args
+        ----
+        agents_order: list
+            New agents order.
+
+        Return
+        ------
+        list:
+            The updated agents order.
+
+        """
+        if agents_order is None:
+            self.agents_order = list(range(len(self.agents)))
+        else:
+            if len(agents_order) != len(self.agents):
+                raise ValueError(
+                    f"Not every agents have an order number.\n"
+                    f"Custom order: {agents_order} for {len(self.agents)} agents\n"
+                )
+            
+            valid_order = True
+            for place in range(len(self.agents)):
+                if not place in agents_order:
+                    valid_order = False
+            
+            if not valid_order:
+                raise ValueError(
+                    f"Custom order is not taking every index in [0, n_agents-1].\n"
+                    f"Custom order: {agents_order}"
+                )
+            self.agents_order = agents_order
+        return self.agents_order
 class DoneHandler():
 
     """ Helper to modify the done given by the environmen
