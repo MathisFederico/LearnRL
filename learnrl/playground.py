@@ -136,7 +136,7 @@ class Playground():
 
         self.env = environement
         self.agents = agents
-        self.set_agent_order(agents_order)
+        self.set_agents_order(agents_order)
 
     @staticmethod
     def _get_episodes_cycle_len(episodes_cycle_len, episodes):
@@ -369,15 +369,14 @@ class Playground():
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
 
     def set_agent_order(self, agents_order) -> list:
-        """
-        Change the agents_order.
+        """Change the agents_order.
         This will change what agent is described by the results of `env.turn`
         if the environment is subclassing :class:`~learnrl.envs.TurnEnv`.
 
         Args
         ----
         agents_order: list
-            New agents order.
+            New agents order. Default is range(n_agents).
 
         Return
         ------
