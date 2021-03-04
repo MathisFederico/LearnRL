@@ -1,11 +1,10 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-import numpy as np
-from copy import copy
+
 import warnings
 
-from time import time
+import numpy as np
 from gym import Env
 
 from learnrl import Agent, TurnEnv
@@ -36,12 +35,12 @@ class Playground():
         self.agents = agents
 
     def run(self, episodes, render=True, learn=True, steps_cycle_len=10, episodes_cycle_len=0.05,
-                  verbose=0, callbacks=[], logger=None, reward_handler=None, done_handler=None, **kwargs):
-        
+            verbose=0, callbacks=(), logger=None, reward_handler=None, done_handler=None, **kwargs):
+
         """ Let the agent(s) play on the environement for a number of episodes.
 
         Additional arguments will be passed to the default logger if none is given, see :class:`~learnrl.callbacks.logger.Logger`.
-        
+
         Parameters
         ----------
             episodes: int
@@ -53,9 +52,11 @@ class Playground():
             steps_cycle_len: int
                 Number of steps that compose a cycle.
             episode_cycle_len: int or float
-                Number of episodes that compose a cycle. If between 0 and 1, this in understood as a proportion.
+                Number of episodes that compose a cycle.
+                If between 0 and 1, this in understood as a proportion.
             verbose: int
-                The verbosity level: 0 (silent), 1 (cycle), 2 (episode), 3 (step_cycle), 4 (step), 5 (detailed step).
+                The verbosity level: 0 (silent), 1 (cycle), 2 (episode),
+                3 (step_cycle), 4 (step), 5 (detailed step).
             callbacks: list
                 List of :class:`~learnrl.callbacks.Callback` to use in runs.
             reward_handler: func or :class:`RewardHandler`
@@ -63,8 +64,9 @@ class Playground():
             done_handler: func or :class:`DoneHandler`
                 A callable to redifine the environement end.
             logger: :class:`~learnrl.callbacks.logging_callback.LoggingCallback`
-                Logging callback to use, if none use the default :class:`~learnrl.callbacks.logger.Logger`.
-        
+                Logging callback to use.
+                If None use the default :class:`~learnrl.callbacks.logger.Logger`.
+
         """
         if episodes_cycle_len < 1 and episodes_cycle_len > 0:
             episodes_cycle_len = max(1, int(episodes_cycle_len*episodes))
@@ -101,7 +103,11 @@ class Playground():
             if isinstance(done_handler, DoneHandler):
                 done_handler.reset()
 
-            previous = [{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None} for _ in range(len(self.agents))]
+            previous = [
+                {'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None}
+                for _ in range(len(self.agents))
+            ]
+
             done = False
             step = 0
 
@@ -161,8 +167,9 @@ class Playground():
 
                 if (step + 1) % steps_cycle_len == 0 or done:
                     callbacks.on_steps_cycle_end(step, logs)
-                
-                if done and render: self.env.render()
+
+                if done and render:
+                    self.env.render()
 
             callbacks.on_episode_end(episode, logs)
 
@@ -176,9 +183,15 @@ class Playground():
         learn = kwargs.pop('learn', True)
         render = kwargs.pop('render', False)
         if not learn:
-            warnings.warn("learn should be True in Playground.fit(), otherwise the agents will not improve", UserWarning)
+            warnings.warn(
+                "learn should be True in Playground.fit(), otherwise the agents will not improve",
+                UserWarning
+            )
         if render:
-            warnings.warn("rendering degrades heavily computation speed", RuntimeWarning)
+            warnings.warn(
+                "rendering degrades heavily computation speed",
+                RuntimeWarning
+            )
 
         self.run(episodes, render=render, learn=learn, **kwargs)
 
@@ -188,11 +201,18 @@ class Playground():
         render = kwargs.pop('render', True)
         verbose = kwargs.pop('verbose', 0)
         if learn:
-            warnings.warn("learn should be False in Playground.test(), otherwise the agents will not act greedy and can have random behavior", UserWarning)
+            warnings.warn(
+                "learn should be False in Playground.test(),"
+                "otherwise the agents will not act greedy and can have random behavior",
+                UserWarning
+            )
         if not render and verbose == 0:
-            warnings.warn("you should set verbose > 0 or render=True to have any feedback ...", UserWarning)
+            warnings.warn(
+                "you should set verbose > 0 or render=True to have any feedback ...",
+                UserWarning
+            )
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
-    
+
 
 class DoneHandler():
 
@@ -200,7 +220,7 @@ class DoneHandler():
 
     You need to specify the method:
      - `done(self, observation, action, reward, done, info, next_observation) -> done`
-    
+
     You can also define __init__ and reset() if you want to store anything.
 
     """
@@ -216,19 +236,19 @@ class DoneHandler():
         if not isinstance(done, (bool, np.bool, np.bool_)):
             raise ValueError(f"Done should be bool, got {done} of type {type(done)} instead")
         return done
-    
+
     def __call__(self, *args):
         return self._done(*args)
 
 class RewardHandler():
 
     """ Helper to modify the rewards given by the environment
-    
+
     You need to specify the method:
      - `reward(self, observation, action, reward, done, info, next_observation) -> reward`
-    
+
     You can also define __init__ and reset() if you want to store anything.
-    
+
     """
 
     def reward(self, observation, action, reward, done, info, next_observation):
@@ -240,8 +260,10 @@ class RewardHandler():
     def _reward(self, *args):
         reward = self.reward(*args)
         if not isinstance(reward, (int, float)):
-            raise ValueError(f"Rewards should be scalars, got {reward} of type {type(reward)} instead")
+            raise ValueError(
+                f"Rewards should be scalars, got {reward} of type {type(reward)} instead"
+            )
         return reward
-    
+
     def __call__(self, *args):
         return self._reward(*args)

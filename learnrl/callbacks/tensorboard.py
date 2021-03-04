@@ -63,7 +63,8 @@ class TensorboardCallback(LoggingCallback):
             metrics_list: :class:`~learnrl.callbacks.MetricList`
                 Metrics to write.
             logs: :class:`dict` (default is None)
-                If set to None, metrics value will be searched in attributes, otherwise they will be searched in logs.
+                If set to None, metrics value will be searched in attributes,
+                otherwise they will be searched in logs.
 
             """
         with self.writer.as_default(): #pylint: disable=all

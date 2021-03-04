@@ -15,12 +15,12 @@ class Metric():
         self.name = split_name[0]
         self.surname = split_name[1] if len(split_name) > 1 else self.name
         self.operator = split_code[1] if len(split_code) > 1 else 'avg'
-    
+
     def __eq__(self, other):
         if isinstance(other, str):
             return self.name == other
         return self.name == other.name
-    
+
     def __str__(self):
         return self.name
 
@@ -35,10 +35,10 @@ class MetricList():
     def __init__(self, metric_list):
         self.metric_list = [self.to_metric(m) for m in metric_list]
         self.metric_names = [m.name for m in self.metric_list]
-    
+
     def __getitem__(self, index):
         return self.metric_list[index]
-    
+
     def __contains__(self, metric:Metric):
         return metric.name in self.metric_names
 
@@ -52,10 +52,10 @@ class MetricList():
             self.metric_names += [metric.name]
         else:
             raise ValueError(f'{metric} already in MetricList')
-    
+
     def __str__(self):
         return str(self.metric_list)
-    
+
     @staticmethod
     def to_metric(metric):
         if isinstance(metric, Metric):
@@ -68,9 +68,9 @@ class LoggingCallback(Callback):
 
     """ Generic class for tracking metrics """
 
-    def __init__(self, metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
-                detailed_step_metrics=['observation', 'action', 'next_observation'],
-                episode_only_metrics=['dt_episode~']):
+    def __init__(self, metrics=(('reward', {'steps': 'sum', 'episode': 'sum'})),
+                detailed_step_metrics=('observation', 'action', 'next_observation'),
+                episode_only_metrics=('dt_episode~')):
 
         self.detailed_step_metrics = MetricList(detailed_step_metrics)
         self.episode_only_metrics = MetricList(episode_only_metrics)
@@ -80,7 +80,9 @@ class LoggingCallback(Callback):
         self.steps_cycle_metrics = MetricList(steps_cycle_metrics)
         self.episode_metrics = MetricList(episode_metrics)
         self.episodes_cycle_metrics = MetricList(episodes_cycle_metrics)
-    
+
+        self.n_agents = None
+
     @staticmethod
     def _extract_lists(metrics):
         step_metrics = []
@@ -93,7 +95,7 @@ class LoggingCallback(Callback):
             elif isinstance(metric, str):
                 metric_name = metric
                 ops = {}
-            
+
             step_metrics.append(metric_name)
             steps_cycle_metrics.append('.'.join((metric_name, ops.get('steps', 'avg'))))
             episode_metrics.append('.'.join((metric_name, ops.get('episode', 'avg'))))
@@ -176,10 +178,17 @@ class LoggingCallback(Callback):
         # If not found or no source, search in logs directly
         if src_value == 'N/A' and logs is not None:
             src_value = self._extract_metric_from_logs(metric.name, logs, agent_id)
-        
+
         return src_value
 
-    def _update_metrics(self, metric_list:MetricList, target_prefix, source_prefix=None, logs=None, agent_id=None, reset=False):
+    def _update_metrics(self,
+            metric_list:MetricList,
+            target_prefix,
+            source_prefix=None,
+            logs=None,
+            agent_id=None,
+            reset=False
+        ):
         """ Update the logger attributes based on a metric list """
         for metric in metric_list:
             target_name = self._get_attr_name(target_prefix, metric, agent_id)
@@ -193,31 +202,38 @@ class LoggingCallback(Callback):
             # Update attr if a value was found
             if src_value != 'N/A':
                 self._update_attr(target_name, src_value, metric.operator)
-    
-    def _update_metrics_all_agents(self, metric_list:MetricList, target_prefix, **kwargs):
+
+    def _update_metrics_all_agents(self,
+            metric_list:MetricList,
+            target_prefix,
+            **kwargs
+        ):
         if self.n_agents > 1:
             for agent_id in range(self.n_agents):
                 self._update_metrics(metric_list, target_prefix, agent_id=agent_id, **kwargs)
         else:
             self._update_metrics(metric_list, target_prefix, agent_id=0, **kwargs)
 
-    def on_step_end(self, step, logs={}):
+    def on_step_end(self, step, logs=None):
         agent_id = logs.get('agent_id') if self.n_agents > 1 else None
         self._update_metrics(self.episode_metrics, 'episode', logs=logs, agent_id=agent_id)
         self._update_metrics_all_agents(self.steps_cycle_metrics, 'steps_cycle', logs=logs)
 
     def on_steps_cycle_begin(self, step, logs=None):
-        self._update_metrics_all_agents(self.steps_cycle_metrics, 'steps_cycle', logs=logs, reset=True)
+        self._update_metrics_all_agents(self.steps_cycle_metrics,
+            'steps_cycle', logs=logs, reset=True)
 
     def on_episode_begin(self, episode, logs=None):
-        self._update_metrics_all_agents(self.episode_metrics, 'episode', logs=logs, reset=True)
+        self._update_metrics_all_agents(self.episode_metrics,
+            'episode', logs=logs, reset=True)
 
     def on_episode_end(self, episode, logs=None):
-        self._update_metrics_all_agents(self.episodes_cycle_metrics, 'episodes_cycle', source_prefix='episode', logs=logs)
+        self._update_metrics_all_agents(self.episodes_cycle_metrics,
+            'episodes_cycle', source_prefix='episode', logs=logs)
 
     def on_episodes_cycle_begin(self, episode, logs=None):
-        self._update_metrics_all_agents(self.episodes_cycle_metrics, 'episodes_cycle', source_prefix='episode', logs=logs, reset=True)
+        self._update_metrics_all_agents(self.episodes_cycle_metrics,
+            'episodes_cycle', source_prefix='episode', logs=logs, reset=True)
 
     def on_run_begin(self, logs=None):
         self.n_agents = len(self.playground.agents)
-
