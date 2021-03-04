@@ -1,6 +1,10 @@
 Welcome to LearnRL's documentation!
 ===================================
 
+.. image:: https://api.codacy.com/project/badge/Grade/5bcd2de86c1748d0a141a125c519dd5c
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/MathisFederico/LearnRL?utm_source=github.com&utm_medium=referral&utm_content=MathisFederico/LearnRL&utm_campaign=Badge_Grade_Settings
+
 We would love to help you make projects with LearnRL, so join us `on Discord <https://discord.gg/z9dd4s5>`_ !
 
 About LearnRL
