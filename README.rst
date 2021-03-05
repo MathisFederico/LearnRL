@@ -121,6 +121,9 @@ Visualize:
 Documentation
 -------------
 
+.. image:: docs\_static\images\docs.png
+   :target: https://learnrl.readthedocs.io/en/latest/
+
 | See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details.
 | See the `development documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see what's coming !
 
