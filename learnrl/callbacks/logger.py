@@ -97,7 +97,7 @@ class Logger(LoggingCallback):
         super().on_steps_cycle_end(step, logs=logs)
 
         if self.verbose == 3:
-            text = self._get_step_text(self.step_start_cycle, step_end=step, pad=True)
+            text = self._get_step_text(step, pad=True)
             print(text, end=' | ')
 
             agent_id = logs.get('agent_id')
