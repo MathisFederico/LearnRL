@@ -38,7 +38,7 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    'autoapi.sphinx'
+    'sphinx_autodoc_typehints',
 ]
 master_doc = 'index'
 autoapi_dirs = ['../learnrl']
@@ -48,6 +48,7 @@ autodoc_default_options = {
     'undoc-members': True,
 }
 add_module_names = False
+napoleon_use_param = True
 # pygments_style = 'monokai'
 
 intersphinx_mapping = {
