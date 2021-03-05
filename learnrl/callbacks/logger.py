@@ -1,6 +1,7 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+from typing import List
 import numpy as np
 
 from learnrl.callbacks import LoggingCallback, MetricList, Metric
@@ -8,7 +9,7 @@ from learnrl.callbacks import LoggingCallback, MetricList, Metric
 
 class Logger(LoggingCallback):
 
-    """ Default logger in every :class:`~learnrl.playground.Playground` run
+    """Default logger in every :class:`~learnrl.playground.Playground` run.
 
     This will print relevant informations in console.
 
@@ -24,27 +25,27 @@ class Logger(LoggingCallback):
     You can also replace it with you own :class:`~learnrl.callbacks.Logger`,
     with the argument `logger` in :meth:`~learnrl.playground.Playground.run`.
 
-     - To build you own logger, you have to chose what metrics will be displayed
-       and how will metrics be aggregated over steps/episodes/cycles.
-       To do that, see the :ref:`metric_code` format.
-
-    Parameters
-    ----------
-        metrics: list(str) or list(tuple)
-            Metrics to display and how to aggregate them.
-        detailed_step_metrics: list(str)
-            Metrics to display only on detailed steps.
-        episode_only_metrics: list(str)
-            Metrics to display only on episodes.
-        titles_on_top: bool
-            If true, titles will be displayed on top and not at every line in the console.
+    To build you own logger, you have to chose what metrics will be displayed
+    and how will metrics be aggregated over steps/episodes/cycles.
+    To do that, see the :ref:`metric_code` format.
 
     """
 
-    def __init__(self, metrics=(('reward', {'steps': 'sum', 'episode': 'sum'})),
-                detailed_step_metrics=('observation', 'action', 'next_observation'),
-                episode_only_metrics=('dt_episode~'),
-                titles_on_top=True):
+    def __init__(self,
+            metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
+            detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
+            episode_only_metrics: List[str]=('dt_episode~'),
+            titles_on_top: bool=True):
+        
+        """Default logger in every :class:`~learnrl.playground.Playground` run.
+
+        Args:
+            metrics: Metrics to display and how to aggregate them.
+            detailed_step_metrics: Metrics to display only on detailed steps.
+            episode_only_metrics: Metrics to display only on episodes.
+            titles_on_top: If true, titles will be displayed on top and not at every line.
+
+        """
 
         super().__init__(
             metrics=metrics,
@@ -127,7 +128,7 @@ class Logger(LoggingCallback):
 
         if self.verbose >= 3:
             print()
-            print("Episode " + self._get_episode_text(episode), end=' | ')                
+            print("Episode " + self._get_episode_text(episode), end=' | ')
 
         if self.verbose >= 2:
             if self.titles_on_top and self.n_agents > 1:
@@ -174,7 +175,8 @@ class Logger(LoggingCallback):
                 self._print_titles(self.episodes_cycle_metrics, prefix='\n', offset=' '*12 + '|')
 
             for agent_id in range(self.n_agents):
-                if self.n_agents > 1: print(end=f'\n    Agent {agent_id} | ')
+                if self.n_agents > 1:
+                    print(end=f'\n    Agent {agent_id} | ')
                 self._print_metrics(self.episodes_cycle_metrics, 'attrs', prefix='episodes_cycle',
                                     agent_id=agent_id, sep=' | ')
 
@@ -278,23 +280,24 @@ class Logger(LoggingCallback):
             text += ' ' * (13 - len(text))
         return text
 
-    def _get_time_text(self, dt, unit):
+    @staticmethod
+    def _get_time_text(elapsed_time, unit):
         """ Get the display text for a time mesurment """
         if unit == 'episode':
             unit = 'eps'
-        if dt < 1e-9:
+        if elapsed_time < 1e-9:
             return 'N/A        '
-        elif dt < 1e-6:
-            time_display = f'{dt/1e-9:.01f}'
+        if elapsed_time < 1e-6:
+            time_display = f'{elapsed_time/1e-9:.01f}'
             time_unit = 'ns'
-        elif dt < 1e-3:
-            time_display = f'{dt/1e-6:.01f}'
+        elif elapsed_time < 1e-3:
+            time_display = f'{elapsed_time/1e-6:.01f}'
             time_unit = 'us'
-        elif dt < 1:
-            time_display = f'{dt/1e-3:.01f}'
+        elif elapsed_time < 1:
+            time_display = f'{elapsed_time/1e-3:.01f}'
             time_unit = 'ms'
         else:
-            time_display = f'{dt:.01f}'
+            time_display = f'{elapsed_time:.01f}'
             time_unit = 's '
 
         margin = (5 - len(time_display)) * ' '

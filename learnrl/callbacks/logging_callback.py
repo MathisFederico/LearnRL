@@ -1,13 +1,14 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+from typing import List
 from learnrl.callbacks.callback import Callback
 
 class Metric():
 
     """ An helper object to represent a metric via a str metric_code """
 
-    def __init__(self, metric_code):
+    def __init__(self, metric_code: str):
         split_code = metric_code.split('.')
         self.code = metric_code
         fullname = split_code[0]
@@ -32,21 +33,21 @@ class MetricList():
 
     """ An helper object to represent a list of metrics """
 
-    def __init__(self, metric_list):
+    def __init__(self, metric_list: List[Metric]):
         self.metric_list = [self.to_metric(m) for m in metric_list]
         self.metric_names = [m.name for m in self.metric_list]
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         return self.metric_list[index]
 
-    def __contains__(self, metric:Metric):
+    def __contains__(self, metric: Metric):
         return metric.name in self.metric_names
 
-    def __add__(self, metric_list):
+    def __add__(self, metric_list: List[Metric]):
         new_list = self.metric_list + [self.to_metric(m) for m in metric_list if m not in self]
         return MetricList(new_list)
 
-    def append(self, metric:Metric):
+    def append(self, metric: Metric):
         if metric not in self:
             self.metric_list += [self.to_metric(metric)]
             self.metric_names += [metric.name]
@@ -57,7 +58,7 @@ class MetricList():
         return str(self.metric_list)
 
     @staticmethod
-    def to_metric(metric):
+    def to_metric(metric: Metric):
         if isinstance(metric, Metric):
             return metric
         else:
@@ -68,14 +69,18 @@ class LoggingCallback(Callback):
 
     """ Generic class for tracking metrics """
 
-    def __init__(self, metrics=(('reward', {'steps': 'sum', 'episode': 'sum'})),
-                detailed_step_metrics=('observation', 'action', 'next_observation'),
-                episode_only_metrics=('dt_episode~')):
-
+    def __init__(self,
+            metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
+            detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
+            episode_only_metrics: List[str]=('dt_episode~')
+        ):
+        super().__init__()
         self.detailed_step_metrics = MetricList(detailed_step_metrics)
         self.episode_only_metrics = MetricList(episode_only_metrics)
 
-        step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics = self._extract_lists(metrics)
+        metric_lists = self._extract_lists(metrics)
+
+        step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics = metric_lists
         self.step_metrics = MetricList(step_metrics)
         self.steps_cycle_metrics = MetricList(steps_cycle_metrics)
         self.episode_metrics = MetricList(episode_metrics)
