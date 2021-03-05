@@ -1,10 +1,10 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-import pytest, sys
+import sys
 import numpy as np
 
-from learnrl.callbacks import LoggingCallback, Callback, CallbackList
+from learnrl.callbacks import LoggingCallback, CallbackList
 
 
 class DummyPlayground():
@@ -68,7 +68,7 @@ class DummyPlayground():
 
                     for metric_name in ('reward', 'loss'):
                         steps_cycle_tracker[metric_name] = 0
-                    
+    
                         logs.update({
                             f'{metric_name}_steps_sum': None,
                             f'{metric_name}_steps_avg': None
@@ -115,7 +115,7 @@ class DummyPlayground():
             for metric_name, metric_avg, metric_sum in zip(
                 ('reward', 'loss'),
                 (reward_avg, loss_avg),
-                (reward_sum, loss_sum), 
+                (reward_sum, loss_sum),
             ):
 
                 logs.update({

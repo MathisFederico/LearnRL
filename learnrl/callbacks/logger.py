@@ -36,7 +36,7 @@ class Logger(LoggingCallback):
             detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
             episode_only_metrics: List[str]=('dt_episode~'),
             titles_on_top: bool=True):
-        
+
         """Default logger in every :class:`~learnrl.playground.Playground` run.
 
         Args:
