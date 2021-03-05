@@ -48,6 +48,7 @@ autodoc_default_options = {
     'undoc-members': True,
 }
 add_module_names = False
+autoclass_content = 'both'
 napoleon_use_param = True
 # pygments_style = 'monokai'
 
