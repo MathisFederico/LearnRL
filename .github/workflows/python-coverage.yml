@@ -20,7 +20,7 @@ jobs:
         pip install -r requirements.txt
     - name: Build coverage using pytest-cov
       run: |
-        pip install pytest
+        pip install -r requirements-dev.txt
         pip install pytest-cov
         pytest --cov=learnrl --cov-report=xml tests/unit
     - name: Upload coverage-report to codacy
