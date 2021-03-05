@@ -15,7 +15,7 @@ from learnrl.callbacks import Callback, CallbackList, Logger
 
 class DoneHandler():
 
-    """ Helper to modify the done given by the environmen
+    """Helper to modify the done given by the environment.
 
     You need to specify the method:
      - `done(self, observation, action, reward, done, info, next_observation) -> bool`
@@ -24,25 +24,25 @@ class DoneHandler():
 
     """
 
-    def done(self, observation, action, reward, done, info, next_observation):
+    def done(self, observation, action, reward, done, info, next_observation) -> bool:
         raise NotImplementedError
 
     def reset(self):
         pass
 
-    def _done(self, *args):
+    def _done(self, *args) -> bool:
         done = self.done(*args)
         if not isinstance(done, (bool, np.bool, np.bool_)):
             raise ValueError(f"Done should be bool, got {done} of type {type(done)} instead")
         return done
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> bool:
         return self._done(*args)
 
 
 class RewardHandler():
 
-    """ Helper to modify the rewards given by the environment
+    """Helper to modify the rewards given by the environment.
 
     You need to specify the method:
      - `reward(self, observation, action, reward, done, info, next_observation) -> float`
@@ -51,28 +51,31 @@ class RewardHandler():
 
     """
 
-    def reward(self, observation, action, reward, done, info, next_observation):
+    def reward(self,
+            observation, action, reward,
+            done, info, next_observation
+        )-> Union[int, float]:
         raise NotImplementedError
 
     def reset(self):
         pass
 
-    def _reward(self, *args):
+    def _reward(self, *args) -> float:
         reward = self.reward(*args)
         if not isinstance(reward, (int, float)):
             raise ValueError(
                 f"Rewards should be scalars, got {reward} of type {type(reward)} instead"
             )
-        return reward
+        return float(reward)
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> float:
         return self._reward(*args)
 
 
 class Playground():
 
     def __init__(self, environement:Env, agents:List[Agent]):
-        """ A playground is used to run agent(s) on an environement.
+        """A playground is used to run agent(s) on an environement.
 
         Args:
             env: Environement in which agents will play.
@@ -115,7 +118,7 @@ class Playground():
             **kwargs
         ):
 
-        """ Let the agent(s) play on the environement for a number of episodes.
+        """Let the agent(s) play on the environement for a number of episodes.
 
         Additional arguments will be passed to the default
         :class:`~learnrl.callbacks.logger.Logger` (only if no custom one is given).
