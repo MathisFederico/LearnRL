@@ -8,7 +8,7 @@ class Agent():
 
     """A general structure for any learning agent."""
 
-    def act(self, observation, greedy: bool=False) -> Dict[Union[int, float, np.ndarray]]:
+    def act(self, observation, greedy: bool=False) -> Union[int, float, np.ndarray]:
         """How the :ref:`Agent` act given an observation.
 
         Args:
@@ -18,7 +18,7 @@ class Agent():
         """
         raise NotImplementedError
 
-    def learn(self) -> Dict[Union[int, float, np.ndarray]]:
+    def learn(self) -> Dict[str, Union[int, float, np.ndarray]]:
         """How the :ref:`Agent` learns from his experiences.
 
         Returns:
