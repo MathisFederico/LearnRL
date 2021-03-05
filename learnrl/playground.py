@@ -111,7 +111,7 @@ class Playground():
             steps_cycle_len: int=10,
             episodes_cycle_len: Union[int, float]=0.05,
             verbose: int=0,
-            callbacks: List[Callback]=(),
+            callbacks: List[Callback]=None,
             logger: Callback=None,
             reward_handler: Union[Callable, RewardHandler]=None,
             done_handler: Union[Callable, DoneHandler]=None,
@@ -153,6 +153,7 @@ class Playground():
         }
 
         logger = logger if logger else Logger(**kwargs)
+        callbacks = callbacks if callbacks is not None else []
         callbacks = CallbackList(callbacks + [logger])
         callbacks.set_params(params)
         callbacks.set_playground(self)
