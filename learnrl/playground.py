@@ -74,12 +74,12 @@ class RewardHandler():
 
 class Playground():
 
-    def __init__(self, environement:Env, agents:List[Agent]):
+    def __init__(self, environement:Env, agents:Union[Agent, List[Agent]]):
         """A playground is used to run agent(s) on an environement.
 
         Args:
             env: Environement in which agents will play.
-            agents: List of :class:`Agent` to run on the :class:`TurnEnv`.
+            agents: List of agents to play (can be only one agent).
 
         """
         if not isinstance(environement, Env):
@@ -120,8 +120,7 @@ class Playground():
 
         """Let the agent(s) play on the environement for a number of episodes.
 
-        Additional arguments will be passed to the default
-        :class:`~learnrl.callbacks.logger.Logger` (only if no custom one is given).
+        Additional arguments will be passed to the default logger.
 
         Args:
             episodes: Number of episodes to run.

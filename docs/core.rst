@@ -36,6 +36,22 @@ TurnEnv
 .. autoclass:: learnrl.envs.TurnEnv
    :members:
 
+Handlers
+--------
+
+RewardHandler
+~~~~~~~~~~~~~
+
+.. autoclass:: learnrl.playground.RewardHandler
+   :members:
+
+
+DoneHandler
+~~~~~~~~~~~
+
+.. autoclass:: learnrl.playground.DoneHandler
+   :members:
+
 
 .. |ndarray| replace:: :class:`numpy.ndarray`
 .. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
