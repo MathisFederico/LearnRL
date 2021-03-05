@@ -24,7 +24,7 @@ author = 'Mathïs Fédérico'
 def get_version():
     version_file = open('../VERSION')
     return version_file.read().strip()
- 
+
 version = get_version()
 release = version
 
@@ -99,4 +99,3 @@ html_context = {
 html_static_path = ['_static']
 def setup(app):
     app.add_css_file('styles/custom.css')
- 
