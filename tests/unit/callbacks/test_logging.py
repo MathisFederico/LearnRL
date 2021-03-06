@@ -1,16 +1,20 @@
+""" Test the logging callback """
+
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 import numpy as np
 import pytest_check as check
+import pytest
 
 from learnrl.callbacks import LoggingCallback, CallbackList
 
 
 class DummyPlayground():
+    """ Dummy playground for testing """
 
-    def __init__(self, agents=[0]):
-        self.agents = agents
+    def __init__(self, agents=None):
+        self.agents = agents if agents is not None else [0]
 
     def run(self, callbacks, eps_end_func=None, verbose=0):
 
@@ -156,11 +160,10 @@ class DummyPlayground():
 
         callbacks.on_run_end(logs)
 
-
 def test_extract_from_logs():
+    """ Test extract_from_logs method """
 
     extract_from_logs = LoggingCallback._extract_metric_from_logs
-
     logs = {
         'value': 0,
         'step': 2,
@@ -200,6 +203,7 @@ def test_extract_from_logs():
         f'Here we found {step} instead of 2.')
 
 def test_extract_lists():
+    """ Test extract_lists method """
 
     extract_lists = LoggingCallback._extract_lists
 
@@ -231,6 +235,8 @@ def test_extract_lists():
             f'instead of {expected_metric_list} for {metric_list_name}'
 
 def test_logging_steps_avg_sum():
+    """ Test logging steps average and sum """
+
     for cycle_operator in ['avg', 'sum']:
         print(cycle_operator, '\n')
 
@@ -248,12 +254,13 @@ def test_logging_steps_avg_sum():
                     assert logged != 'N/A' and np.isclose(logged, expected), \
                         f'Logged {logged} instead of {expected}'
 
-        pg = DummyPlayground()
-        pg.run([logging_callback], eps_end_func=check_function, verbose=3)
+        playground = DummyPlayground()
+        playground.run([logging_callback], eps_end_func=check_function, verbose=3)
         print()
 
 
 def test_logging_episodes_avg_sum():
+    """ Test logging episodes average and sum """
 
     for eps_operator in ['avg', 'sum']:
 
@@ -284,12 +291,13 @@ def test_logging_episodes_avg_sum():
                             assert logged != 'N/A' and np.isclose(logged, expected), \
                                 f'Logged {logged} instead of {expected}'
 
-            pg = DummyPlayground()
-            pg.run([logging_callback], eps_end_func=check_function, verbose=1)
+            playground = DummyPlayground()
+            playground.run([logging_callback], eps_end_func=check_function, verbose=1)
             print()
 
 
 def test_display():
+    """ Test display mode """
 
     from learnrl.callbacks import Logger
 
@@ -302,7 +310,7 @@ def test_display():
 
             print(f'Verbose {verbose}, Title_on_top {titles_on_top}\n')
 
-            pg = DummyPlayground()
-            pg.run([logging_callback], verbose=verbose)
+            playground = DummyPlayground()
+            playground.run([logging_callback], verbose=verbose)
 
             print()
