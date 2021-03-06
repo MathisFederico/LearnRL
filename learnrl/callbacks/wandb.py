@@ -1,75 +1,83 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+from typing import List
+
 import wandb
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
 
 
 def construct_panel_configs(metric_name:str, title:str=None):
-        histories = [
+    """Construct a custom wandb query to build the custom graphs."""
+
+    histories = [
+        {
+            "name": "history",
+            "args": [{"name": "keys",
+                        "value": [
+                            "step",
+                            "steps_cycle",
+                            "episode",
+                            "episodes_cycle",
+                            f"step_{metric_name}",
+                            f"steps_cycle_{metric_name}",
+                            f"episode_{metric_name}",
+                            f"episodes_cycle_{metric_name}",
+                        ]
+                    }],
+                "fields": [],
+        }
+    ]
+
+    user_query = {
+        "queryFields": [
             {
-                "name": "history",
-                "args": [{"name": "keys",
-                            "value": [
-                                "step",
-                                "steps_cycle",
-                                "episode",
-                                "episodes_cycle",
-                                f"step_{metric_name}",
-                                f"steps_cycle_{metric_name}",
-                                f"episode_{metric_name}",
-                                f"episodes_cycle_{metric_name}",
-                            ]
-                        }],
-                    "fields": [],
+                "name": "runSets",
+                "args": [{"name": "runSets", "value": "${runSets}"}],
+                "fields": [
+                    {"name": "id", "fields": []},
+                    {"name": "name", "fields": []},
+                    {"name": "_defaultColorIndex", "fields": []}
+                ] + histories,
             }
-        ]
-        
-        userQuery = {
-            "queryFields": [
-                {
-                    "name": "runSets",
-                    "args": [{"name": "runSets", "value": "${runSets}"}],
-                    "fields": [
-                        {"name": "id", "fields": []},
-                        {"name": "name", "fields": []},
-                        {"name": "_defaultColorIndex", "fields": []}
-                    ] + histories,
-                }
-            ],
-        }
+        ],
+    }
 
-        title = title or metric_name.capitalize()
-        fields = {
-            "title": title,
-            "x1": "step",
-            "x2": "steps_cycle",
-            "x3": "episode",
-            "x4": "episodes_cycle",
-            "y1": f"step_{metric_name}",
-            "y2": f"steps_cycle_{metric_name}",
-            "y3": f"episode_{metric_name}",
-            "y4": f"episodes_cycle_{metric_name}",
-        }
+    title = title or metric_name.capitalize()
+    fields = {
+        "title": title,
+        "x1": "step",
+        "x2": "steps_cycle",
+        "x3": "episode",
+        "x4": "episodes_cycle",
+        "y1": f"step_{metric_name}",
+        "y2": f"steps_cycle_{metric_name}",
+        "y3": f"episode_{metric_name}",
+        "y4": f"episodes_cycle_{metric_name}",
+    }
 
-        return {
-            "userQuery": userQuery,
-            "panelDefId": 'mathisfederico/learnrl-chart',
-            "transform": {"name": "tableWithLeafColNames"},
-            "fieldSettings": fields
-        }
+    return {
+        "userQuery": user_query,
+        "panelDefId": 'mathisfederico/learnrl-chart',
+        "transform": {"name": "tableWithLeafColNames"},
+        "fieldSettings": fields
+    }
 
 class WandbCallback(LoggingCallback):
-    
-    def __init__(self, run,
-                metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
-                detailed_step_metrics=['observation', 'action', 'next_observation'],
-                episode_only_metrics=['dt_episode~']):
 
-        """ WandbCallback logger if wandb is installed.
+    """ WandbCallback will log metrics to wandb."""
 
-        Parameters
-        ----------
+    def __init__(self, run:wandb.wandb_run.Run,
+            metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
+            detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
+            episode_only_metrics: List[str]=('dt_episode~')
+        ):
+
+        """ WandbCallback will log metrics to wandb.
+
+        See https://wandb.ai.
+
+        Args:
             metrics: list(str) or list(tuple)
                 Metrics to display and how to aggregate them.
             detailed_step_metrics: list(str)
@@ -94,10 +102,10 @@ class WandbCallback(LoggingCallback):
         self.episode = 0
         self.episodes_cycle = 0
 
-    def on_step_begin(self, step, logs={}):
+    def on_step_begin(self, step, logs=None):
         super().on_step_begin(step, logs=logs)
 
-    def on_step_end(self, step, logs={}):
+    def on_step_end(self, step, logs=None):
         super().on_step_end(step, logs=logs)
 
         if not self.chart_is_init:
@@ -147,5 +155,6 @@ class WandbCallback(LoggingCallback):
             for metric in metrics_list:
                 name = self._get_attr_name(prefix, metric, agent_id)
                 value = self._get_value(metric, prefix, agent_id, logs)
-                if value != 'N/A': wandb.log({name: value}, commit=False)
-
+                if value != 'N/A':
+                    wandb.log({name: value}, commit=False)
+        wandb.log({ 'episode': self.episode })

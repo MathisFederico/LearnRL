@@ -2,7 +2,7 @@ LearnRL's Core
 ==============
 
 LearnRL is based on those core objects: :ref:`Playground`,
-:ref:`Agent`, :ref:`TurnEnv`, :ref:`Memory`.
+:ref:`Agent`, :ref:`TurnEnv`.
 
 They are all linked by the :ref:`Playground`, as showned by this:
 
@@ -36,14 +36,22 @@ TurnEnv
 .. autoclass:: learnrl.envs.TurnEnv
    :members:
 
+Handlers
+--------
 
-.. _Memory:
+RewardHandler
+~~~~~~~~~~~~~
 
-Memory
-------
-
-.. autoclass:: learnrl.memory.Memory
+.. autoclass:: learnrl.playground.RewardHandler
    :members:
+
+
+DoneHandler
+~~~~~~~~~~~
+
+.. autoclass:: learnrl.playground.DoneHandler
+   :members:
+
 
 .. |ndarray| replace:: :class:`numpy.ndarray`
 .. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__

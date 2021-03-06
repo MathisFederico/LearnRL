@@ -1,10 +1,9 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-import pytest, sys
 import numpy as np
 
-from learnrl.callbacks import LoggingCallback, Callback, CallbackList
+from learnrl.callbacks import LoggingCallback, CallbackList
 
 
 class DummyPlayground():
@@ -68,7 +67,7 @@ class DummyPlayground():
 
                     for metric_name in ('reward', 'loss'):
                         steps_cycle_tracker[metric_name] = 0
-                    
+
                         logs.update({
                             f'{metric_name}_steps_sum': None,
                             f'{metric_name}_steps_avg': None
@@ -115,7 +114,7 @@ class DummyPlayground():
             for metric_name, metric_avg, metric_sum in zip(
                 ('reward', 'loss'),
                 (reward_avg, loss_avg),
-                (reward_sum, loss_sum), 
+                (reward_sum, loss_sum),
             ):
 
                 logs.update({
@@ -136,7 +135,7 @@ class DummyPlayground():
                 for metric_name, metric_avg, metric_sum in zip(
                         ('reward', 'loss'),
                         (reward_avg, loss_avg),
-                        (reward_sum, loss_sum), 
+                        (reward_sum, loss_sum),
                     ):
 
                     sum_cycle_avg = cycle_tracker[metric_name]['sum_cycle_sum'] / cycle_episode_seen
@@ -151,7 +150,8 @@ class DummyPlayground():
 
                 callbacks.on_episodes_cycle_end(episode, logs)
 
-            if eps_end_func is not None: eps_end_func(callbacks, logs)
+            if eps_end_func is not None:
+                eps_end_func(callbacks, logs)
 
         callbacks.on_run_end(logs)
 
@@ -172,28 +172,40 @@ def test_extract_from_logs():
         }
     }
 
-    # We should find values
     value = extract_from_logs('value', logs)
-    assert value == 0
+    if value != 0:
+        raise ValueError('We should find values in logs')
 
-    # Nothing should return N/A
     nothing = extract_from_logs('nothing', logs)
-    assert nothing == 'N/A'
+    if nothing != 'N/A':
+        raise ValueError('Nothing should return N/A')
 
-    # If no agent is specified, it should find any specific_value in agent
     specific_value = extract_from_logs('specific_value', logs)
-    assert specific_value == 42
+    if specific_value != 42:
+        raise ValueError(
+            'If no agent is specified, it should find any specific_value in agent.'
+            f'Here specific_value was {specific_value} instead of 42.'
+        )
 
-    # We should find specific agent values
     value_0 = extract_from_logs('value', logs, agent_id=0)
-    assert value_0 == 1
+    if value_0 != 1:
+        raise ValueError(
+            'We should find specific agent values.'
+            f'Here value for agent 0 was {value_0} instead of 1.'
+        )
     value_1 = extract_from_logs('value', logs, agent_id=1)
-    assert value_1 == 2
+    if value_1 != 2:
+        raise ValueError(
+            'We should find specific agent values.'
+            f'Here value for agent 1 was {value_1} instead of 2.'
+        )
 
-    # When agent is specified, it should return outer value
-    # if a specific value is not found
     step = extract_from_logs('step', logs, agent_id=0)
-    assert step == 2
+    if step != 2:
+        raise ValueError(
+            'When agent is specified, it should return outer value.'
+            f'if a specific value is not found. Here we found {step} instead of 2'
+        )
 
 def test_extract_lists():
 
@@ -204,11 +216,29 @@ def test_extract_lists():
         ('loss', {'episodes': 'last'}),
     ]
 
-    step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics = extract_lists(metrics)
-    assert step_metrics == ['reward~rwd', 'loss']
-    assert steps_cycle_metrics == ['reward~rwd.sum', 'loss.avg']
-    assert episode_metrics == ['reward~rwd.sum', 'loss.avg']
-    assert episodes_cycle_metrics == ['reward~rwd.avg', 'loss.last']
+    metric_lists = extract_lists(metrics)
+
+    expected_metric_lists = [
+        ['reward~rwd', 'loss'],
+        ['reward~rwd.sum', 'loss.avg'],
+        ['reward~rwd.sum', 'loss.avg'],
+        ['reward~rwd.avg', 'loss.last']
+    ]
+
+    metric_lists_names = [
+        'step_metrics',
+        'steps_cycle_metrics',
+        'episode_metrics',
+        'episodes_cycle_metrics'
+    ]
+
+    iterator = zip(metric_lists, expected_metric_lists, metric_lists_names)
+    for metric_list, expected_metric_list, metric_list_name in iterator:
+        if metric_list != expected_metric_list:
+            raise ValueError(
+                f'Unexpected metric list got {metric_list}'
+                f'instead of {expected_metric_list} for {metric_list_name}'
+            )
 
 def test_logging_steps_avg_sum():
     for cycle_operator in ['avg', 'sum']:
@@ -225,8 +255,8 @@ def test_logging_steps_avg_sum():
                 logged = callback_dict[f'steps_cycle_{metric_name}']
                 if expected is not None:
                     print(metric_name, logged, expected)
-                    assert logged != 'N/A'
-                    assert np.isclose(logged, expected)
+                    if logged == 'N/A' or not np.isclose(logged, expected):
+                        raise ValueError(f'Logged {logged} instead of {expected}')
 
         pg = DummyPlayground()
         pg.run([logging_callback], eps_end_func=check_function, verbose=3)
@@ -261,9 +291,9 @@ def test_logging_episodes_avg_sum():
                         logged = callback_dict[f'{position}_{metric_name}']
                         if expected is not None:
                             print(position.capitalize(), metric_name, logged, expected)
-                            assert logged != 'N/A'
-                            assert np.isclose(logged, expected)
-                        
+                            if logged == 'N/A' or not np.isclose(logged, expected):
+                                raise ValueError(f'Logged {logged} instead of {expected}')
+
             pg = DummyPlayground()
             pg.run([logging_callback], eps_end_func=check_function, verbose=1)
             print()
@@ -286,5 +316,3 @@ def test_display():
             pg.run([logging_callback], verbose=verbose)
 
             print()
-            
-    assert True
