@@ -2,6 +2,7 @@
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
 import numpy as np
+import pytest_check as check
 
 from learnrl.callbacks import LoggingCallback, CallbackList
 
@@ -173,22 +174,30 @@ def test_extract_from_logs():
     }
 
     value = extract_from_logs('value', logs)
-    assert value == 0, 'We should find values in logs'
+    check.equal(value, 0, 'We should find values in logs.')
 
     nothing = extract_from_logs('nothing', logs)
-    assert nothing == 'N/A', 'Nothing should return N/A'
+    check.equal(nothing, 'N/A', 'Nothing should return N/A.')
 
     specific_value = extract_from_logs('specific_value', logs)
-    assert specific_value == 42, 'If no agent is specified, it should find any specific_value in agent. Here specific_value was {specific_value} instead of 42.'
+    check.equal(specific_value, 42,
+                'If no agent is specified, it should find any specific_value in agent. '
+                f'Here specific_value was {specific_value} instead of 42.')
 
     value_0 = extract_from_logs('value', logs, agent_id=0)
-    assert value_0 == 1, f'We should find specific agent values. Here value for agent 0 was {value_0} instead of 1.'
+    check.equal(value_0, 1,
+                'We should find specific agent values. '
+                f'Here value for agent 0 was {value_0} instead of 1.')
 
     value_1 = extract_from_logs('value', logs, agent_id=1)
-    assert value_1 == 2, f'We should find specific agent values. Here value for agent 1 was {value_1} instead of 2.'
+    check.equal(value_1, 2,
+                'We should find specific agent values. '
+                f'Here value for agent 1 was {value_1} instead of 2.')
 
     step = extract_from_logs('step', logs, agent_id=0)
-    assert step == 2, f'When agent is specified, it should return outer value if a specific value is not found. Here we found {step} instead of 2'
+    check.equal(step, 2,
+        'When agent is specified, it should return outer value if a specific value is not found. '
+        f'Here we found {step} instead of 2.')
 
 def test_extract_lists():
 
@@ -217,7 +226,9 @@ def test_extract_lists():
 
     iterator = zip(metric_lists, expected_metric_lists, metric_lists_names)
     for metric_list, expected_metric_list, metric_list_name in iterator:
-        assert metric_list == expected_metric_list, f'Unexpected metric list got {metric_list} instead of {expected_metric_list} for {metric_list_name}'
+        assert metric_list == expected_metric_list, \
+            f'Unexpected metric list got {metric_list} ' \
+            f'instead of {expected_metric_list} for {metric_list_name}'
 
 def test_logging_steps_avg_sum():
     for cycle_operator in ['avg', 'sum']:
@@ -234,7 +245,8 @@ def test_logging_steps_avg_sum():
                 logged = callback_dict[f'steps_cycle_{metric_name}']
                 if expected is not None:
                     print(metric_name, logged, expected)
-                    assert logged != 'N/A' and np.isclose(logged, expected), f'Logged {logged} instead of {expected}'
+                    assert logged != 'N/A' and np.isclose(logged, expected), \
+                        f'Logged {logged} instead of {expected}'
 
         pg = DummyPlayground()
         pg.run([logging_callback], eps_end_func=check_function, verbose=3)
@@ -269,7 +281,8 @@ def test_logging_episodes_avg_sum():
                         logged = callback_dict[f'{position}_{metric_name}']
                         if expected is not None:
                             print(position.capitalize(), metric_name, logged, expected)
-                            assert logged != 'N/A' and np.isclose(logged, expected), f'Logged {logged} instead of {expected}'
+                            assert logged != 'N/A' and np.isclose(logged, expected), \
+                                f'Logged {logged} instead of {expected}'
 
             pg = DummyPlayground()
             pg.run([logging_callback], eps_end_func=check_function, verbose=1)
