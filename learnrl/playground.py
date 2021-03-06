@@ -371,7 +371,7 @@ class Playground():
     def set_agent_order(self, agents_order) -> list:
         """Change the agents_order.
 
-        This will the agents order.
+        This will update the agents order.
 
         Args:
             agents_order: New agents indices order.
