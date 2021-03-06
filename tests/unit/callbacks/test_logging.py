@@ -10,7 +10,7 @@ class DummyPlayground():
 
     """Dummy playground for tests"""
 
-    def __init__(self, agents=(0)):
+    def __init__(self, agents=(0,)):
         self.agents = list(agents)
 
     def run(self, callbacks, eps_end_func=None, verbose=0):
