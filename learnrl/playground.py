@@ -110,7 +110,7 @@ class RewardHandler():
 
 class Playground():
 
-    """A playground is used to run agent(s) on an environement
+    """A playground is used to run interactions between an environement and agent(s)
 
     Attributes:
         env (gym.Env):  Environement in which the agent(s) will play.
@@ -279,10 +279,13 @@ class Playground():
             self.env.render()
 
         # Get playing agent (TurnEnv)
-        agent_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
-        if agent_id >= len(previous):
-            raise ValueError(f'Not enough agents to play environement {self.env}')
-        agent = self.agents[agent_id]
+        turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
+        agent_id = self.agents_order[turn_id]
+        try:
+            agent = self.agents[agent_id]
+        except IndexError as error:
+            error_msg = f'Not enough agents to play environement {self.env}'
+            raise ValueError(error_msg) from error
 
         # If the agent has played before, perform a learning step
         prev = previous[agent_id]
@@ -369,7 +372,7 @@ class Playground():
             )
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
 
-    def set_agent_order(self, agents_order) -> list:
+    def set_agents_order(self, agents_order: list) -> list:
         """Change the agents_order.
 
         This will update the agents order.
