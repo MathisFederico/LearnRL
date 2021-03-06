@@ -67,7 +67,7 @@ class WandbCallback(LoggingCallback):
 
     """ WandbCallback will log metrics to wandb."""
 
-    def __init__(self, run:wandb.wandb_run.Run,
+    def __init__(self, run,
             metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
             detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
             episode_only_metrics: List[str]=('dt_episode~')
