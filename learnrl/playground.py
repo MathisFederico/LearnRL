@@ -110,7 +110,7 @@ class RewardHandler():
 
 class Playground():
 
-    """A playground is used to run agent(s) on an environement
+    """A playground is used to run interactions between an environement and agent(s)
 
     Attributes:
         env (gym.Env):  Environement in which the agent(s) will play.
@@ -118,7 +118,7 @@ class Playground():
 
     """
 
-    def __init__(self, environement:Env, agents:Union[Agent, List[Agent]]):
+    def __init__(self, environement:Env, agents:Union[Agent, List[Agent]], agents_order=None):
         """A playground is used to run agent(s) on an environement
 
         Args:
@@ -136,6 +136,8 @@ class Playground():
 
         self.env = environement
         self.agents = agents
+        self.agents_order = None
+        self.set_agents_order(agents_order)
 
     @staticmethod
     def _get_episodes_cycle_len(episodes_cycle_len, episodes):
@@ -277,10 +279,13 @@ class Playground():
             self.env.render()
 
         # Get playing agent (TurnEnv)
-        agent_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
-        if agent_id >= len(previous):
-            raise ValueError(f'Not enough agents to play environement {self.env}')
-        agent = self.agents[agent_id]
+        turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
+        agent_id = self.agents_order[turn_id]
+        try:
+            agent = self.agents[agent_id]
+        except IndexError as error:
+            error_msg = f'Not enough agents to play environement {self.env}'
+            raise ValueError(error_msg) from error
 
         # If the agent has played before, perform a learning step
         prev = previous[agent_id]
@@ -366,3 +371,38 @@ class Playground():
                 UserWarning
             )
         self.run(episodes, render=render, learn=learn, verbose=verbose, **kwargs)
+
+    def set_agents_order(self, agents_order: list) -> list:
+        """Change the agents_order.
+
+        This will update the agents order.
+
+        Args:
+            agents_order: New agents indices order.
+                Default is range(n_agents).
+
+        Returns:
+            The updated agents ordered indices list.
+
+        """
+        if agents_order is None:
+            self.agents_order = list(range(len(self.agents)))
+        else:
+            if len(agents_order) != len(self.agents):
+                raise ValueError(
+                    f"Not every agents have an order number.\n"
+                    f"Custom order: {agents_order} for {len(self.agents)} agents\n"
+                )
+
+            valid_order = True
+            for place in range(len(self.agents)):
+                if not place in agents_order:
+                    valid_order = False
+
+            if not valid_order:
+                raise ValueError(
+                    f"Custom order is not taking every index in [0, n_agents-1].\n"
+                    f"Custom order: {agents_order}"
+                )
+            self.agents_order = agents_order
+        return self.agents_order
