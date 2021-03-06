@@ -370,18 +370,15 @@ class Playground():
 
     def set_agent_order(self, agents_order) -> list:
         """Change the agents_order.
-        This will change what agent is described by the results of `env.turn`
-        if the environment is subclassing :class:`~learnrl.envs.TurnEnv`.
 
-        Args
-        ----
-        agents_order: list
-            New agents order. Default is range(n_agents).
+        This will the agents order.
 
-        Return
-        ------
-        list:
-            The updated agents order.
+        Args:
+            agents_order: New agents indices order.
+                Default is range(n_agents).
+
+        Returns:
+            The updated agents ordered indices list.
 
         """
         if agents_order is None:
