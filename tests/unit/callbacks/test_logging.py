@@ -273,7 +273,7 @@ def test_logging_steps_operators_(cycle_operator, metric_name):
 @pytest.mark.parametrize('eps_operator', ['avg', 'sum'])
 @pytest.mark.parametrize('cycle_operator', ['avg', 'sum'])
 @pytest.mark.parametrize('metric_name', ['reward', 'loss'])
-def test_logging_episodes_operators(eps_operator, cycle_operator, metric_name):
+def test_logging_episodes_operators_(eps_operator, cycle_operator, metric_name):
 
     print(eps_operator, cycle_operator, '\n')
 
