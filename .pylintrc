@@ -63,6 +63,7 @@ confidence=
 disable=print-statement,
         no-name-in-module,
         no-member,
+        no-self-use,
         unused-wildcard-import,
         wildcard-import,
         redefined-outer-name,

@@ -1,6 +1,9 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+"""Environment types, extentions from the classic gym.Env"""
+
+from abc import abstractmethod
 from gym import Env
 
 class TurnEnv(Env):
@@ -27,6 +30,7 @@ class TurnEnv(Env):
 
     """
 
+    @abstractmethod
     def step(self, action):
         """Perform a step of the environement.
 
@@ -40,8 +44,8 @@ class TurnEnv(Env):
             info (dict): Additional informations given by the |gym.Env|.
 
         """
-        raise NotImplementedError
 
+    @abstractmethod
     def turn(self, state) -> int:
         """Give the turn to the next agent to play.
 
@@ -56,8 +60,8 @@ class TurnEnv(Env):
             agent_id (int): The next player id
 
         """
-        raise NotImplementedError
 
+    @abstractmethod
     def reset(self):
         """Reset the environement and returns the initial state.
 
@@ -65,4 +69,3 @@ class TurnEnv(Env):
             observation: The observation for the first :class:`Agent` to play
 
         """
-        raise NotImplementedError
