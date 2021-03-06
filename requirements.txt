@@ -1,4 +1,2 @@
 numpy
 gym
-wandb >= 0.10.0
-tensorboard >= 2.3.0
