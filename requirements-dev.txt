@@ -1,4 +1,5 @@
 pytest
 pytest-mock
+pytest-pspec
 wandb >= 0.10.0
-tensorboard >= 2.3.0
+tensorflow >= 2.3.0
