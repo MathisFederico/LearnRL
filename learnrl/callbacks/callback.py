@@ -1,6 +1,8 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+"""Callback abstract classes"""
+
 import time
 
 class Callback():
@@ -28,43 +30,103 @@ class Callback():
         self.playground = None
 
     def set_params(self, params):
+        """Sets run parameters"""
         self.params = params
 
     def set_playground(self, playground):
+        """Sets reference to the used playground"""
         self.playground = playground
 
-    def on_step_begin(self, step, logs=None):
-        pass
+    def on_step_begin(self, step: int, logs: dict=None):
+        """Triggers on each step beginning
 
-    def on_step_end(self, step, logs=None):
-        pass
+        Args:
+            step: current step.
+            logs: current logs.
 
-    def on_steps_cycle_begin(self, step, logs=None):
-        pass
+        """
 
-    def on_steps_cycle_end(self, step, logs=None):
-        pass
+    def on_step_end(self, step: int, logs: dict=None):
+        """Triggers on each step end
 
-    def on_episode_begin(self, episode, logs=None):
-        pass
+        Args:
+            step: current step.
+            logs: current logs.
 
-    def on_episode_end(self, episode, logs=None):
-        pass
+        """
 
-    def on_episodes_cycle_begin(self, episode, logs=None):
-        pass
+    def on_steps_cycle_begin(self, step: int, logs: dict=None):
+        """Triggers on each step cycle beginning
 
-    def on_episodes_cycle_end(self, episode, logs=None):
-        pass
+        Args:
+            step: current step.
+            logs: current logs.
 
-    def on_run_begin(self, logs=None):
-        pass
+        """
 
-    def on_run_end(self, logs=None):
-        pass
+    def on_steps_cycle_end(self, step: int, logs: dict=None):
+        """Triggers on each step cycle end
+
+        Args:
+            step: current step.
+            logs: current logs.
+
+        """
+
+    def on_episode_begin(self, episode: int, logs: dict=None):
+        """Triggers on each episode beginning
+
+        Args:
+            episode: current episode.
+            logs: current logs.
+
+        """
+
+    def on_episode_end(self, episode: int, logs: dict=None):
+        """Triggers on each episode end
+
+        Args:
+            episode: current episode.
+            logs: current logs.
+
+        """
+
+    def on_episodes_cycle_begin(self, episode: int, logs: dict=None):
+        """Triggers on each episode cycle beginning
+
+        Args:
+            episode: current episode.
+            logs: current logs.
+
+        """
+
+    def on_episodes_cycle_end(self, episode: int, logs: dict=None):
+        """Triggers on each episode cycle end
+
+        Args:
+            episode: current episode.
+            logs: current logs.
+
+        """
+
+    def on_run_begin(self, logs: dict=None):
+        """Triggers on each run beginning
+
+        Args:
+            logs: current logs.
+
+        """
+
+    def on_run_end(self, logs: dict=None):
+        """Triggers on run end
+
+        Args:
+            logs: current logs.
+
+        """
 
 
-class CallbackList():
+class CallbackList(Callback):
     """ An wrapper to use a list of :class:`Callback`.
 
     Call all concerned callbacks While the :class:`~learnrl.playground.Playground` is running.
@@ -72,9 +134,8 @@ class CallbackList():
     """
 
     def __init__(self, callbacks=()):
+        super().__init__()
         self.callbacks = callbacks
-        self.params = {}
-        self.playground = None
 
     def set_params(self, params):
         self.params = params

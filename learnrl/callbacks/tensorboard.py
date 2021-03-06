@@ -1,6 +1,12 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+"""TensorboardCallback to log metrics into tensorboard
+
+https://www.tensorflow.org/tensorboard/get_started
+
+"""
+
 import os, datetime
 from typing import List, Tuple, Dict, Any
 
