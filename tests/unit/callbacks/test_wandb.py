@@ -11,13 +11,16 @@ import learnrl
 wandb_spec = importlib.util.find_spec('wandb')
 
 if wandb_spec is not None:
-    def test_instanciate_without_wandb(hide_wandb):
-        """ should raise an ImportError when wandb is not installed. """
-        with pytest.raises(ImportError, match=r".*wandb >= 0.10.*"):
-            learnrl.callbacks.WandbCallback(run=None)
+    class TestWandbCallback():
+        """ WandbCallback """
 
-    def test_instanciate_with_wandb():
-        """ should load normally when wandb is installed """
-        learnrl.callbacks.WandbCallback(run=None)
+        def test_instanciate_without_wandb(self, hide_wandb):
+            """ should raise an ImportError when wandb is not found. """
+            with pytest.raises(ImportError, match=r".*wandb >= 0.10.*"):
+                learnrl.callbacks.WandbCallback(run=None)
+
+        def test_instanciate_with_wandb(self):
+            """ should instanciate correctly if wandb is found. """
+            learnrl.callbacks.WandbCallback(run=None)
 else:
     pass
