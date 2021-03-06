@@ -1,6 +1,18 @@
 Welcome to LearnRL's community !
 ================================
 
+.. image:: https://img.shields.io/pypi/l/learnrl
+   :alt: PyPI - License
+   :target: https://www.gnu.org/licenses/
+
+.. image:: https://app.codacy.com/project/badge/Grade/b4c3818135484e8b9acae67b01526957
+   :alt: Codacy - Quality
+   :target: https://www.codacy.com/gh/MathisFederico/LearnRL/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MathisFederico/LearnRL&amp;utm_campaign=Badge_Grade
+
+.. image:: https://app.codacy.com/project/badge/Coverage/b4c3818135484e8b9acae67b01526957
+   :alt: Codacy - Coverage
+   :target: https://www.codacy.com/gh/MathisFederico/LearnRL/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MathisFederico/LearnRL&amp;utm_campaign=Badge_Coverage
+
 LearnRL is a library to use and learn reinforcement learning.
 It's also a community off supportive enthousiasts loving to share and build RL-based AI projects !
 We would love to help you make projects with LearnRL, so join us `on Discord <https://discord.gg/z9dd4s5>`_ !
@@ -108,6 +120,9 @@ Visualize:
 
 Documentation
 -------------
+
+.. image:: docs\_static\images\docs.png
+   :target: https://learnrl.readthedocs.io/en/latest/
 
 | See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details.
 | See the `development documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see what's coming !

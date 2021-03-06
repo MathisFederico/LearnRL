@@ -1,6 +1,7 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+from typing import List
 import numpy as np
 
 from learnrl.callbacks import LoggingCallback, MetricList, Metric
@@ -8,39 +9,43 @@ from learnrl.callbacks import LoggingCallback, MetricList, Metric
 
 class Logger(LoggingCallback):
 
-    """ Default logger in every :class:`~learnrl.playground.Playground` run
-    
+    """Default logger in every :class:`~learnrl.playground.Playground` run.
+
     This will print relevant informations in console.
 
-    You can regulate the flow of informations with the argument `verbose` in :meth:`~learnrl.playground.Playground.run` directly :
+    You can regulate the flow of informations with the argument `verbose`
+    in :meth:`~learnrl.playground.Playground.run` directly :
      - 0 is silent (nothing will be printed)
      - 1 is cycles of episodes (aggregated metrics over multiple episodes)
      - 2 is every episode (aggregated metrics over all steps)
      - 3 is cycles of steps (aggregated metrics over some steps)
      - 4 is every step
      - 5 is every step detailed (all metrics of all steps)
-    
-    You can also replace it with you own :class:`~learnrl.callbacks.Logger` with the argument `logger` in :meth:`~learnrl.playground.Playground.run`.
-     - To build you own logger, you have to chose what metrics will be displayed and how will metrics be aggregated over steps/episodes/cycles.
-       To do that, see the :ref:`metric_code` format.
-    
-    Parameters
-    ----------
-        metrics: list(str) or list(tuple)
-            Metrics to display and how to aggregate them.
-        detailed_step_metrics: list(str)
-            Metrics to display only on detailed steps.
-        episode_only_metrics: list(str)
-            Metrics to display only on episodes.
-        titles_on_top: bool
-            If true, titles will be displayed on top and not at every line in the console.
-    
+
+    You can also replace it with you own :class:`~learnrl.callbacks.Logger`,
+    with the argument `logger` in :meth:`~learnrl.playground.Playground.run`.
+
+    To build you own logger, you have to chose what metrics will be displayed
+    and how will metrics be aggregated over steps/episodes/cycles.
+    To do that, see the :ref:`metric_code` format.
+
     """
 
-    def __init__(self, metrics=[('reward', {'steps': 'sum', 'episode': 'sum'})],
-                detailed_step_metrics=['observation', 'action', 'next_observation'],
-                episode_only_metrics=['dt_episode~'],
-                titles_on_top=True):
+    def __init__(self,
+            metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
+            detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
+            episode_only_metrics: List[str]=('dt_episode~'),
+            titles_on_top: bool=True):
+
+        """Default logger in every :class:`~learnrl.playground.Playground` run.
+
+        Args:
+            metrics: Metrics to display and how to aggregate them.
+            detailed_step_metrics: Metrics to display only on detailed steps.
+            episode_only_metrics: Metrics to display only on episodes.
+            titles_on_top: If true, titles will be displayed on top and not at every line.
+
+        """
 
         super().__init__(
             metrics=metrics,
@@ -51,6 +56,9 @@ class Logger(LoggingCallback):
         self._bar_lenght = 100
         self._number_window = 9
         self.titles_on_top = titles_on_top
+        self.step_start_cycle = None
+        self.verbose = None
+        self.n_digits_episodes = None
 
     def on_step_begin(self, step, logs=None):
         super().on_step_begin(step, logs=logs)
@@ -60,8 +68,8 @@ class Logger(LoggingCallback):
             print(text, end=' | ')
         elif self.verbose == 5:
             self._print_bar('-', text)
-    
-    def on_step_end(self, step, logs={}):
+
+    def on_step_end(self, step, logs=None):
         super().on_step_end(step, logs=logs)
         agent_id = logs.get('agent_id')
 
@@ -69,7 +77,8 @@ class Logger(LoggingCallback):
             sep, end = (' | ', '\n') if self.verbose == 4 else (None, '')
             if self.n_agents > 1:
                 print(f"Agent {agent_id}", end=sep)
-            self._print_metrics(self.step_metrics, 'logs', agent_id=agent_id, logs=logs, sep=sep, end=end)
+            self._print_metrics(self.step_metrics, 'logs',
+                agent_id=agent_id, logs=logs, sep=sep, end=end)
 
         if self.verbose == 5:
             self._print_metrics(self.detailed_step_metrics, 'logs', logs=logs)
@@ -88,7 +97,7 @@ class Logger(LoggingCallback):
         super().on_steps_cycle_end(step, logs=logs)
 
         if self.verbose == 3:
-            text = self._get_step_text(self.step_start_cycle, step_end=step, pad=True)
+            text = self._get_step_text(step, pad=True)
             print(text, end=' | ')
 
             agent_id = logs.get('agent_id')
@@ -109,14 +118,17 @@ class Logger(LoggingCallback):
                 self._print_bar('=', text)
                 if self.verbose == 3 and self.titles_on_top:
                     step_text = self._get_step_text(0)
-                    self._print_titles(self.step_metrics, offset=' ' * len(step_text) + ' |', end='\n')
+                    self._print_titles(
+                        self.step_metrics,
+                        offset=' ' * len(step_text) + ' |', end='\n'
+                    )
 
     def on_episode_end(self, episode, logs=None):
         super().on_episode_end(episode, logs=logs)
 
         if self.verbose >= 3:
             print()
-            print("Episode " + self._get_episode_text(episode), end=' | ')                
+            print("Episode " + self._get_episode_text(episode), end=' | ')
 
         if self.verbose >= 2:
             if self.titles_on_top and self.n_agents > 1:
@@ -132,14 +144,17 @@ class Logger(LoggingCallback):
                     agent_id=agent_id, sep=' | ', titles_on_top=titles_on_top
                 )
 
-            self._print_metrics(self.episode_only_metrics, 'logs', logs=logs, sep=' | ', titles_on_top=False)
+            self._print_metrics(
+                self.episode_only_metrics, 'logs',
+                logs=logs, sep=' | ', titles_on_top=False
+            )
 
         if self.verbose > 1:
             print()
 
         if self.verbose > 2:
             self._print_bar('=')
-    
+
     def on_episodes_cycle_begin(self, episode, logs=None):
         super().on_episodes_cycle_begin(episode, logs=logs)
 
@@ -156,13 +171,12 @@ class Logger(LoggingCallback):
         if self.verbose == 1:
             print("Episode " + self._get_episode_text(episode), end=' | ')
 
-            # self._print_metrics(self.episodes_cycle_only_metrics, 'logs', logs=logs, sep=' | ')
-
             if self.titles_on_top and self.n_agents > 1:
                 self._print_titles(self.episodes_cycle_metrics, prefix='\n', offset=' '*12 + '|')
 
             for agent_id in range(self.n_agents):
-                if self.n_agents > 1: print(end=f'\n    Agent {agent_id} | ')
+                if self.n_agents > 1:
+                    print(end=f'\n    Agent {agent_id} | ')
                 self._print_metrics(self.episodes_cycle_metrics, 'attrs', prefix='episodes_cycle',
                                     agent_id=agent_id, sep=' | ')
 
@@ -178,8 +192,12 @@ class Logger(LoggingCallback):
 
         if self.titles_on_top and self.n_agents == 1 and self.verbose == 1:
             offset_len = len("Episode " + self._get_episode_text(0))
-            metrics_to_print = self.episodes_cycle_metrics if self.verbose == 1 else self.episode_metrics
-            self._print_titles(metrics_to_print, prefix='', offset=' ' * offset_len + ' |', end='\n')
+            if self.verbose == 1:
+                metrics_to_print = self.episodes_cycle_metrics
+            else:
+                metrics_to_print = self.episode_metrics
+            self._print_titles(metrics_to_print,
+                prefix='', offset=' ' * offset_len + ' |', end='\n')
 
     def _print_metrics(self, metric_list:MetricList, source:str, prefix=None, agent_id=None,
                              logs=None, sep=None, end='', titles_on_top=None):
@@ -261,26 +279,26 @@ class Logger(LoggingCallback):
         if pad and len(text) < 13:
             text += ' ' * (13 - len(text))
         return text
-    
-    def _get_time_text(self, dt, unit):
+
+    @staticmethod
+    def _get_time_text(elapsed_time, unit):
         """ Get the display text for a time mesurment """
         if unit == 'episode':
             unit = 'eps'
-        if dt < 1e-9:
+        if elapsed_time < 1e-9:
             return 'N/A        '
-        elif dt < 1e-6:
-            time_display = f'{dt/1e-9:.01f}'
+        if elapsed_time < 1e-6:
+            time_display = f'{elapsed_time/1e-9:.01f}'
             time_unit = 'ns'
-        elif dt < 1e-3:
-            time_display = f'{dt/1e-6:.01f}'
+        elif elapsed_time < 1e-3:
+            time_display = f'{elapsed_time/1e-6:.01f}'
             time_unit = 'us'
-        elif dt < 1:
-            time_display = f'{dt/1e-3:.01f}'
+        elif elapsed_time < 1:
+            time_display = f'{elapsed_time/1e-3:.01f}'
             time_unit = 'ms'
         else:
-            time_display = f'{dt:.01f}'
+            time_display = f'{elapsed_time:.01f}'
             time_unit = 's '
-        
+
         margin = (5 - len(time_display)) * ' '
         return margin + f'{time_display}{time_unit}/{unit}'
-

@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::UserWarning:gym",
+    "ignore::DeprecationWarning"
+]

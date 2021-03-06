@@ -3,3 +3,4 @@ gym
 sphinx-autoapi
 autoapi
 sphinx_rtd_theme
+sphinx-autodoc-typehints
