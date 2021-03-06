@@ -10,7 +10,7 @@ if wandb_spec is not None:
 
     class TestWandbCallback():
 
-        def test_instanciate_without_wandb(self, hide_wandb):
+        def test_instanciate_without_wandb(self, hide_wandb): # pylint: disable=unused-argument
             """Should raise ImportError if wandb is not found"""
             with pytest.raises(ImportError, match=r".*wandb >= 0.10.*"):
                 learnrl.callbacks.WandbCallback()
