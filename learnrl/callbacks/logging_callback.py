@@ -1,7 +1,9 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-from typing import List
+"""LoggingCallback tracks aggregated metrics during runs"""
+
+from typing import List, Union
 from learnrl.callbacks.callback import Callback
 
 class Metric():
@@ -48,6 +50,7 @@ class MetricList():
         return MetricList(new_list)
 
     def append(self, metric: Metric):
+        """Adds a new metric to the MetricList"""
         if metric not in self:
             self.metric_list += [self.to_metric(metric)]
             self.metric_names += [metric.name]
@@ -58,11 +61,11 @@ class MetricList():
         return str(self.metric_list)
 
     @staticmethod
-    def to_metric(metric: Metric):
+    def to_metric(metric: Union[str, Metric]):
+        """Convert a metric_code into a true Metric"""
         if isinstance(metric, Metric):
             return metric
-        else:
-            return Metric(metric)
+        return Metric(metric)
 
 
 class LoggingCallback(Callback):
@@ -90,6 +93,7 @@ class LoggingCallback(Callback):
 
     @staticmethod
     def _extract_lists(metrics):
+        """Extract the metric lists from a nested metrics argument"""
         step_metrics = []
         steps_cycle_metrics = []
         episode_metrics = []
@@ -108,14 +112,14 @@ class LoggingCallback(Callback):
         return step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics
 
     def _reset_attr(self, attr_name, operator):
-        """ Reset a metric attribute based on the metric operator """
+        """Reset a metric attribute based on the metric operator"""
         setattr(self, attr_name, 'N/A')
         if operator == 'avg':
             metric_seen = attr_name + '_seen'
             setattr(self, metric_seen, 0)
 
     def _update_attr(self, attr_name, last_value, operator):
-        """ Update a metric attribute based on the metric operator and the last metric value """
+        """Update a metric attribute based on the metric operator and the last metric value"""
         previous_value = getattr(self, attr_name)
 
         if previous_value == 'N/A':
@@ -135,15 +139,14 @@ class LoggingCallback(Callback):
 
     @staticmethod
     def _get_attr_name(prefix, metric, agent_id=None):
-        """ Get the attribute name of a metric/agent couple """
+        """Get the attribute name of a metric/agent couple"""
         if agent_id:
             return '_'.join((prefix, "agent" + str(agent_id), metric.name))
-        else:
-            return '_'.join((prefix, metric.name))
+        return '_'.join((prefix, metric.name))
 
     @staticmethod
     def _extract_metric_from_logs(metric_name, logs, agent_id=None):
-        """ Extract the last value of a metric from logs (specified for an agent or not) """
+        """Extract the last value of a metric from logs (specified for an agent or not)"""
 
         def _search_logs(metric_name, logs:dict):
             if logs is None or metric_name in logs:
@@ -172,7 +175,16 @@ class LoggingCallback(Callback):
         value = _logs.get(metric_name) if _logs is not None else 'N/A'
         return value
 
-    def _get_value(self, metric:Metric, prefix=None, agent_id=None, logs=None):
+    def _get_value(self, metric:Metric, prefix: str=None, agent_id: int=None, logs: dict=None):
+        """Gather the value of a specific metric
+
+        Args:
+            metric: The metric to look for.
+            prefix: The level of aggregation to look for.
+            agent_id: The specific agent to look into.
+            logs: The logs to look into if the value was not found.
+
+        """
         # Search for prefix-wise attr
         if prefix is not None:
             src_name = self._get_attr_name(prefix, metric, agent_id)
@@ -194,7 +206,7 @@ class LoggingCallback(Callback):
             agent_id=None,
             reset=False
         ):
-        """ Update the logger attributes based on a metric list """
+        """Update the logger attributes based on a metric list"""
         for metric in metric_list:
             target_name = self._get_attr_name(target_prefix, metric, agent_id)
 
@@ -213,6 +225,7 @@ class LoggingCallback(Callback):
             target_prefix,
             **kwargs
         ):
+        """Update the logger attributes of all agents based on a metric list"""
         if self.n_agents > 1:
             for agent_id in range(self.n_agents):
                 self._update_metrics(metric_list, target_prefix, agent_id=agent_id, **kwargs)
