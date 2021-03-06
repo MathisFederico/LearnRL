@@ -6,7 +6,6 @@
 import importlib
 
 from learnrl.callbacks.callback import Callback, CallbackList
-
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList, Metric
 from learnrl.callbacks.logger import Logger
 
