@@ -16,7 +16,7 @@ if tensorflow_spec is not None:
                 learnrl.callbacks.TensorboardCallback(log_dir='logs')
 
         def test_instanciate_with_tensorflow(self):
-            """Should instanciate correctly tensorflow is found"""
+            """Should instanciate correctly if tensorflow is found"""
             learnrl.callbacks.TensorboardCallback(log_dir='logs')
 else:
     pass

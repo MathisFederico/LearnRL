@@ -16,7 +16,7 @@ if wandb_spec is not None:
                 learnrl.callbacks.WandbCallback()
 
         def test_instanciate_with_wandb(self):
-            """Should instanciate correctly wandb is found"""
+            """Should instanciate correctly if wandb is found"""
             learnrl.callbacks.WandbCallback()
 else:
     pass
