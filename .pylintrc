@@ -31,7 +31,7 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python module names) to load,
 # usually to register additional checkers.
-load-plugins=
+load-plugins=pylint_pytest
 
 # Pickle collected data for later comparisons.
 persistent=yes
@@ -63,6 +63,9 @@ confidence=
 disable=print-statement,
         no-name-in-module,
         no-member,
+        no-self-use,
+        too-many-locals,
+        duplicate-code,
         unused-wildcard-import,
         wildcard-import,
         redefined-outer-name,
@@ -145,7 +148,8 @@ disable=print-statement,
         xreadlines-attribute,
         deprecated-sys-function,
         exception-escape,
-        comprehension-escape
+        comprehension-escape,
+        cyclic-import
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
