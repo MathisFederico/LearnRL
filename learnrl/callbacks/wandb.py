@@ -153,7 +153,7 @@ class WandbCallback(LoggingCallback):
                 title = f'{metric_name.capitalize()} ({metric.surname.capitalize()})'
                 panel_config = construct_panel_configs(metric_name, title)
                 panel_name = metric_name + '_panel'
-                self.run._add_panel(panel_name, 'Vega2', panel_config)
+                self.run._add_panel(panel_name, 'Vega2', panel_config) # pylint: disable=protected-access
                 metrics_with_chart.append(metric_name)
 
     def _update_wandb(self, prefix, metrics_list:MetricList, logs=None):
