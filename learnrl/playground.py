@@ -198,9 +198,11 @@ class Playground():
                 # Get playing agent (TurnEnv)
                 turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
                 agent_id = self.agents_order[turn_id]
-                if agent_id >= len(self.agents):
-                    raise ValueError(f'Not enough agents to play environement {self.env}')
-                agent = self.agents[agent_id]
+                try:
+                    agent = self.agents[agent_id]
+                except IndexError as error:
+                    error_msg = f'Not enough agents to play environement {self.env}'
+                    raise ValueError(error_msg) from error
 
                 # If the agent has played before, perform a learning step
                 prev = previous[agent_id]
@@ -312,14 +314,14 @@ class Playground():
     def set_agents_order(self, agents_order: list) -> list:
         """Change the agents_order.
 
-        This will change what agent is described by the results of `env.turn`
-        if the environment is subclassing :class:`~learnrl.envs.TurnEnv`.
+        This will the agents order.
 
         Args:
-            agents_order: New agents order. Default is range(n_agents).
+            agents_order: New agents indices order.
+                Default is range(n_agents).
 
         Returns:
-            The updated agents order.
+            The updated agents ordered indices list.
 
         """
         if agents_order is None:
