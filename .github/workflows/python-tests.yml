@@ -33,7 +33,7 @@ jobs:
     - name: Lint with pylint
       run: |
         pip install pylint
-        pylint **/*.py
+        pylint learnrl/ tests/
     - name: Test with pytest
       run: |
         pip install -r requirements-dev.txt
