@@ -1,6 +1,8 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+"""Default Logger to show progress in console"""
+
 from typing import List
 import numpy as np
 
@@ -77,11 +79,11 @@ class Logger(LoggingCallback):
             sep, end = (' | ', '\n') if self.verbose == 4 else (None, '')
             if self.n_agents > 1:
                 print(f"Agent {agent_id}", end=sep)
-            self._print_metrics(self.step_metrics, 'logs',
+            self._print_metrics(self.step_metrics,
                 agent_id=agent_id, logs=logs, sep=sep, end=end)
 
         if self.verbose == 5:
-            self._print_metrics(self.detailed_step_metrics, 'logs', logs=logs)
+            self._print_metrics(self.detailed_step_metrics, logs=logs)
             self._print_bar('-')
 
     def on_steps_cycle_begin(self, step, logs=None):
@@ -104,7 +106,7 @@ class Logger(LoggingCallback):
             sep, end = (' | ', '\n')
             if self.n_agents > 1:
                 print(f"Agent {agent_id}", end=sep)
-            self._print_metrics(self.steps_cycle_metrics, 'attrs', prefix='steps_cycle',
+            self._print_metrics(self.steps_cycle_metrics, prefix='steps_cycle',
                                 agent_id=agent_id, logs=logs, sep=sep, end=end)
 
     def on_episode_begin(self, episode, logs=None):
@@ -140,12 +142,12 @@ class Logger(LoggingCallback):
 
                 titles_on_top = False if self.verbose >= 3 else None
 
-                self._print_metrics(self.episode_metrics, 'attrs', prefix='episode',
+                self._print_metrics(self.episode_metrics, prefix='episode',
                     agent_id=agent_id, sep=' | ', titles_on_top=titles_on_top
                 )
 
             self._print_metrics(
-                self.episode_only_metrics, 'logs',
+                self.episode_only_metrics,
                 logs=logs, sep=' | ', titles_on_top=False
             )
 
@@ -177,8 +179,8 @@ class Logger(LoggingCallback):
             for agent_id in range(self.n_agents):
                 if self.n_agents > 1:
                     print(end=f'\n    Agent {agent_id} | ')
-                self._print_metrics(self.episodes_cycle_metrics, 'attrs', prefix='episodes_cycle',
-                                    agent_id=agent_id, sep=' | ')
+                self._print_metrics(self.episodes_cycle_metrics,
+                    prefix='episodes_cycle', agent_id=agent_id, sep=' | ')
 
             print()
 
@@ -199,7 +201,7 @@ class Logger(LoggingCallback):
             self._print_titles(metrics_to_print,
                 prefix='', offset=' ' * offset_len + ' |', end='\n')
 
-    def _print_metrics(self, metric_list:MetricList, source:str, prefix=None, agent_id=None,
+    def _print_metrics(self, metric_list:MetricList, prefix=None, agent_id=None,
                              logs=None, sep=None, end='', titles_on_top=None):
         """ Print a metric list """
         titles_on_top = titles_on_top if titles_on_top is not None else self.titles_on_top

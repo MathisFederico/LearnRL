@@ -1,13 +1,19 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+"""Agent to represent any learning or static agent"""
+
 from typing import Dict, Union
+from abc import abstractmethod
+
 import numpy as np
+
 
 class Agent():
 
     """A general structure for any learning agent."""
 
+    @abstractmethod
     def act(self, observation, greedy: bool=False) -> Union[int, float, np.ndarray]:
         """How the :ref:`Agent` act given an observation.
 
@@ -16,7 +22,6 @@ class Agent():
             greedy: If True, act greedely (without exploration).
 
         """
-        raise NotImplementedError
 
     def learn(self) -> Dict[str, Union[int, float, np.ndarray]]:
         """How the :ref:`Agent` learns from his experiences.
@@ -48,4 +53,3 @@ class Agent():
             ...                       info, **param)
 
         """
-        pass
