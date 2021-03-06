@@ -136,6 +136,7 @@ class Playground():
 
         self.env = environement
         self.agents = agents
+        self.agents_order = None
         self.set_agents_order(agents_order)
 
     @staticmethod
@@ -389,12 +390,12 @@ class Playground():
                     f"Not every agents have an order number.\n"
                     f"Custom order: {agents_order} for {len(self.agents)} agents\n"
                 )
-            
+
             valid_order = True
             for place in range(len(self.agents)):
                 if not place in agents_order:
                     valid_order = False
-            
+
             if not valid_order:
                 raise ValueError(
                     f"Custom order is not taking every index in [0, n_agents-1].\n"
