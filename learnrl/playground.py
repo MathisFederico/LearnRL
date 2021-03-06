@@ -110,6 +110,8 @@ class RewardHandler():
 
 class Playground():
 
+    """A playground is used to run interactions between an environement and agent(s)"""
+
     def __init__(self, environement:Env, agents:Union[Agent, List[Agent]], agents_order=None):
         """A playground is used to run agent(s) on an environement.
 
