@@ -9,7 +9,6 @@ import pytest
 
 from learnrl.callbacks import LoggingCallback, CallbackList
 
-
 class DummyPlayground():
     """ Dummy playground for testing """
 
@@ -109,7 +108,7 @@ class DummyPlayground():
                     for metric_name in ('reward', 'loss'):
                         logs.update({
                             f'{metric_name}_steps_sum': steps_cycle_tracker[metric_name],
-                            f'{metric_name}_steps_avg': steps_cycle_tracker[metric_name]/steps_cycle_seen,
+                            f'{metric_name}_steps_avg': steps_cycle_tracker[metric_name] / steps_cycle_seen,
                         })
                     callbacks.on_steps_cycle_end(step, logs)
 
@@ -160,140 +159,148 @@ class DummyPlayground():
 
         callbacks.on_run_end(logs)
 
-def test_extract_from_logs():
-    """ Test extract_from_logs method """
+class TestExtractFromLogs():
+    """ extract_from_logs """
 
-    extract_from_logs = LoggingCallback._extract_metric_from_logs
-    logs = {
-        'value': 0,
-        'step': 2,
-        'agent_0': {
-            'value': 1,
-        },
-        'agent_1': {
-            'value': 2,
-            'specific_value': 42,
+    @pytest.fixture(autouse=True)
+    def setup_logs(self):
+        """ Setup fake logs and retrieve function to test """
+
+        self.extract_from_logs = LoggingCallback._extract_metric_from_logs
+        self.logs = {
+            'value': 0,
+            'step': 2,
+            'agent_0': {
+                'value': 1,
+            },
+            'agent_1': {
+                'value': 2,
+                'specific_value': 42,
+            }
         }
-    }
 
-    value = extract_from_logs('value', logs)
-    check.equal(value, 0, 'We should find values in logs.')
+    def test_find_value(self):
+        """ should find value in logs. """
 
-    nothing = extract_from_logs('nothing', logs)
-    check.equal(nothing, 'N/A', 'Nothing should return N/A.')
+        value = self.extract_from_logs('value', self.logs)
+        check.equal(value, 0)
 
-    specific_value = extract_from_logs('specific_value', logs)
-    check.equal(specific_value, 42,
-                'If no agent is specified, it should find any specific_value in agent. '
-                f'Here specific_value was {specific_value} instead of 42.')
+    def test_find_nothing(self):
+        """ should return N/A when there is no value. """
 
-    value_0 = extract_from_logs('value', logs, agent_id=0)
-    check.equal(value_0, 1,
-                'We should find specific agent values. '
-                f'Here value for agent 0 was {value_0} instead of 1.')
-
-    value_1 = extract_from_logs('value', logs, agent_id=1)
-    check.equal(value_1, 2,
-                'We should find specific agent values. '
-                f'Here value for agent 1 was {value_1} instead of 2.')
-
-    step = extract_from_logs('step', logs, agent_id=0)
-    check.equal(step, 2,
-        'When agent is specified, it should return outer value if a specific value is not found. '
-        f'Here we found {step} instead of 2.')
-
-def test_extract_lists():
-    """ Test extract_lists method """
-
-    extract_lists = LoggingCallback._extract_lists
-
-    metrics = [
-        ('reward~rwd', {'steps': 'sum', 'episode': 'sum'}),
-        ('loss', {'episodes': 'last'}),
-    ]
-
-    metric_lists = extract_lists(metrics)
-
-    expected_metric_lists = [
-        ['reward~rwd', 'loss'],
-        ['reward~rwd.sum', 'loss.avg'],
-        ['reward~rwd.sum', 'loss.avg'],
-        ['reward~rwd.avg', 'loss.last']
-    ]
-
-    metric_lists_names = [
-        'step_metrics',
-        'steps_cycle_metrics',
-        'episode_metrics',
-        'episodes_cycle_metrics'
-    ]
-
-    iterator = zip(metric_lists, expected_metric_lists, metric_lists_names)
-    for metric_list, expected_metric_list, metric_list_name in iterator:
-        assert metric_list == expected_metric_list, \
-            f'Unexpected metric list got {metric_list} ' \
-            f'instead of {expected_metric_list} for {metric_list_name}'
-
-def test_logging_steps_avg_sum():
-    """ Test logging steps average and sum """
-
-    for cycle_operator in ['avg', 'sum']:
-        print(cycle_operator, '\n')
-
-        logging_callback = LoggingCallback(
-            metrics=[('reward', {'steps':cycle_operator}), ('loss', {'steps':cycle_operator})],
-        )
-
-        def check_function(callbacks, logs):
-            callback_dict = callbacks.callbacks[0].__dict__
-            for metric_name in ('reward', 'loss'):
-                expected = logs.get(f'{metric_name}_steps_{cycle_operator}')
-                logged = callback_dict[f'steps_cycle_{metric_name}']
-                if expected is not None:
-                    print(metric_name, logged, expected)
-                    assert logged != 'N/A' and np.isclose(logged, expected), \
-                        f'Logged {logged} instead of {expected}'
-
-        playground = DummyPlayground()
-        playground.run([logging_callback], eps_end_func=check_function, verbose=3)
-        print()
+        nothing = self.extract_from_logs('nothing', self.logs)
+        check.equal(nothing, 'N/A')
 
 
-def test_logging_episodes_avg_sum():
-    """ Test logging episodes average and sum """
+    def test_find_any_specific_value(self):
+        """ should find any specific value in agent when no agent is specified. """
 
-    for eps_operator in ['avg', 'sum']:
+        specific_value = self.extract_from_logs('specific_value', self.logs)
+        check.equal(specific_value, 42)
 
-        for cycle_operator in ['avg', 'sum']:
+    def test_find_agent_specific_value(self):
+        """ should find specific agent values. """
 
-            print(eps_operator, cycle_operator, '\n')
+        value_0 = self.extract_from_logs('value', self.logs, agent_id=0)
+        value_1 = self.extract_from_logs('value', self.logs, agent_id=1)
 
-            logging_callback = LoggingCallback(
-                detailed_step_metrics=[],
-                metrics=[('reward', {'episode': eps_operator, 'episodes': cycle_operator}),
-                         ('loss', {'episode': eps_operator, 'episodes': cycle_operator})],
-            )
+        check.equal(value_0, 1)
+        check.equal(value_1, 2)
 
-            def check_function(callbacks, logs):
-                callback_dict = callbacks.callbacks[0].__dict__
+    def test_return_outer_value_when_no_specific_agent_value(self):
+        """ should return outer value if no specific value is found when an agent is specified. """
 
-                for position in ('episode', 'episodes_cycle'):
-                    for metric_name in ('reward', 'loss'):
+        step = self.extract_from_logs('step', self.logs, agent_id=0)
+        check.equal(step, 2)
 
-                        if position == 'episode':
-                            expected = logs.get(f'{metric_name}_episode_{eps_operator}')
-                        elif position == 'episodes_cycle':
-                            expected = logs.get(f'{metric_name}_{eps_operator}_cycle_{cycle_operator}')
+class TestExtractLists:
+    """ extract_lists """
 
-                        logged = callback_dict[f'{position}_{metric_name}']
-                        if expected is not None:
-                            print(position.capitalize(), metric_name, logged, expected)
-                            assert logged != 'N/A' and np.isclose(logged, expected), \
-                                f'Logged {logged} instead of {expected}'
+    def test_extract_lists(self):
+        """ should extract the correct metrics list. """
 
-            playground = DummyPlayground()
-            playground.run([logging_callback], eps_end_func=check_function, verbose=1)
-            print()
+        extract_lists = LoggingCallback._extract_lists
+
+        metrics = [
+            ('reward~rwd', {'steps': 'sum', 'episode': 'sum'}),
+            ('loss', {'episodes': 'last'}),
+        ]
+
+        metric_lists = extract_lists(metrics)
+
+        expected_metric_lists = [
+            ['reward~rwd', 'loss'],
+            ['reward~rwd.sum', 'loss.avg'],
+            ['reward~rwd.sum', 'loss.avg'],
+            ['reward~rwd.avg', 'loss.last']
+        ]
+
+        metric_lists_names = [
+            'step_metrics',
+            'steps_cycle_metrics',
+            'episode_metrics',
+            'episodes_cycle_metrics'
+        ]
+
+        iterator = zip(metric_lists, expected_metric_lists, metric_lists_names)
+        for metric_list, expected_metric_list, metric_list_name in iterator:
+            assert metric_list == expected_metric_list, \
+                f'Unexpected metric list got {metric_list} ' \
+                f'instead of {expected_metric_list} for {metric_list_name}'
+
+@pytest.mark.parametrize('cycle_operator', ['avg', 'sum'])
+@pytest.mark.parametrize('metric_name', ['reward', 'loss'])
+def test_logging_steps_operators_(cycle_operator, metric_name):
+
+    print(cycle_operator, metric_name)
+    logging_callback = LoggingCallback(
+        metrics=[('reward', {'steps':cycle_operator}), ('loss', {'steps':cycle_operator})],
+    )
+
+    def check_function(callbacks, logs):
+        callback_dict = callbacks.callbacks[0].__dict__
+        expected = logs.get(f'{metric_name}_steps_{cycle_operator}')
+        logged = callback_dict[f'steps_cycle_{metric_name}']
+        if expected is not None:
+            print(metric_name, logged, expected)
+            assert logged != 'N/A' and np.isclose(logged, expected), \
+                f'Logged {logged} instead of {expected}'
+
+    playground = DummyPlayground()
+    playground.run([logging_callback], eps_end_func=check_function, verbose=3)
+    print()
+
+@pytest.mark.parametrize('eps_operator', ['avg', 'sum'])
+@pytest.mark.parametrize('cycle_operator', ['avg', 'sum'])
+@pytest.mark.parametrize('metric_name', ['reward', 'loss'])
+def test_logging_episodes_operators(eps_operator, cycle_operator, metric_name):
+
+    print(eps_operator, cycle_operator, '\n')
+
+    logging_callback = LoggingCallback(
+        detailed_step_metrics=[],
+        metrics=[('reward', {'episode': eps_operator, 'episodes': cycle_operator}),
+                 ('loss', {'episode': eps_operator, 'episodes': cycle_operator})],
+    )
+
+    def check_function(callbacks, logs):
+        callback_dict = callbacks.callbacks[0].__dict__
+
+        for position in ('episode', 'episodes_cycle'):
+            if position == 'episode':
+                expected = logs.get(f'{metric_name}_episode_{eps_operator}')
+            elif position == 'episodes_cycle':
+                expected = logs.get(f'{metric_name}_{eps_operator}_cycle_{cycle_operator}')
+
+            logged = callback_dict[f'{position}_{metric_name}']
+            if expected is not None:
+                print(position.capitalize(), metric_name, logged, expected)
+                assert logged != 'N/A' and np.isclose(logged, expected), \
+                    f'Logged {logged} instead of {expected}'
+
+    playground = DummyPlayground()
+    playground.run([logging_callback], eps_end_func=check_function, verbose=1)
+    print()
 
 
 def test_display():

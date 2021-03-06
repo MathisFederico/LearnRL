@@ -1,6 +1,7 @@
 pytest
 pytest-mock
 pytest-check
+pytest-pspec
 pylint
 pylint-pytest
 wandb >= 0.10.0
