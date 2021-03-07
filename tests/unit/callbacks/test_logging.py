@@ -364,7 +364,6 @@ class TestLoggingCallbackGetValue:
             return 'attribute'
 
         mocker.patch(
-            # Dataset is in slow.py, but imported to main.py
             'learnrl.callbacks.logging_callback.LoggingCallback._get_attr_name',
             _get_attr_name
         )
@@ -385,7 +384,6 @@ class TestLoggingCallbackGetValue:
             return logs[metric_name]
 
         mocker.patch(
-            # Dataset is in slow.py, but imported to main.py
             'learnrl.callbacks.logging_callback.LoggingCallback._extract_metric_from_logs',
             _extract_metric_from_logs
         )
