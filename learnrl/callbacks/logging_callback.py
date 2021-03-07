@@ -45,17 +45,12 @@ class MetricList():
     def __contains__(self, metric: Metric):
         return metric.name in self.metric_names
 
-    def __add__(self, metric_list: List[Metric]):
-        new_list = self.metric_list + [self.to_metric(m) for m in metric_list if m not in self]
+    def __add__(self, metric_list: Union[str, Metric, List[Metric], List[str], 'MetricList']):
+        if isinstance(metric_list, (str, Metric)):
+            metric_list = [metric_list]
+        metric_list = [self.to_metric(m) for m in metric_list]
+        new_list = self.metric_list + [m for m in metric_list if m not in self]
         return MetricList(new_list)
-
-    def append(self, metric: Metric):
-        """Adds a new metric to the MetricList"""
-        if metric not in self:
-            self.metric_list += [self.to_metric(metric)]
-            self.metric_names += [metric.name]
-        else:
-            raise ValueError(f'{metric} already in MetricList')
 
     def __str__(self):
         return str(self.metric_list)
@@ -98,6 +93,10 @@ class LoggingCallback(Callback):
         steps_cycle_metrics = []
         episode_metrics = []
         episodes_cycle_metrics = []
+
+        if not isinstance(metrics, (tuple, list)):
+            raise ValueError('Wrong metrics format. See metrics codes in documentation.')
+
         for metric in metrics:
             if isinstance(metric, (tuple, list)):
                 metric_name, ops = metric
