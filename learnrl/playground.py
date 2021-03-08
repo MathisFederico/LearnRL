@@ -28,7 +28,7 @@ class DoneHandler():
 
     @abstractmethod
     def done(self, previous_observation, action, reward,
-            done, infos, observation, logs) -> bool:
+            done, info, observation, logs) -> bool:
         """Replace the environment done.
 
         Often used to make episodes shorter when the agent is stuck for example.
@@ -74,7 +74,7 @@ class RewardHandler():
 
     @abstractmethod
     def reward(self, previous_observation, action, reward,
-            done, infos, observation, logs)-> float:
+            done, info, observation, logs)-> float:
         """Replace the environment reward.
 
         Often used to scale rewards or to do reward shaping.
