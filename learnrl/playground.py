@@ -241,7 +241,7 @@ class Playground():
 
                 callbacks.on_step_begin(step, logs)
 
-                next_observation, logs = self._run_step(
+                next_observation, done, logs = self._run_step(
                     step=step,
                     observation=observation,
                     previous=previous,
@@ -334,7 +334,7 @@ class Playground():
 
         logs.update({'action': action, 'next_observation': next_observation})
         logs.update(info)
-        return next_observation, logs
+        return next_observation, done, logs
 
 
     def fit(self, episodes, **kwargs):
