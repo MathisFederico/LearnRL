@@ -3,7 +3,7 @@
 
 """Callbacks to perform actions while running a playground"""
 
-import importlib
+import importlib.util
 
 from learnrl.callbacks.callback import Callback, CallbackList
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList, Metric

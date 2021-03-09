@@ -1,9 +1,9 @@
-""" Test Tensorboard callback """
-
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-import importlib
+""" TensorboardCallback """
+
+import importlib.util
 import pytest
 
 import learnrl
