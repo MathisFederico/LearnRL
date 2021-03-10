@@ -8,7 +8,7 @@ https://www.tensorflow.org/tensorboard/get_started
 """
 
 import os, datetime
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Union
 
 import tensorflow as tf
 
