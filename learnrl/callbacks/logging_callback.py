@@ -36,6 +36,8 @@ class MetricList():
     """ An helper object to represent a list of metrics """
 
     def __init__(self, metric_list: List[Metric]):
+        if metric_list is None:
+            metric_list = []
         self.metric_list = [self.to_metric(m) for m in metric_list]
         self.metric_names = [m.name for m in self.metric_list]
 
@@ -68,9 +70,9 @@ class LoggingCallback(Callback):
     """ Generic class for tracking metrics """
 
     def __init__(self,
-            metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
-            detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
-            episode_only_metrics: List[str]=('dt_episode~')
+            metrics: List[Union[str, tuple]]=None,
+            detailed_step_metrics: List[str]=None,
+            episode_only_metrics: List[str]=None
         ):
         super().__init__()
         self.detailed_step_metrics = MetricList(detailed_step_metrics)
@@ -94,20 +96,21 @@ class LoggingCallback(Callback):
         episode_metrics = []
         episodes_cycle_metrics = []
 
-        if not isinstance(metrics, (tuple, list)):
-            raise ValueError('Wrong metrics format. See metrics codes in documentation.')
+        if metrics is not None:
+            if not isinstance(metrics, (tuple, list)):
+                raise ValueError('Wrong metrics format. See metrics codes in documentation.')
 
-        for metric in metrics:
-            if isinstance(metric, (tuple, list)):
-                metric_name, ops = metric
-            elif isinstance(metric, str):
-                metric_name = metric
-                ops = {}
+            for metric in metrics:
+                if isinstance(metric, (tuple, list)):
+                    metric_name, ops = metric
+                elif isinstance(metric, str):
+                    metric_name = metric
+                    ops = {}
+                step_metrics.append(metric_name)
+                steps_cycle_metrics.append('.'.join((metric_name, ops.get('steps', 'avg'))))
+                episode_metrics.append('.'.join((metric_name, ops.get('episode', 'avg'))))
+                episodes_cycle_metrics.append('.'.join((metric_name, ops.get('episodes', 'avg'))))
 
-            step_metrics.append(metric_name)
-            steps_cycle_metrics.append('.'.join((metric_name, ops.get('steps', 'avg'))))
-            episode_metrics.append('.'.join((metric_name, ops.get('episode', 'avg'))))
-            episodes_cycle_metrics.append('.'.join((metric_name, ops.get('episodes', 'avg'))))
         return step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics
 
     def _reset_attr(self, attr_name, operator):

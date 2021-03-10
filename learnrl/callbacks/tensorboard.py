@@ -22,9 +22,9 @@ class TensorboardCallback(LoggingCallback):
     def __init__(self,
             log_dir: str,
             run_name: str=None,
-            metrics: List[Tuple[str, Dict[str, str]]]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
-            detailed_step_metrics: List[str]=['observation', 'action', 'next_observation'],
-            episode_only_metrics: List[str]=['dt_episode~']
+            metrics: List[Union[str, tuple]]=None,
+            detailed_step_metrics: List[str]=None,
+            episode_only_metrics: List[str]=None
         ):
         
         """Tensorboard logger will log metrics in tensorboard.

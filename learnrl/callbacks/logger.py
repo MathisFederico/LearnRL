@@ -3,7 +3,7 @@
 
 """Default Logger to show progress in console"""
 
-from typing import List
+from typing import List, Union
 import numpy as np
 
 from learnrl.callbacks import LoggingCallback, MetricList, Metric
@@ -34,9 +34,9 @@ class Logger(LoggingCallback):
     """
 
     def __init__(self,
-            metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
-            detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
-            episode_only_metrics: List[str]=('dt_episode~'),
+            metrics: List[Union[str, tuple]]=None,
+            detailed_step_metrics: List[str]=None,
+            episode_only_metrics: List[str]=None,
             titles_on_top: bool=True):
 
         """Default logger in every :class:`~learnrl.playground.Playground` run.
@@ -48,6 +48,13 @@ class Logger(LoggingCallback):
             titles_on_top: If true, titles will be displayed on top and not at every line.
 
         """
+
+        if metrics is None:
+            metrics = [('reward', {'steps_cycles': 'sum', 'episode': 'sum'})]
+        if detailed_step_metrics is None:
+            detailed_step_metrics = ['observation', 'action', 'next_observation']
+        if episode_only_metrics is None:
+            episode_only_metrics = ('dt_episode~')
 
         super().__init__(
             metrics=metrics,

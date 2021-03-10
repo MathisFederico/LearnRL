@@ -7,7 +7,7 @@ https://wandb.ai/site
 
 """
 
-from typing import List
+from typing import List, Union
 
 import wandb
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
@@ -74,9 +74,9 @@ class WandbCallback(LoggingCallback):
     """ WandbCallback will log metrics to wandb."""
 
     def __init__(self, run,
-            metrics: List[str]=(('reward', {'steps': 'sum', 'episode': 'sum'})),
-            detailed_step_metrics: List[str]=('observation', 'action', 'next_observation'),
-            episode_only_metrics: List[str]=('dt_episode~')
+            metrics: List[Union[str, tuple]]=None,
+            detailed_step_metrics: List[str]=None,
+            episode_only_metrics: List[str]=None
         ):
 
         """ WandbCallback will log metrics to wandb.
