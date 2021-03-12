@@ -254,7 +254,6 @@ class TestExtractFromLogs:
     @pytest.fixture(autouse=True)
     def setup(self):
         """ Setup fake logs and retrieve function to test. """
-
         self.extract_from_logs = LoggingCallback._extract_metric_from_logs
         self.logs = {
             'value': 0,
@@ -270,26 +269,21 @@ class TestExtractFromLogs:
 
     def test_find_value(self):
         """ should find value in logs. """
-
         value = self.extract_from_logs('value', self.logs)
         check.equal(value, 0)
 
     def test_find_nothing(self):
         """ should return N/A when there is no value. """
-
         nothing = self.extract_from_logs('nothing', self.logs)
         check.equal(nothing, 'N/A')
 
-
     def test_find_any_specific_value(self):
         """ should find any specific value in agent when no agent is specified. """
-
         specific_value = self.extract_from_logs('specific_value', self.logs)
         check.equal(specific_value, 42)
 
     def test_find_agent_specific_value(self):
         """ should find specific agent values. """
-
         value_0 = self.extract_from_logs('value', self.logs, agent_id=0)
         value_1 = self.extract_from_logs('value', self.logs, agent_id=1)
 
@@ -298,7 +292,6 @@ class TestExtractFromLogs:
 
     def test_return_outer_value_when_no_specific_agent_value(self):
         """ should return outer value if no specific value is found when an agent is specified. """
-
         step = self.extract_from_logs('step', self.logs, agent_id=0)
         check.equal(step, 2)
 
@@ -309,7 +302,6 @@ class TestLoggingCallbackExtractLists:
     @pytest.fixture(autouse=True)
     def setup_logs(self):
         """ Setup fake logs and retrieve function to test. """
-
         self.extract_lists = LoggingCallback._extract_lists
 
     def test_extract_lists_use_case(self):
@@ -318,16 +310,16 @@ class TestLoggingCallbackExtractLists:
         metrics = [
             ('reward~rwd', {'steps': 'sum', 'episode': 'sum'}),
             ('loss', {'episodes': 'last'}),
-            'exploration~exp'
+            'exploration~exp.last'
         ]
 
         metric_lists = self.extract_lists(metrics)
 
         expected_metric_lists = [
             ['reward~rwd', 'loss', 'exploration~exp'],
-            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.avg'],
-            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.avg'],
-            ['reward~rwd.avg', 'loss.last', 'exploration~exp.avg']
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last'],
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last'],
+            ['reward~rwd.avg', 'loss.last', 'exploration~exp.last']
         ]
 
         metric_lists_names = [
@@ -346,7 +338,6 @@ class TestLoggingCallbackExtractLists:
 
     def test_extract_lists_wrong_format(self):
         """ should raise ValueError on wrong metric nested format. """
-
         metrics = ('reward')
 
         with pytest.raises(ValueError, match=r".*metrics format.*"):

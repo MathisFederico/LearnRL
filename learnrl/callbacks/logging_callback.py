@@ -97,12 +97,18 @@ class LoggingCallback(Callback):
         if not isinstance(metrics, (tuple, list)):
             raise ValueError('Wrong metrics format. See metrics codes in documentation.')
 
+
+        ops_keys = ('steps', 'episode', 'episodes')
         for metric in metrics:
             if isinstance(metric, (tuple, list)):
                 metric_name, ops = metric
             elif isinstance(metric, str):
                 metric_name = metric
-                ops = {}
+                if '.' in metric_name:
+                    metric_name, opertor_for_all = metric_name.split('.')
+                    ops = {key:opertor_for_all for key in ops_keys}
+                else:
+                    ops = {}
 
             step_metrics.append(metric_name)
             steps_cycle_metrics.append('.'.join((metric_name, ops.get('steps', 'avg'))))
