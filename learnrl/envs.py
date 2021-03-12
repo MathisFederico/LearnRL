@@ -44,6 +44,7 @@ class TurnEnv(Env):
             info (dict): Additional informations given by the |gym.Env|.
 
         """
+        raise NotImplementedError('TurnEnv.step must be user-defined by subclassing.')
 
     @abstractmethod
     def turn(self, state) -> int:
@@ -60,6 +61,7 @@ class TurnEnv(Env):
             agent_id (int): The next player id
 
         """
+        raise NotImplementedError('TurnEnv.turn must be user-defined by subclassing.')
 
     @abstractmethod
     def reset(self):
@@ -69,3 +71,4 @@ class TurnEnv(Env):
             observation: The observation for the first :class:`Agent` to play
 
         """
+        raise NotImplementedError('TurnEnv.reset must be user-defined by subclassing.')
