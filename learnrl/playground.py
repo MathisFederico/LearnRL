@@ -5,7 +5,7 @@
 
 import warnings
 
-from typing import List, Union, Callable
+from typing import List, Union, Callable, Any
 from abc import abstractmethod
 from numbers import Number
 
@@ -183,21 +183,39 @@ class Playground():
             raise ValueError(error_msg) from index_error
         return agent, agent_id
 
-    def _run_step(self, step, observation, previous,
-        learn, render, render_mode, reward_handler, done_handler, logs):
+    @staticmethod
+    def _call_handlers(reward, done, experience,
+            reward_handler=None, done_handler=None, logs=None):
+        logs = {} if logs is None else logs
+
+        logs.update({'reward': reward})
+        if reward_handler is not None:
+            handled_reward = reward_handler(*experience, logs)
+            experience['reward'] = handled_reward
+            logs.update({'handled_reward': handled_reward})
+
+        logs.update({'done': done})
+        if done_handler is not None:
+            handled_done = done_handler(*experience, logs)
+            experience['done'] = handled_done
+            logs.update({'handled_done': handled_done})
+
+    def _run_step(self,
+            observation: Any,
+            previous: list,
+            logs: dict,
+            learn=False,
+            render=False,
+            render_mode='human',
+            reward_handler=None,
+            done_handler=None,
+        ):
         """Run a single step"""
         # Render the environment
         if render:
             self.env.render(render_mode)
 
-        # Get playing agent (TurnEnv)
-        turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
-        agent_id = self.agents_order[turn_id]
-        try:
-            agent = self.agents[agent_id]
-        except IndexError as error:
-            error_msg = f'Not enough agents to play environement {self.env}'
-            raise ValueError(error_msg) from error
+        agent, agent_id = self._get_next_agent(observation)
 
         # If the agent has played before, perform a learning step
         prev = previous[agent_id]
@@ -210,7 +228,7 @@ class Playground():
             logs.update({f'agent_{agent_id}': agent_logs})
 
         # Adds step informations to logs
-        logs.update({'step':step, 'agent_id':agent_id, 'observation':observation})
+        logs.update({'agent_id':agent_id, 'observation':observation})
 
         # Ask action to agent
         action = agent.act(observation, greedy=not learn)
@@ -228,17 +246,8 @@ class Playground():
             'info': info
         }
 
-        # Perform reward handling
-        logs.update({'reward': reward})
-        if reward_handler is not None:
-            experience['reward'] = reward_handler(*experience, logs)
-            logs.update({'handled_reward': reward})
-
-        # Perform done handling
-        logs.update({'done': done})
-        if done_handler is not None:
-            experience['done'] = done_handler(*experience, logs)
-            logs.update({'handled_done': done})
+        # Use Handlers
+        self._call_handlers(reward, done, experience, reward_handler, done_handler, logs)
 
         # Store experience in prev
         if learn:
@@ -253,12 +262,12 @@ class Playground():
 
         # Do a last rendering if done
         if done and render:
-            self.env.render()
+            self.env.render(render_mode)
 
         # Add experience to logs
         logs.update(experience)
 
-        return next_observation, done, logs
+        return next_observation, done
 
     def run(self,
             episodes: int,
@@ -335,16 +344,15 @@ class Playground():
                 logs.update({'step': step})
                 callbacks.on_step_begin(step, logs)
 
-                observation, done, logs = self._run_step(
-                    step=step,
+                observation, done = self._run_step(
                     observation=observation,
                     previous=previous,
+                    logs=logs,
                     learn=learn,
                     render=render,
                     render_mode=render_mode,
                     reward_handler=reward_handler,
                     done_handler=done_handler,
-                    logs=logs
                 )
                 callbacks.on_step_end(step, logs)
 

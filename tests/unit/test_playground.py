@@ -46,10 +46,10 @@ class TestPlayground:
         """ run should call callbacks at the right time and in the right order. """
 
         steps_outputs = [
-            (f'obs_{i+1}', False, {'log': i+1})
+            (f'obs_{i+1}', False)
             for i in range(9)
         ]
-        steps_outputs += [(f'obs_{9}', True, {'log': 9})]
+        steps_outputs += [(f'obs_{9}', True)]
         steps_outputs = steps_outputs*10
         steps_outputs = steps_outputs[::-1]
 
@@ -385,6 +385,243 @@ class TestPlaygroundGetNextAgent:
         with pytest.raises(ValueError, match=r'Not enough agents.*'):
             playground._get_next_agent('observation')
 
+
+class TestPlaygroundCallHandlers:
+    """Playground._call_handlers"""
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """Setup of used fixtures"""
+        self.call_handlers = Playground._call_handlers
+        self.done = False
+        self.reward = 1.2
+        self.experience = {
+            'observation': 'observation',
+            'action': 'action',
+            'reward': self.reward,
+            'done': self.done,
+            'next_observation': 'next_observation',
+            'info': {'info': 'info'}
+        }
+
+
+    def test_no_handlers(self):
+        """ should not log or change experience if no handler is given. """
+        logs = {}
+        self.call_handlers(
+            self.reward,
+            self.done,
+            self.experience,
+            reward_handler=None,
+            done_handler=None,
+            logs=logs
+        )
+        check.equal(self.experience['done'], self.done)
+        check.equal(logs['done'], self.done)
+
+        check.equal(self.experience['reward'], self.reward)
+        check.equal(logs['reward'], self.reward)
+
+    def test_done_only(self):
+        """ should log and change experience correctly with a done_handler only. """
+        logs = {}
+        handled_done = not self.done
+        self.call_handlers(
+            self.reward,
+            self.done,
+            self.experience,
+            reward_handler=None,
+            done_handler=lambda *args: handled_done,
+            logs=logs
+        )
+        check.equal(self.experience['done'], handled_done)
+        check.equal(logs['done'], self.done)
+        check.equal(logs['handled_done'], handled_done)
+
+        check.equal(self.experience['reward'], self.reward)
+        check.equal(logs['reward'], self.reward)
+
+    def test_reward_only(self):
+        """ should log and change experience correctly with a reward_handler only. """
+        logs = {}
+        handled_reward = 1.7
+        self.call_handlers(
+            self.reward,
+            self.done,
+            self.experience,
+            reward_handler=lambda *args:handled_reward,
+            done_handler=None,
+            logs=logs
+        )
+        check.equal(self.experience['done'], self.done)
+        check.equal(logs['done'], self.done)
+
+        check.equal(self.experience['reward'], handled_reward)
+        check.equal(logs['reward'], self.reward)
+        check.equal(logs['handled_reward'], handled_reward)
+
+    def test_both_handlers(self):
+        """ should log and change experience correctly with a both handlers. """
+        logs = {}
+        handled_done = not self.done
+        handled_reward = 1.7
+        self.call_handlers(
+            self.reward,
+            self.done,
+            self.experience,
+            reward_handler=lambda *args: handled_reward,
+            done_handler=lambda *args: handled_done,
+            logs=logs
+        )
+        check.equal(self.experience['done'], handled_done)
+        check.equal(logs['done'], self.done)
+        check.equal(logs['handled_done'], handled_done)
+
+        check.equal(self.experience['reward'], handled_reward)
+        check.equal(logs['reward'], self.reward)
+        check.equal(logs['handled_reward'], handled_reward)
+
+class TestPlaygroundRunStep:
+    """Playground._run_step"""
+
+    @pytest.fixture(autouse=True)
+    def setup_playground(self, mocker):
+        """Setup of used fixtures"""
+
+        self.observation = 'observation'
+        self.next_observation = 'next_observation'
+        self.reward = 1.2
+        self.done = False
+        self.info = {'env_info': 'env_info'}
+
+        mocker.patch('gym.Env.render')
+        mocker.patch('gym.Env.step',
+            return_value=(self.next_observation, self.reward,
+                self.done, self.info)
+        )
+        self.env = Env()
+
+        mocker.patch('learnrl.agent.Agent.remember')
+        mocker.patch('learnrl.agent.Agent.learn')
+        self.action = 3
+        mocker.patch('learnrl.agent.Agent.act', return_value=self.action)
+        self.n_agents = 5
+        self.agents = [Agent() for _ in range(self.n_agents)]
+
+        self.agent_id = 0
+        mocker.patch('learnrl.playground.Playground._get_next_agent',
+            return_value=(self.agents[self.agent_id], self.agent_id))
+        mocker.patch('learnrl.playground.Playground._call_handlers')
+        self.playground = Playground(self.env, self.agents)
+
+        self.previous = [
+            {'observation':None,'action':None,
+            'reward':None, 'done':None, 'info':None}
+            for _ in range(self.n_agents)
+        ]
+
+    def test_run_step(self):
+        """ should update the observation, done and logs correcty. """
+        logs = {}
+        done = not self.done
+        observation, done = self.playground._run_step(
+            self.observation,
+            self.previous,
+            logs=logs,
+        )
+        check.equal(observation, self.next_observation)
+        check.equal(done, self.done)
+
+        for log_name in ['reward', 'observation', 'next_observation',
+                            'info', 'done', 'agent_id', 'action']:
+            expected = getattr(self, log_name)
+            check.equal(logs[log_name], expected)
+
+    def test_render_not_done(self, mocker):
+        """ should render at each step begining if not done. """
+        render_mode = 'render_mode'
+        self.playground._run_step(
+            self.observation,
+            self.previous,
+            logs={},
+            render=True,
+            render_mode=render_mode
+        )
+
+        check.equal(len(self.env.render.call_args_list), 1)
+        render_args, _ = self.env.render.call_args
+        check.equal(render_args[0], render_mode)
+
+    def test_render_done(self, mocker):
+        """ should render at step begining and end if done. """
+        render_mode = 'render_mode'
+        self.env.step.return_value = (
+            self.next_observation, self.reward, True, self.info
+        )
+        self.playground._run_step(
+            self.observation,
+            self.previous,
+            logs={},
+            render=True,
+            render_mode=render_mode
+        )
+
+        check.equal(len(self.env.render.call_args_list), 2)
+        render_args, _ = self.env.render.call_args_list[-1]
+        check.equal(render_args[0], render_mode)
+
+    def test_learn_without_prev_not_done(self, mocker):
+        """ should store experience without learn or remember for first experience. """
+        previous = self.previous
+        self.playground._run_step(
+            self.observation,
+            previous,
+            logs={},
+            learn=True,
+        )
+        check.equal(previous[self.agent_id],
+            {name: getattr(self, name)
+            for name in ['observation', 'action', 'reward', 'done', 'info']}
+        )
+        check.is_false(Agent.learn.called)
+        check.is_false(Agent.remember.called)
+
+    def test_learn_not_done(self, mocker):
+        """ should call learn and remember once at the beginning of the step if not done. """
+        logs = {}
+        previous = self.previous
+        previous[0] = {
+            name: getattr(self, name)
+            for name in ['observation', 'action', 'reward', 'done', 'info']
+        }
+        self.playground._run_step(
+            self.observation,
+            previous,
+            logs=logs,
+            learn=True,
+        )
+
+        check.equal(len(Agent.learn.call_args_list), 1)
+        check.equal(len(Agent.remember.call_args_list), 1)
+        check.is_in('agent_0', logs)
+
+    def test_learn_done(self, mocker):
+        """ should call learn and remember once at the beginning of the step if not done. """
+        logs = {}
+        previous = self.previous
+        self.env.step.return_value = (
+            self.next_observation, self.reward, True, self.info
+        )
+        self.playground._run_step(
+            self.observation,
+            previous,
+            logs=logs,
+            learn=True,
+        )
+
+        check.equal(len(Agent.learn.call_args_list), 1)
+        check.equal(len(Agent.remember.call_args_list), 1)
+        check.is_in('agent_0', logs)
 
 class TestDoneHandler:
 
