@@ -7,6 +7,7 @@ import warnings
 
 from typing import List, Union, Callable
 from abc import abstractmethod
+from numbers import Number
 
 import numpy as np
 from gym import Env
@@ -53,7 +54,8 @@ class DoneHandler():
 
     def _done(self, *args) -> bool:
         done = self.done(*args)
-        if not isinstance(done, (bool, np.bool, np.bool_)):
+        if not isinstance(done, bool) and \
+           not (isinstance(done, np.ndarray) and done.dtype == bool):
             raise ValueError(f"Done should be bool, got {done} of type {type(done)} instead")
         return done
 
@@ -99,9 +101,10 @@ class RewardHandler():
 
     def _reward(self, *args) -> float:
         reward = self.reward(*args)
-        if not isinstance(reward, (int, float)):
+        if not isinstance(reward, Number) and \
+           not (isinstance(reward, np.ndarray) and np.issubdtype(reward.dtype, np.floating)):
             raise ValueError(
-                f"Rewards should be scalars, got {reward} of type {type(reward)} instead"
+                f"Rewards should be a float, got {reward} of type {type(reward)} instead"
             )
         return float(reward)
 

@@ -7,6 +7,8 @@
 import pytest
 import pytest_check as check
 
+import numpy as np
+
 from gym import Env
 from learnrl.agent import Agent
 from learnrl.envs import TurnEnv
@@ -40,6 +42,128 @@ class TestPlayground:
         with pytest.raises(TypeError, match=r"agent.*learnrl.Agent"):
             Playground(self.env, [Agent(), 'agent'])
 
+    def test_run(self, mocker):
+        """ run should call callbacks at the right time and in the right order. """
+
+        steps_outputs = [
+            (f'obs_{i+1}', False, {'log': i+1})
+            for i in range(9)
+        ]
+        steps_outputs += [(f'obs_{9}', True, {'log': 9})]
+        steps_outputs = steps_outputs*10
+        steps_outputs = steps_outputs[::-1]
+
+        def dummy_run_step(*args, **kwargs):
+            return steps_outputs.pop()
+
+        class RegisterCallback(Callback):
+
+            """Dummy Callback to register calls"""
+
+            def __init__(self):
+                super().__init__()
+                self.stored_key = ""
+
+            def on_run_begin(self, logs=None):
+                self.stored_key += "|-"
+
+            def on_episodes_cycle_begin(self, episode, logs=None):
+                self.stored_key += "["
+
+            def on_episode_begin(self, episode, logs=None):
+                self.stored_key += "("
+
+            def on_steps_cycle_begin(self, step, logs=None):
+                self.stored_key += "<"
+
+            def on_step_begin(self, step, logs=None):
+                self.stored_key += ","
+
+            def on_step_end(self, step, logs=None):
+                self.stored_key += "."
+
+            def on_steps_cycle_end(self, step, logs=None):
+                self.stored_key += ">"
+
+            def on_episode_end(self, episode, logs=None):
+                self.stored_key += ")"
+
+            def on_episodes_cycle_end(self, episode, logs=None):
+                self.stored_key += "]"
+
+            def on_run_end(self, logs=None):
+                self.stored_key += "-|"
+
+        mocker.patch(
+            'learnrl.playground.Playground._get_episodes_cycle_len',
+            return_value=3
+        )
+        mocker.patch(
+            'learnrl.playground.Playground._reset',
+            lambda *args: ('obs_0', 0, False, {})
+        )
+        mocker.patch(
+            'learnrl.playground.Playground._build_callbacks',
+            lambda self, callbacks, logger, params: callbacks[0]
+        )
+        mocker.patch(
+            'learnrl.playground.Playground._run_step',
+            dummy_run_step
+        )
+
+        playground = Playground(self.env, self.agents)
+        register_callback = RegisterCallback()
+        playground.run(episodes=10, callbacks=[register_callback], steps_cycle_len=3)
+        episode_key = "(<,.,.,.><,.,.,.><,.,.,.><,.>)"
+        expected_key = "|-[" + episode_key*3 + "][" + episode_key*3 + "][" + \
+            episode_key*3  + "][" + episode_key + "]-|"
+        check.equal(register_callback.stored_key, expected_key)
+
+    def test_fit(self, mocker):
+        """ fit should call run with learn=True and render=False. """
+        mocker.patch('learnrl.playground.Playground.run')
+        playground = Playground(self.env, self.agents)
+        playground.fit(10)
+        _, kwargs = playground.run.call_args
+        check.is_true(kwargs.get('learn'))
+        check.is_false(kwargs.get('render'))
+
+    def test_fit_warn_learn(self, mocker):
+        """ fit should warn a UserWarning if learn=False. """
+        mocker.patch('learnrl.playground.Playground.run')
+        playground = Playground(self.env, self.agents)
+        with pytest.warns(UserWarning, match=r".*agents will not improve.*"):
+            playground.fit(10, learn=False)
+
+    def test_fit_warn_render(self, mocker):
+        """ fit should warn a RuntimeWarning if render=True. """
+        mocker.patch('learnrl.playground.Playground.run')
+        playground = Playground(self.env, self.agents)
+        with pytest.warns(RuntimeWarning, match=r".*computation speed.*"):
+            playground.fit(10, render=True)
+
+    def test_test(self, mocker):
+        """ test should call run with learn=False and render=True. """
+        mocker.patch('learnrl.playground.Playground.run')
+        playground = Playground(self.env, self.agents)
+        playground.test(10)
+        _, kwargs = playground.run.call_args
+        check.is_false(kwargs.get('learn'))
+        check.is_true(kwargs.get('render'))
+
+    def test_test_warn_learn(self, mocker):
+        """ test should warn a UserWarning if learn=True. """
+        mocker.patch('learnrl.playground.Playground.run')
+        playground = Playground(self.env, self.agents)
+        with pytest.warns(UserWarning, match=r".*not act greedy.*"):
+            playground.test(10, learn=True)
+
+    def test_test_warn_render(self, mocker):
+        """ test should warn a UserWarning if render=False. """
+        mocker.patch('learnrl.playground.Playground.run')
+        playground = Playground(self.env, self.agents)
+        with pytest.warns(UserWarning, match=r".*render=True.*"):
+            playground.test(10, render=False, verbose=0)
 
 class TestPlaygroundGetEpisodeCycleLen:
 
@@ -262,90 +386,59 @@ class TestPlaygroundGetNextAgent:
             playground._get_next_agent('observation')
 
 
-class TestPlaygroundRun:
+class TestDoneHandler:
 
-    """Playground.run"""
+    """DoneHandler"""
 
-    @pytest.fixture(autouse=True)
-    def setup_playground(self):
-        """Setup of used fixtures"""
-        self.env = Env()
-        self.n_agents = 5
-        self.agents = [Agent() for _ in range(self.n_agents)]
+    def test_done(self, mocker):
+        """ should use `done` if the output of `done` is a bool or a bool numpy array. """
+        mocker.patch("learnrl.playground.DoneHandler.done", lambda *args: True)
+        handler = DoneHandler()
+        check.is_true(handler._done())
 
-    def test_run(self, mocker):
-        """ should call callbacks at the right time and in the right order. """
+        mocker.patch("learnrl.playground.DoneHandler.done", lambda *args: np.array(True))
+        handler = DoneHandler()
+        check.is_true(handler._done())
 
-        steps_outputs = [
-            (f'obs_{i+1}', False, {'log': i+1})
-            for i in range(9)
-        ]
-        steps_outputs += [(f'obs_{9}', True, {'log': 9})]
-        steps_outputs = steps_outputs*10
-        steps_outputs = steps_outputs[::-1]
+    def test_not_bool_done(self, mocker):
+        """ should raise ValueError if the output of `done` is not a bool. """
+        mocker.patch("learnrl.playground.DoneHandler.done", lambda *args: 'True')
+        handler = DoneHandler()
+        with pytest.raises(ValueError, match=r"Done should be bool.*"):
+            handler._done()
 
-        def dummy_run_step(*args, **kwargs):
-            return steps_outputs.pop()
+    def test_call(self, mocker):
+        """ should call done on class call. """
+        mocker.patch("learnrl.playground.DoneHandler._done", return_value=True)
+        handler = DoneHandler()
+        check.is_true(handler())
+        check.is_true(handler._done.called)
 
-        class RegisterCallback(Callback):
 
-            """Dummy Callback to register calls"""
+class TestRewardHandler:
 
-            def __init__(self):
-                super().__init__()
-                self.stored_key = ""
+    """RewardHandler"""
 
-            def on_run_begin(self, logs=None):
-                self.stored_key += "|-"
+    def test_reward(self, mocker):
+        """ should use `reward` if the output of `reward` is a float or floating numpy array. """
+        mocker.patch("learnrl.playground.RewardHandler.reward", lambda *args: 1.2)
+        handler = RewardHandler()
+        check.equal(handler._reward(), 1.2)
 
-            def on_episodes_cycle_begin(self, episode, logs=None):
-                self.stored_key += "["
+        mocker.patch("learnrl.playground.RewardHandler.reward", lambda *args: np.array(1.2))
+        handler = RewardHandler()
+        check.equal(handler._reward(), 1.2)
 
-            def on_episode_begin(self, episode, logs=None):
-                self.stored_key += "("
+    def test_not_scalar_reward(self, mocker):
+        """ should raise ValueError if the output of `reward` is not a float. """
+        mocker.patch("learnrl.playground.RewardHandler.reward", lambda *args: '1.2')
+        handler = RewardHandler()
+        with pytest.raises(ValueError, match=r"Rewards should be a float.*"):
+            handler._reward()
 
-            def on_steps_cycle_begin(self, step, logs=None):
-                self.stored_key += "<"
-
-            def on_step_begin(self, step, logs=None):
-                self.stored_key += ","
-
-            def on_step_end(self, step, logs=None):
-                self.stored_key += "."
-
-            def on_steps_cycle_end(self, step, logs=None):
-                self.stored_key += ">"
-
-            def on_episode_end(self, episode, logs=None):
-                self.stored_key += ")"
-
-            def on_episodes_cycle_end(self, episode, logs=None):
-                self.stored_key += "]"
-
-            def on_run_end(self, logs=None):
-                self.stored_key += "-|"
-
-        mocker.patch(
-            'learnrl.playground.Playground._get_episodes_cycle_len',
-            return_value=3
-        )
-        mocker.patch(
-            'learnrl.playground.Playground._reset',
-            lambda *args: ('obs_0', 0, False, {})
-        )
-        mocker.patch(
-            'learnrl.playground.Playground._build_callbacks',
-            lambda self, callbacks, logger, params: callbacks[0]
-        )
-        mocker.patch(
-            'learnrl.playground.Playground._run_step',
-            dummy_run_step
-        )
-
-        playground = Playground(self.env, self.agents)
-        register_callback = RegisterCallback()
-        playground.run(episodes=10, callbacks=[register_callback], steps_cycle_len=3)
-        episode_key = "(<,.,.,.><,.,.,.><,.,.,.><,.>)"
-        expected_key = "|-[" + episode_key*3 + "][" + episode_key*3 + "][" + \
-            episode_key*3  + "][" + episode_key + "]-|"
-        check.equal(register_callback.stored_key, expected_key)
+    def test_call(self, mocker):
+        """ should call reward on class call. """
+        mocker.patch("learnrl.playground.RewardHandler._reward", return_value=True)
+        handler = RewardHandler()
+        check.is_true(handler())
+        check.is_true(handler._reward.called)
