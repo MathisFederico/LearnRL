@@ -295,7 +295,7 @@ class Logger(LoggingCallback):
         if unit == 'episode':
             unit = 'eps'
         if elapsed_time < 1e-9:
-            return 'N/A        '
+            return '< 1ns      '
         if elapsed_time < 1e-6:
             time_display = f'{elapsed_time/1e-9:.01f}'
             time_unit = 'ns'
