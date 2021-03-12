@@ -184,12 +184,22 @@ class Playground():
         if render:
             self.env.render(render_mode)
 
-        agent, agent_id = self._get_next_agent(observation)
+        # Get playing agent (TurnEnv)
+        turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
+        agent_id = self.agents_order[turn_id]
+        try:
+            agent = self.agents[agent_id]
+        except IndexError as error:
+            error_msg = f'Not enough agents to play environement {self.env}'
+            raise ValueError(error_msg) from error
 
         # If the agent has played before, perform a learning step
         prev = previous[agent_id]
         if learn and prev['observation'] is not None:
-            agent.remember(**prev)
+            agent.remember(
+                prev['observation'], prev['action'], prev['reward'],
+                prev['done'], observation, prev['info']
+            )
             agent_logs = agent.learn()
             logs.update({f'agent_{agent_id}': agent_logs})
 
@@ -198,7 +208,6 @@ class Playground():
 
         # Ask action to agent
         action = agent.act(observation, greedy=not learn)
-
         # Perform environment step
         next_observation, reward, done, info = self.env.step(action)
         logs.update(info)
@@ -232,7 +241,7 @@ class Playground():
 
             # Perform a last learning step if done
             if done:
-                agent.remember(*experience)
+                agent.remember(**experience)
                 agent_logs = agent.learn()
                 logs.update({f'agent_{agent_id}': agent_logs})
 
@@ -243,7 +252,7 @@ class Playground():
         # Add experience to logs
         logs.update(experience)
 
-        return next_observation, logs
+        return next_observation, done, logs
 
     def run(self,
             episodes: int,
@@ -344,71 +353,6 @@ class Playground():
                 callbacks.on_episodes_cycle_end(episode, logs)
 
         callbacks.on_run_end(logs)
-
-    def _run_step(self, step, observation, previous,
-        learn, render, reward_handler, done_handler, logs):
-        """Run a single step"""
-        # Render the environment
-        if render:
-            self.env.render()
-
-        # Get playing agent (TurnEnv)
-        turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
-        agent_id = self.agents_order[turn_id]
-        try:
-            agent = self.agents[agent_id]
-        except IndexError as error:
-            error_msg = f'Not enough agents to play environement {self.env}'
-            raise ValueError(error_msg) from error
-
-        # If the agent has played before, perform a learning step
-        prev = previous[agent_id]
-        if learn and prev['observation'] is not None:
-            agent.remember(
-                prev['observation'], prev['action'], prev['reward'],
-                prev['done'], observation, prev['info']
-            )
-            agent_logs = agent.learn()
-            logs.update({f'agent_{agent_id}': agent_logs})
-
-        # Adds step informations to logs
-        logs.update({'step':step, 'agent_id':agent_id, 'observation':observation})
-
-        # Ask action to agent
-        action = agent.act(observation, greedy=not learn)
-        # Perform environment step
-        next_observation, reward, done, info = self.env.step(action)
-
-        # Perform reward handling
-        logs.update({'reward': reward})
-        if reward_handler is not None:
-            reward = reward_handler(
-                observation, action, reward, done, info, next_observation
-            )
-            logs.update({'handled_reward': reward})
-
-        # Perform done handling
-        logs.update({'done': done})
-        if done_handler is not None:
-            done = done_handler(
-                observation, action, reward, done, info, next_observation
-            )
-            logs.update({'handled_done': done})
-
-        # Perform a learning step
-        if learn:
-            for key, value in zip(prev, [observation, action, reward, done, info]):
-                prev[key] = value
-            if done:
-                agent.remember(
-                    observation, action, reward, done, next_observation, info
-                )
-                agent_logs = agent.learn()
-                logs.update({f'agent_{agent_id}': agent_logs})
-
-        logs.update({'action': action, 'next_observation': next_observation})
-        logs.update(info)
-        return next_observation, done, logs
 
 
     def fit(self, episodes, **kwargs):
