@@ -83,7 +83,7 @@ class TestPlaygroundBuildCallbacks:
         self.agents = [Agent() for _ in range(self.n_agents)]
         self.playground = Playground(self.env, self.agents)
 
-    def test_builb_callback(self, mocker):
+    def test_build_callback(self):
         """ should build a CallbackList from given callbacks and logger
         and set their params and playground. """
         callbacks = [Callback(), Callback()]
@@ -95,6 +95,17 @@ class TestPlaygroundBuildCallbacks:
             check.equal(callback.params, params)
             check.equal(callback.playground, self.playground)
         check.is_in(logger, callbacklist.callbacks)
+
+    def test_builb_callback_no_logger(self):
+        """ should work if logger is None. """
+        callbacks = [Callback(), Callback()]
+        logger = None
+        params = {'param123': 123}
+        callbacklist = self.playground._build_callbacks(callbacks, logger, params)
+        check.is_instance(callbacklist, CallbackList)
+        for callback in callbacklist.callbacks:
+            check.equal(callback.params, params)
+            check.equal(callback.playground, self.playground)
 
 
 class TestPlaygroundReset:
@@ -171,36 +182,6 @@ class TestPlaygroundReset:
         check.is_true(done_handler.reset.called)
 
 
-class TestPlaygroundGetNextAgent:
-    """ Playground._get_next_agent """
-
-    @pytest.fixture(autouse=True)
-    def setup_playground(self):
-        """Setup of used fixtures"""
-        self.n_agents = 5
-        self.agents = [Agent() for _ in range(self.n_agents)]
-
-    def test_no_turnenv(self):
-        """ should return the first agent if env is not a TurnEnv. """
-        playground = Playground(Env(), self.agents)
-        _, agent_id = playground._get_next_agent('observation')
-        check.equal(agent_id, 0)
-
-    def test_turnenv(self, mocker):
-        """ should return the first agent if env is not a TurnEnv. """
-        mocker.patch('learnrl.envs.TurnEnv.turn', return_value=2)
-        playground = Playground(TurnEnv(), self.agents)
-        _, agent_id = playground._get_next_agent('observation')
-        check.equal(agent_id, 2)
-
-    def test_turnenv_indexerror(self, mocker):
-        """ should return the first agent if env is not a TurnEnv. """
-        mocker.patch('learnrl.envs.TurnEnv.turn', return_value=10)
-        playground = Playground(TurnEnv(), self.agents)
-        with pytest.raises(ValueError, match=r'Not enough agents.*'):
-            playground._get_next_agent('observation')
-
-
 class TestPlaygroundAgentOrder:
 
     """ Playground.set_agent_order """
@@ -248,3 +229,123 @@ class TestPlaygroundAgentOrder:
         """ should raise ValueError if missing indexes in custom order. """
         with pytest.raises(ValueError, match=r".*not taking every index*"):
             Playground(self.env, self.agents, agents_order=[4, 6, 1, 2, 0])
+
+
+class TestPlaygroundGetNextAgent:
+    """ Playground._get_next_agent """
+
+    @pytest.fixture(autouse=True)
+    def setup_playground(self):
+        """Setup of used fixtures"""
+        self.n_agents = 5
+        self.agents = [Agent() for _ in range(self.n_agents)]
+
+    def test_no_turnenv(self):
+        """ should return the first agent if env is not a TurnEnv. """
+        playground = Playground(Env(), self.agents)
+        _, agent_id = playground._get_next_agent('observation')
+        check.equal(agent_id, 0)
+
+    def test_turnenv(self, mocker):
+        """ should return the agent designed by agent_order and turn if env is a TurnEnv. """
+        mocker.patch('learnrl.envs.TurnEnv.turn', return_value=2)
+        playground = Playground(TurnEnv(), self.agents)
+        playground.agents_order = [3, 2, 1, 0, 4]
+        _, agent_id = playground._get_next_agent('observation')
+        check.equal(agent_id, 1)
+
+    def test_turnenv_indexerror(self, mocker):
+        """ should raise ValueError if turn result is out of agent_order. """
+        mocker.patch('learnrl.envs.TurnEnv.turn', return_value=10)
+        playground = Playground(TurnEnv(), self.agents)
+        with pytest.raises(ValueError, match=r'Not enough agents.*'):
+            playground._get_next_agent('observation')
+
+
+class TestPlaygroundRun:
+
+    """Playground.run"""
+
+    @pytest.fixture(autouse=True)
+    def setup_playground(self):
+        """Setup of used fixtures"""
+        self.env = Env()
+        self.n_agents = 5
+        self.agents = [Agent() for _ in range(self.n_agents)]
+
+    def test_run(self, mocker):
+        """ should call callbacks at the right time and in the right order. """
+
+        steps_outputs = [
+            (f'obs_{i+1}', False, {'log': i+1})
+            for i in range(9)
+        ]
+        steps_outputs += [(f'obs_{9}', True, {'log': 9})]
+        steps_outputs = steps_outputs*10
+        steps_outputs = steps_outputs[::-1]
+
+        def dummy_run_step(*args, **kwargs):
+            return steps_outputs.pop()
+
+        class RegisterCallback(Callback):
+
+            """Dummy Callback to register calls"""
+
+            def __init__(self):
+                super().__init__()
+                self.stored_key = ""
+
+            def on_run_begin(self, logs=None):
+                self.stored_key += "|-"
+
+            def on_episodes_cycle_begin(self, episode, logs=None):
+                self.stored_key += "["
+
+            def on_episode_begin(self, episode, logs=None):
+                self.stored_key += "("
+
+            def on_steps_cycle_begin(self, step, logs=None):
+                self.stored_key += "<"
+
+            def on_step_begin(self, step, logs=None):
+                self.stored_key += ","
+
+            def on_step_end(self, step, logs=None):
+                self.stored_key += "."
+
+            def on_steps_cycle_end(self, step, logs=None):
+                self.stored_key += ">"
+
+            def on_episode_end(self, episode, logs=None):
+                self.stored_key += ")"
+
+            def on_episodes_cycle_end(self, episode, logs=None):
+                self.stored_key += "]"
+
+            def on_run_end(self, logs=None):
+                self.stored_key += "-|"
+
+        mocker.patch(
+            'learnrl.playground.Playground._get_episodes_cycle_len',
+            return_value=3
+        )
+        mocker.patch(
+            'learnrl.playground.Playground._reset',
+            lambda *args: ('obs_0', 0, False, {})
+        )
+        mocker.patch(
+            'learnrl.playground.Playground._build_callbacks',
+            lambda self, callbacks, logger, params: callbacks[0]
+        )
+        mocker.patch(
+            'learnrl.playground.Playground._run_step',
+            dummy_run_step
+        )
+
+        playground = Playground(self.env, self.agents)
+        register_callback = RegisterCallback()
+        playground.run(episodes=10, callbacks=[register_callback], steps_cycle_len=3)
+        episode_key = "(<,.,.,.><,.,.,.><,.,.,.><,.>)"
+        expected_key = "|-[" + episode_key*3 + "][" + episode_key*3 + "][" + \
+            episode_key*3  + "][" + episode_key + "]-|"
+        check.equal(register_callback.stored_key, expected_key)

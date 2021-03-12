@@ -153,7 +153,10 @@ class Playground():
 
     def _build_callbacks(self, callbacks, logger, params):
         callbacks = callbacks if callbacks is not None else []
-        callbacks = CallbackList(callbacks + [logger])
+        if logger is not None:
+            callbacks += [logger]
+
+        callbacks = CallbackList(callbacks)
         callbacks.set_params(params)
         callbacks.set_playground(self)
         return callbacks
@@ -340,12 +343,12 @@ class Playground():
                     done_handler=done_handler,
                     logs=logs
                 )
-
                 callbacks.on_step_end(step, logs)
-                step += 1
 
                 if (step + 1) % steps_cycle_len == 0 or done:
                     callbacks.on_steps_cycle_end(step, logs)
+
+                step += 1
 
             callbacks.on_episode_end(episode, logs)
 
