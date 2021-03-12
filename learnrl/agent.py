@@ -22,6 +22,7 @@ class Agent():
             greedy: If True, act greedely (without exploration).
 
         """
+        raise NotImplementedError('Agent.act must be user-defined by subclassing.')
 
     def learn(self) -> Dict[str, Union[int, float, np.ndarray]]:
         """How the :ref:`Agent` learns from his experiences.
