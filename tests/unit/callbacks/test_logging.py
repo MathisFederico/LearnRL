@@ -310,16 +310,17 @@ class TestLoggingCallbackExtractLists:
         metrics = [
             ('reward~rwd', {'steps': 'sum', 'episode': 'sum'}),
             ('loss', {'episodes': 'last'}),
-            'exploration~exp.last'
+            'exploration~exp.last',
+            'decay'
         ]
 
         metric_lists = self.extract_lists(metrics)
 
         expected_metric_lists = [
-            ['reward~rwd', 'loss', 'exploration~exp'],
-            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last'],
-            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last'],
-            ['reward~rwd.avg', 'loss.last', 'exploration~exp.last']
+            ['reward~rwd', 'loss', 'exploration~exp', 'decay'],
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last', 'decay.avg'],
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last', 'decay.avg'],
+            ['reward~rwd.avg', 'loss.last', 'exploration~exp.last', 'decay.avg']
         ]
 
         metric_lists_names = [
