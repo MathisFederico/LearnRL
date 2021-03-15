@@ -167,6 +167,7 @@ class DummyPlayground():
 def test_logging_steps_operators_(cycle_operator, metric_name):
 
     print(cycle_operator, metric_name)
+
     logging_callback = LoggingCallback(
         metrics=[('reward', {'steps':cycle_operator}), ('loss', {'steps':cycle_operator})],
     )
