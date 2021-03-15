@@ -32,12 +32,12 @@ class TestCallback:
         callback.set_playground(expected_playground)
         check.equal(callback.playground, expected_playground)
 
-    @pytest.mark.parametrize('at', ['begin', 'end'])
-    @pytest.mark.parametrize('timescale', ['step', 'steps_cycle', 
+    @pytest.mark.parametrize('hook', ['begin', 'end'])
+    @pytest.mark.parametrize('timescale', ['step', 'steps_cycle',
         'episode', 'episodes_cycle', 'run'])
-    def test_callback_on_(self, timescale, at):
+    def test_callback_on_(self, timescale, hook):
         callback = Callback()
-        callback_hook = getattr(callback, f'on_{timescale}_{at}')
+        callback_hook = getattr(callback, f'on_{timescale}_{hook}')
         if timescale in ['step', 'steps_cycle']:
             callback_hook(step=7, logs={'log': 'info'})
         elif timescale in ['episode', 'episodes_cycle']:
@@ -88,13 +88,13 @@ class TestCallbackList:
         callbacks._call_key_hook('timescale', 'at')
 
     @pytest.mark.parametrize('hook', ['begin', 'end'])
-    @pytest.mark.parametrize('timescale', ['step', 'steps_cycle', 
+    @pytest.mark.parametrize('timescale', ['step', 'steps_cycle',
         'episode', 'episodes_cycle', 'run'])
     def test_call_key_hook(self, mocker, timescale, hook):
         time = 0.1 if hook == 'begin' else 0.123
         value = 17 if timescale != 'run' else None
         logs = {'log': 7}
-        t_begin_name = f't_{timescale}_begin' 
+        t_begin_name = f't_{timescale}_begin'
         dt_name = f'dt_{timescale}'
         hook_name = f'on_{timescale}_{hook}'
 
@@ -115,7 +115,7 @@ class TestCallbackList:
 
 
     @pytest.mark.parametrize('hook', ['begin', 'end'])
-    @pytest.mark.parametrize('timescale', ['step', 'steps_cycle', 
+    @pytest.mark.parametrize('timescale', ['step', 'steps_cycle',
         'episode', 'episodes_cycle', 'run'])
     def test_calls_all_callbacks_on_(self, timescale, hook, mocker):
         mocker.patch('learnrl.callbacks.callback.CallbackList._call_key_hook')

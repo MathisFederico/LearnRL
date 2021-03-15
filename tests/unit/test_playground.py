@@ -1,6 +1,6 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
-# pylint: disable=protected-access, attribute-defined-outside-init, unused-argument
+# pylint: disable=protected-access, attribute-defined-outside-init, unused-argument, too-many-instance-attributes
 
 """ Test playground.py """
 
