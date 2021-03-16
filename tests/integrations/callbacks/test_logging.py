@@ -1,5 +1,6 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+# pylint: disable=too-many-branches, too-many-statements, missing-function-docstring
 
 """ Test metrics logging behavior """
 
@@ -108,9 +109,11 @@ class DummyPlayground():
 
                 if (step + 1) % steps_cycle_len == 0 or step == n_steps - 1:
                     for metric_name in ('reward', 'loss'):
+                        sum_value = steps_cycle_tracker[metric_name]
+                        avg_value = steps_cycle_tracker[metric_name] / steps_cycle_seen
                         logs.update({
-                            f'{metric_name}_steps_sum': steps_cycle_tracker[metric_name],
-                            f'{metric_name}_steps_avg': steps_cycle_tracker[metric_name] / steps_cycle_seen,
+                            f'{metric_name}_steps_sum': sum_value,
+                            f'{metric_name}_steps_avg': avg_value,
                         })
                     callbacks.on_steps_cycle_end(step, logs)
 
@@ -167,6 +170,7 @@ class DummyPlayground():
 def test_logging_steps_operators_(cycle_operator, metric_name):
 
     print(cycle_operator, metric_name)
+
     logging_callback = LoggingCallback(
         metrics=[('reward', {'steps':cycle_operator}), ('loss', {'steps':cycle_operator})],
     )

@@ -105,12 +105,16 @@ class LoggingCallback(Callback):
                     metric_name, ops = metric
                 elif isinstance(metric, str):
                     metric_name = metric
-                    ops = {}
+                    if '.' in metric_name:
+                        metric_name, opertor_for_all = metric_name.split('.')
+                        ops = {key:opertor_for_all for key in ('steps', 'episode', 'episodes')}
+                    else:
+                        ops = {}
+
                 step_metrics.append(metric_name)
                 steps_cycle_metrics.append('.'.join((metric_name, ops.get('steps', 'avg'))))
                 episode_metrics.append('.'.join((metric_name, ops.get('episode', 'avg'))))
                 episodes_cycle_metrics.append('.'.join((metric_name, ops.get('episodes', 'avg'))))
-
         return step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics
 
     def _reset_attr(self, attr_name, operator):
@@ -228,32 +232,29 @@ class LoggingCallback(Callback):
             **kwargs
         ):
         """Update the logger attributes of all agents based on a metric list"""
-        if self.n_agents > 1:
-            for agent_id in range(self.n_agents):
-                self._update_metrics(metric_list, target_prefix, agent_id=agent_id, **kwargs)
-        else:
-            self._update_metrics(metric_list, target_prefix, agent_id=0, **kwargs)
+        for agent_id in range(self.n_agents):
+            self._update_metrics(metric_list, target_prefix, agent_id=agent_id, **kwargs)
+
+    def on_run_begin(self, logs=None):
+        self.n_agents = len(self.playground.agents)
+
+    def on_episodes_cycle_begin(self, episode, logs=None):
+        self._update_metrics_all_agents(self.episodes_cycle_metrics,
+            'episodes_cycle', source_prefix='episode', logs=logs, reset=True)
+
+    def on_episode_begin(self, episode, logs=None):
+        self._update_metrics_all_agents(self.episode_metrics,
+            'episode', logs=logs, reset=True)
+
+    def on_steps_cycle_begin(self, step, logs=None):
+        self._update_metrics_all_agents(self.steps_cycle_metrics,
+            'steps_cycle', logs=logs, reset=True)
 
     def on_step_end(self, step, logs=None):
         agent_id = logs.get('agent_id') if self.n_agents > 1 else None
         self._update_metrics(self.episode_metrics, 'episode', logs=logs, agent_id=agent_id)
         self._update_metrics_all_agents(self.steps_cycle_metrics, 'steps_cycle', logs=logs)
 
-    def on_steps_cycle_begin(self, step, logs=None):
-        self._update_metrics_all_agents(self.steps_cycle_metrics,
-            'steps_cycle', logs=logs, reset=True)
-
-    def on_episode_begin(self, episode, logs=None):
-        self._update_metrics_all_agents(self.episode_metrics,
-            'episode', logs=logs, reset=True)
-
     def on_episode_end(self, episode, logs=None):
         self._update_metrics_all_agents(self.episodes_cycle_metrics,
             'episodes_cycle', source_prefix='episode', logs=logs)
-
-    def on_episodes_cycle_begin(self, episode, logs=None):
-        self._update_metrics_all_agents(self.episodes_cycle_metrics,
-            'episodes_cycle', source_prefix='episode', logs=logs, reset=True)
-
-    def on_run_begin(self, logs=None):
-        self.n_agents = len(self.playground.agents)

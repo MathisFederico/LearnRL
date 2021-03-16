@@ -148,7 +148,7 @@ class CallbackList(Callback):
             callback.set_playground(playground)
 
     def _call_key_hook(self, key, hook, value=None, logs=None):
-        """ Helper func for {step|episode|cycle|run}_{begin|end} methods. """
+        """ Helper func for {step|episode|steps_cycle|episodes_cycle|run}_{begin|end} methods. """
 
         if len(self.callbacks) == 0:
             return

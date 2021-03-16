@@ -1,6 +1,6 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
-# pylint: disable=protected-access, attribute-defined-outside-init, unused-argument
+# pylint: disable=protected-access, attribute-defined-outside-init, unused-argument, missing-function-docstring
 
 """ Test metrics logging behavior """
 
@@ -167,6 +167,11 @@ class TestMetricList:
 class TestLoggingCallback:
     """ LoggingCallback """
 
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """ Setup fixtures. """
+        self.logging_callback_path = "learnrl.callbacks.logging_callback.LoggingCallback"
+
     def test_init(self):
         """ should instanciate correctly. """
         LoggingCallback()
@@ -224,6 +229,91 @@ class TestLoggingCallback:
             logging_callback.reward = 'N/A'
             logging_callback._update_attr('reward', 1, 'x')
 
+    def test_on_run_begin(self, mocker):
+        """ should set n_agents on_run_begin. """
+        class DummyPlayground():
+            """DummyPlaygrounf"""
+            def __init__(self, n_agents):
+                self.agents = [None] * n_agents
+
+        n_agents = 5
+        mocker.patch(self.logging_callback_path + '', return_value=n_agents)
+        logging_callback = LoggingCallback()
+        logging_callback.playground = DummyPlayground(n_agents)
+        check.is_none(logging_callback.n_agents)
+        logging_callback.on_run_begin()
+        check.equal(logging_callback.n_agents, n_agents)
+
+    def test_on_episodes_cycle_begin(self, mocker):
+        """ should reset episodes_cycle_metrics on_episodes_cycle_begin. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_episodes_cycle_begin(episode=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'episodes_cycle')
+        check.is_true(kwargs.get('reset'))
+
+    def test_on_episode_begin(self, mocker):
+        """ should reset episode_metrics on_episode_begin. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_episode_begin(episode=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'episode')
+        check.is_true(kwargs.get('reset'))
+
+    def test_on_step_cycle_begin(self, mocker):
+        """ should reset steps_cycle_metrics on step_cycle_begin. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_steps_cycle_begin(step=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'steps_cycle')
+        check.is_true(kwargs.get('reset'))
+
+    def test_on_episode_end(self, mocker):
+        """ should update episodes_cycle_metrics on_episode_end from episode metrics. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_episode_end(episode=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'episodes_cycle')
+        check.is_false(kwargs.get('reset'))
+        check.equal(kwargs.get('source_prefix'), 'episode')
+
+    def test_on_step_end(self, mocker):
+        """ should update episode_metrics for the current agent and
+            steps_cycle_metrics for all agents on_step_end. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        mocker.patch(self.logging_callback_path + '._update_metrics')
+
+        logging_callback = LoggingCallback()
+        logging_callback.n_agents = 1
+        logging_callback.on_step_end(step=7)
+
+        args, kwargs = logging_callback._update_metrics.call_args
+        check.equal(args[1], 'episode')
+        check.is_false(kwargs.get('reset'))
+        check.is_none(kwargs.get('agent_id'))
+
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'steps_cycle')
+        check.is_false(kwargs.get('reset'))
+
+        # Multi agents
+        logging_callback = LoggingCallback()
+        logging_callback.n_agents = 5
+        logging_callback.on_step_end(step=7, logs={'agent_id': 3})
+
+        args, kwargs = logging_callback._update_metrics.call_args
+        check.equal(args[1], 'episode')
+        check.is_false(kwargs.get('reset'))
+        check.equal(kwargs.get('agent_id'), 3)
+
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'steps_cycle')
+        check.is_false(kwargs.get('reset'))
+
 
 class TestGetAttrName:
     """ LoggingCallback._get_attr_name """
@@ -254,7 +344,6 @@ class TestExtractFromLogs:
     @pytest.fixture(autouse=True)
     def setup(self):
         """ Setup fake logs and retrieve function to test. """
-
         self.extract_from_logs = LoggingCallback._extract_metric_from_logs
         self.logs = {
             'value': 0,
@@ -270,26 +359,21 @@ class TestExtractFromLogs:
 
     def test_find_value(self):
         """ should find value in logs. """
-
         value = self.extract_from_logs('value', self.logs)
         check.equal(value, 0)
 
     def test_find_nothing(self):
         """ should return N/A when there is no value. """
-
         nothing = self.extract_from_logs('nothing', self.logs)
         check.equal(nothing, 'N/A')
 
-
     def test_find_any_specific_value(self):
         """ should find any specific value in agent when no agent is specified. """
-
         specific_value = self.extract_from_logs('specific_value', self.logs)
         check.equal(specific_value, 42)
 
     def test_find_agent_specific_value(self):
         """ should find specific agent values. """
-
         value_0 = self.extract_from_logs('value', self.logs, agent_id=0)
         value_1 = self.extract_from_logs('value', self.logs, agent_id=1)
 
@@ -298,7 +382,6 @@ class TestExtractFromLogs:
 
     def test_return_outer_value_when_no_specific_agent_value(self):
         """ should return outer value if no specific value is found when an agent is specified. """
-
         step = self.extract_from_logs('step', self.logs, agent_id=0)
         check.equal(step, 2)
 
@@ -309,7 +392,6 @@ class TestLoggingCallbackExtractLists:
     @pytest.fixture(autouse=True)
     def setup_logs(self):
         """ Setup fake logs and retrieve function to test. """
-
         self.extract_lists = LoggingCallback._extract_lists
 
     def test_extract_lists_use_case(self):
@@ -318,16 +400,17 @@ class TestLoggingCallbackExtractLists:
         metrics = [
             ('reward~rwd', {'steps': 'sum', 'episode': 'sum'}),
             ('loss', {'episodes': 'last'}),
-            'exploration~exp'
+            'exploration~exp.last',
+            'decay'
         ]
 
         metric_lists = self.extract_lists(metrics)
 
         expected_metric_lists = [
-            ['reward~rwd', 'loss', 'exploration~exp'],
-            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.avg'],
-            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.avg'],
-            ['reward~rwd.avg', 'loss.last', 'exploration~exp.avg']
+            ['reward~rwd', 'loss', 'exploration~exp', 'decay'],
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last', 'decay.avg'],
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last', 'decay.avg'],
+            ['reward~rwd.avg', 'loss.last', 'exploration~exp.last', 'decay.avg']
         ]
 
         metric_lists_names = [
@@ -346,7 +429,6 @@ class TestLoggingCallbackExtractLists:
 
     def test_extract_lists_wrong_format(self):
         """ should raise ValueError on wrong metric nested format. """
-
         metrics = ('reward')
 
         with pytest.raises(ValueError, match=r".*metrics format.*"):
@@ -403,3 +485,125 @@ class TestLoggingCallbackGetValue:
         metric = Metric('attribute')
         value = logging_callback._get_value(metric)
         check.equal(value, expected_value)
+
+
+class TestLoggingCallbackUpdateMetrics:
+    """ LoggingCallback._update_metrics """
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.metric_list = MetricList([
+            Metric("metric_1"),
+            Metric("metric_2"),
+            Metric("metric_2")
+        ])
+
+        self.logging_callback = LoggingCallback()
+
+    def test_na_value(self, mocker):
+        """ should not update attr if value is N/A. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._get_attr_name', return_value="target_name")
+        mocker.patch(logging_callback_path + '._reset_attr')
+        mocker.patch(logging_callback_path + '._get_value', return_value='N/A')
+        mocker.patch(logging_callback_path + '._update_attr')
+
+        self.logging_callback._update_metrics(
+            self.metric_list,
+            'target_prefix',
+            source_prefix='source_prefix',
+            logs='logs',
+            agent_id='agent_id',
+            reset=False
+        )
+
+        for args, _ in self.logging_callback._get_attr_name.call_args_list:
+            check.equal(args[0], 'target_prefix')
+            check.equal(args[2], 'agent_id')
+
+        for args, _ in self.logging_callback._get_value.call_args_list:
+            check.equal(args[1], 'source_prefix')
+            check.equal(args[2], 'agent_id')
+            check.equal(args[3], 'logs')
+
+        check.is_false(self.logging_callback._reset_attr.called)
+        check.is_false(self.logging_callback._update_attr.called)
+
+    def test_update(self, mocker):
+        """ should update attr if value is not N/A. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._get_attr_name', return_value="target_name")
+        mocker.patch(logging_callback_path + '._reset_attr')
+        mocker.patch(logging_callback_path + '._get_value', return_value="value")
+        mocker.patch(logging_callback_path + '._update_attr')
+
+        self.logging_callback._update_metrics(
+            self.metric_list,
+            'target_prefix',
+            source_prefix='source_prefix',
+            logs='logs',
+            agent_id='agent_id',
+            reset=False
+        )
+
+        for args, _ in self.logging_callback._get_attr_name.call_args_list:
+            check.equal(args[0], 'target_prefix')
+            check.equal(args[2], 'agent_id')
+
+        for args, _ in self.logging_callback._get_value.call_args_list:
+            check.equal(args[1], 'source_prefix')
+            check.equal(args[2], 'agent_id')
+            check.equal(args[3], 'logs')
+
+        check.is_false(self.logging_callback._reset_attr.called)
+
+        for args, _ in self.logging_callback._update_attr.call_args_list:
+            check.equal(args[0], 'target_name')
+            check.equal(args[1], 'value')
+
+    def test_reset(self, mocker):
+        """ should reset attr if reset is True. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._get_attr_name', return_value="target_name")
+        mocker.patch(logging_callback_path + '._reset_attr')
+        mocker.patch(logging_callback_path + '._get_value', return_value="value")
+        mocker.patch(logging_callback_path + '._update_attr')
+
+        self.logging_callback._update_metrics(
+            self.metric_list,
+            'target_prefix',
+            source_prefix='source_prefix',
+            logs='logs',
+            agent_id='agent_id',
+            reset=True
+        )
+
+        for args, _ in self.logging_callback._get_attr_name.call_args_list:
+            check.equal(args[0], 'target_prefix')
+            check.equal(args[2], 'agent_id')
+
+        for args, _ in self.logging_callback._get_value.call_args_list:
+            check.equal(args[1], 'source_prefix')
+            check.equal(args[2], 'agent_id')
+            check.equal(args[3], 'logs')
+
+        for args, _ in self.logging_callback._reset_attr.call_args_list:
+            check.equal(args[0], 'target_name')
+
+        check.is_false(self.logging_callback._update_attr.called)
+
+    def test_all_agents(self, mocker):
+        """ should update all agents indepentently. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._update_metrics')
+
+        n_agents = 5
+        self.logging_callback.n_agents = n_agents
+        self.logging_callback._update_metrics_all_agents(
+            self.metric_list,
+            'target_prefix'
+        )
+
+        for i in range(n_agents):
+            _, kwargs = self.logging_callback._update_metrics.call_args_list[i]
+            check.equal(kwargs.get('agent_id'), i)

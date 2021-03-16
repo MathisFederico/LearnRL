@@ -5,8 +5,9 @@
 
 import warnings
 
-from typing import List, Union, Callable
+from typing import List, Union, Callable, Any
 from abc import abstractmethod
+from numbers import Number
 
 import numpy as np
 from gym import Env
@@ -27,7 +28,8 @@ class DoneHandler():
     """
 
     @abstractmethod
-    def done(self, previous_observation, action, reward, done, info, observation) -> bool:
+    def done(self, previous_observation, action, reward,
+            done, info, observation, logs) -> bool:
         """Replace the environment done.
 
         Often used to make episodes shorter when the agent is stuck for example.
@@ -52,7 +54,8 @@ class DoneHandler():
 
     def _done(self, *args) -> bool:
         done = self.done(*args)
-        if not isinstance(done, (bool, np.bool, np.bool_)):
+        if not isinstance(done, bool) and \
+           not (isinstance(done, np.ndarray) and done.dtype == bool):
             raise ValueError(f"Done should be bool, got {done} of type {type(done)} instead")
         return done
 
@@ -73,7 +76,7 @@ class RewardHandler():
 
     @abstractmethod
     def reward(self, previous_observation, action, reward,
-            done, info, observation)-> float:
+            done, info, observation, logs)-> float:
         """Replace the environment reward.
 
         Often used to scale rewards or to do reward shaping.
@@ -98,9 +101,10 @@ class RewardHandler():
 
     def _reward(self, *args) -> float:
         reward = self.reward(*args)
-        if not isinstance(reward, (int, float)):
+        if not isinstance(reward, Number) and \
+           not (isinstance(reward, np.ndarray) and np.issubdtype(reward.dtype, np.floating)):
             raise ValueError(
-                f"Rewards should be scalars, got {reward} of type {type(reward)} instead"
+                f"Rewards should be a float, got {reward} of type {type(reward)} instead"
             )
         return float(reward)
 
@@ -150,9 +154,125 @@ class Playground():
 
         return episodes_cycle_len
 
+    def _build_callbacks(self, callbacks, logger, params):
+        callbacks = callbacks if callbacks is not None else []
+        if logger is not None:
+            callbacks += [logger]
+
+        callbacks = CallbackList(callbacks)
+        callbacks.set_params(params)
+        callbacks.set_playground(self)
+        return callbacks
+
+    def _reset(self, reward_handler, done_handler):
+        previous = [{'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None}
+            for _ in range(len(self.agents))]
+        if isinstance(reward_handler, RewardHandler):
+            reward_handler.reset()
+        if isinstance(done_handler, DoneHandler):
+            done_handler.reset()
+        return self.env.reset(), 0, False, previous
+
+    def _get_next_agent(self, observation):
+        turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
+        try:
+            agent_id = self.agents_order[turn_id]
+            agent = self.agents[agent_id]
+        except IndexError as index_error:
+            error_msg = f'Not enough agents to play environement {self.env}'
+            raise ValueError(error_msg) from index_error
+        return agent, agent_id
+
+    @staticmethod
+    def _call_handlers(reward, done, experience,
+            reward_handler=None, done_handler=None, logs=None):
+        logs = {} if logs is None else logs
+
+        logs.update({'reward': reward})
+        if reward_handler is not None:
+            handled_reward = reward_handler(*experience, logs)
+            experience['reward'] = handled_reward
+            logs.update({'handled_reward': handled_reward})
+
+        logs.update({'done': done})
+        if done_handler is not None:
+            handled_done = done_handler(*experience, logs)
+            experience['done'] = handled_done
+            logs.update({'handled_done': handled_done})
+
+    def _run_step(self,
+            observation: Any,
+            previous: list,
+            logs: dict,
+            learn=False,
+            render=False,
+            render_mode='human',
+            reward_handler=None,
+            done_handler=None,
+        ):
+        """Run a single step"""
+        # Render the environment
+        if render:
+            self.env.render(render_mode)
+
+        agent, agent_id = self._get_next_agent(observation)
+
+        # If the agent has played before, perform a learning step
+        prev = previous[agent_id]
+        if learn and prev['observation'] is not None:
+            agent.remember(
+                prev['observation'], prev['action'], prev['reward'],
+                prev['done'], observation, prev['info']
+            )
+            agent_logs = agent.learn()
+            logs.update({f'agent_{agent_id}': agent_logs})
+
+        # Adds step informations to logs
+        logs.update({'agent_id':agent_id, 'observation':observation})
+
+        # Ask action to agent
+        action = agent.act(observation, greedy=not learn)
+        # Perform environment step
+        next_observation, reward, done, info = self.env.step(action)
+        logs.update(info)
+
+        # Compact experience
+        experience = {
+            'observation': observation,
+            'action': action,
+            'reward': reward,
+            'done': done,
+            'next_observation': next_observation,
+            'info': info
+        }
+
+        # Use Handlers
+        self._call_handlers(reward, done, experience, reward_handler, done_handler, logs)
+
+        # Store experience in prev
+        if learn:
+            for key, value in zip(prev, [observation, action, reward, done, info]):
+                prev[key] = value
+
+            # Perform a last learning step if done
+            if done:
+                agent.remember(**experience)
+                agent_logs = agent.learn()
+                logs.update({f'agent_{agent_id}': agent_logs})
+
+        # Do a last rendering if done
+        if done and render:
+            self.env.render(render_mode)
+
+        # Add experience to logs
+        logs.update(experience)
+
+        return next_observation, done
+
     def run(self,
             episodes: int,
             render: bool=True,
+            render_mode: str='human',
             learn: bool=True,
             steps_cycle_len: int=10,
             episodes_cycle_len: Union[int, float]=0.05,
@@ -170,7 +290,9 @@ class Playground():
 
         Args:
             episodes: Number of episodes to run.
-            render: If True, call :meth:`TurnEnv.render` every step.
+            render: If True, call |gym.render| every step.
+            render_mode: Rendering mode.
+                One of {'human', 'rgb_array', 'ansi'} (see |gym.render|).
             learn: If True, call :meth:`Agent.learn` every step.
             steps_cycle_len: Number of steps that compose a cycle.
             episode_cycle_len: Number of episodes that compose a cycle.
@@ -184,11 +306,8 @@ class Playground():
                 If None use the default :class:`~learnrl.callbacks.logger.Logger`.
 
         """
-
-        # Get episode cycle lenght
         episodes_cycle_len = self._get_episodes_cycle_len(episodes_cycle_len, episodes)
 
-        # Build callback list
         params = {
             'episodes': episodes,
             'episodes_cycle_len': episodes_cycle_len,
@@ -199,14 +318,12 @@ class Playground():
         }
 
         logger = logger if logger else Logger(**kwargs)
-        callbacks = callbacks if callbacks is not None else []
-        callbacks = CallbackList(callbacks + [logger])
-        callbacks.set_params(params)
-        callbacks.set_playground(self)
+        callbacks = self._build_callbacks(callbacks, logger, params)
 
         # Start the run
         logs = {}
         logs.update(params)
+
         callbacks.on_run_begin(logs)
 
         for episode in range(episodes):
@@ -214,24 +331,9 @@ class Playground():
             if episode % episodes_cycle_len == 0:
                 callbacks.on_episodes_cycle_begin(episode, logs)
 
-            # Reset environment and Handlers
-            observation = self.env.reset()
-            if isinstance(reward_handler, RewardHandler):
-                reward_handler.reset()
-            if isinstance(done_handler, DoneHandler):
-                done_handler.reset()
+            observation, step, done, previous = self._reset(reward_handler, done_handler)
 
-            # Store previous for correct attribution in multi_agent settings (TurnEnv)
-            previous = [
-                {'observation':None, 'action':None, 'reward':None, 'done':None, 'info':None}
-                for _ in range(len(self.agents))
-            ]
-
-            # Initialize episode variables
-            done = False
-            step = 0
-
-            logs.update({'episode':episode})
+            logs.update({'episode': episode})
             callbacks.on_episode_begin(episode, logs)
 
             while not done:
@@ -239,102 +341,32 @@ class Playground():
                 if step % steps_cycle_len == 0:
                     callbacks.on_steps_cycle_begin(step, logs)
 
+                logs.update({'step': step})
                 callbacks.on_step_begin(step, logs)
 
-                next_observation, done, logs = self._run_step(
-                    step=step,
+                observation, done = self._run_step(
                     observation=observation,
                     previous=previous,
+                    logs=logs,
                     learn=learn,
                     render=render,
+                    render_mode=render_mode,
                     reward_handler=reward_handler,
                     done_handler=done_handler,
-                    logs=logs
                 )
-
                 callbacks.on_step_end(step, logs)
-
-                step += 1
-                observation = next_observation
 
                 if (step + 1) % steps_cycle_len == 0 or done:
                     callbacks.on_steps_cycle_end(step, logs)
 
-                # Do a last rendering if done
-                if done and render:
-                    self.env.render()
+                step += 1
 
             callbacks.on_episode_end(episode, logs)
 
-            if (episode + 1) % episodes_cycle_len == 0 or episode == episodes - 1:
+            if (episode + 1) % episodes_cycle_len == 0 or episode + 1 == episodes:
                 callbacks.on_episodes_cycle_end(episode, logs)
 
         callbacks.on_run_end(logs)
-
-    def _run_step(self, step, observation, previous,
-        learn, render, reward_handler, done_handler, logs):
-        """Run a single step"""
-        # Render the environment
-        if render:
-            self.env.render()
-
-        # Get playing agent (TurnEnv)
-        turn_id = self.env.turn(observation) if isinstance(self.env, TurnEnv) else 0
-        agent_id = self.agents_order[turn_id]
-        try:
-            agent = self.agents[agent_id]
-        except IndexError as error:
-            error_msg = f'Not enough agents to play environement {self.env}'
-            raise ValueError(error_msg) from error
-
-        # If the agent has played before, perform a learning step
-        prev = previous[agent_id]
-        if learn and prev['observation'] is not None:
-            agent.remember(
-                prev['observation'], prev['action'], prev['reward'],
-                prev['done'], observation, prev['info']
-            )
-            agent_logs = agent.learn()
-            logs.update({f'agent_{agent_id}': agent_logs})
-
-        # Adds step informations to logs
-        logs.update({'step':step, 'agent_id':agent_id, 'observation':observation})
-
-        # Ask action to agent
-        action = agent.act(observation, greedy=not learn)
-        # Perform environment step
-        next_observation, reward, done, info = self.env.step(action)
-
-        # Perform reward handling
-        logs.update({'reward': reward})
-        if reward_handler is not None:
-            reward = reward_handler(
-                observation, action, reward, done, info, next_observation
-            )
-            logs.update({'handled_reward': reward})
-
-        # Perform done handling
-        logs.update({'done': done})
-        if done_handler is not None:
-            done = done_handler(
-                observation, action, reward, done, info, next_observation
-            )
-            logs.update({'handled_done': done})
-
-        # Perform a learning step
-        if learn:
-            for key, value in zip(prev, [observation, action, reward, done, info]):
-                prev[key] = value
-            if done:
-                agent.remember(
-                    observation, action, reward, done, next_observation, info
-                )
-                agent_logs = agent.learn()
-                logs.update({f'agent_{agent_id}': agent_logs})
-
-        logs.update({'action': action, 'next_observation': next_observation})
-        logs.update(info)
-        return next_observation, done, logs
 
 
     def fit(self, episodes, **kwargs):
