@@ -55,6 +55,7 @@ class TestCallbackList:
         self.callback1 = Callback()
         self.callback2 = Callback()
         self.callbacks = [self.callback1, self.callback2]
+        self.callback_path = 'learnrl.callbacks.callback.Callback'
 
     def test_init(self):
         """ should instanciate correctly. """
@@ -62,25 +63,31 @@ class TestCallbackList:
         check.equal(callbacks.params, {})
         check.is_none(callbacks.playground)
 
-    def test_set_params(self):
+    def test_set_params(self, mocker):
         """ should update params of all callbacks correctly. """
+        mocker.patch(self.callback_path + '.set_params')
+
         callbacks = CallbackList(self.callbacks)
         expected_params = {"param": 1}
         callbacks.set_params(expected_params)
 
         check.equal(callbacks.params, expected_params)
         for callback in self.callbacks:
-            check.equal(callback.params, expected_params)
+            args, _ = callback.set_params.call_args
+            check.equal(args[0], expected_params)
 
-    def test_set_playground(self):
+    def test_set_playground(self, mocker):
         """ should update playground of all callbacks correctly. """
+        mocker.patch(self.callback_path + '.set_playground')
+
         callbacks = CallbackList(self.callbacks)
         expected_playground = "playground"
         callbacks.set_playground(expected_playground)
 
         check.equal(callbacks.playground, expected_playground)
         for callback in self.callbacks:
-            check.equal(callback.playground, expected_playground)
+            args, _ = callback.set_playground.call_args
+            check.equal(args[0], expected_playground)
 
     def test_call_key_hook_no_callback(self):
         """ _call_key_hook should do nothing if no callbacks. """

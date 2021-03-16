@@ -38,7 +38,7 @@ class TestPlayground:
             Playground("env", self.agents)
 
     def test_agent_typeerror(self):
-        " should raise a TypeError if the any agent isn't a subclass of learnrl.Agent. "
+        " should raise a TypeError if any agent isn't a subclass of learnrl.Agent. "
         with pytest.raises(TypeError, match=r"agent.*learnrl.Agent"):
             Playground(self.env, [Agent(), 'agent'])
 
@@ -207,17 +207,23 @@ class TestPlaygroundBuildCallbacks:
         self.agents = [Agent() for _ in range(self.n_agents)]
         self.playground = Playground(self.env, self.agents)
 
-    def test_build_callback(self):
+    def test_build_callback(self, mocker):
         """ should build a CallbackList from given callbacks and logger
         and set their params and playground. """
+        callback_path = 'learnrl.callbacks.callback.Callback'
+        mocker.patch(callback_path + '.set_params')
+        mocker.patch(callback_path + '.set_playground')
+
         callbacks = [Callback(), Callback()]
         logger = Callback()
         params = {'param123': 123}
         callbacklist = self.playground._build_callbacks(callbacks, logger, params)
         check.is_instance(callbacklist, CallbackList)
         for callback in callbacklist.callbacks:
-            check.equal(callback.params, params)
-            check.equal(callback.playground, self.playground)
+            args, _ = callback.set_params.call_args
+            check.equal(args[0], params)
+            args, _ = callback.set_playground.call_args
+            check.equal(args[0], self.playground)
         check.is_in(logger, callbacklist.callbacks)
 
     def test_builb_callback_no_logger(self):
@@ -538,7 +544,7 @@ class TestPlaygroundRunStep:
             check.equal(logs[log_name], expected)
 
     def test_render_not_done(self, mocker):
-        """ should render at each step begining if not done. """
+        """ should render at each step beginning if not done. """
         render_mode = 'render_mode'
         self.playground._run_step(
             self.observation,
@@ -553,7 +559,7 @@ class TestPlaygroundRunStep:
         check.equal(render_args[0], render_mode)
 
     def test_render_done(self, mocker):
-        """ should render at step begining and end if done. """
+        """ should render at step beginning and end if done. """
         render_mode = 'render_mode'
         self.env.step.return_value = (
             self.next_observation, self.reward, True, self.info
