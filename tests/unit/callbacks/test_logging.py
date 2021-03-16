@@ -1,280 +1,609 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
+# pylint: disable=protected-access, attribute-defined-outside-init, unused-argument, missing-function-docstring
 
-import pytest, sys
-import numpy as np
+""" Test metrics logging behavior """
 
-from learnrl.callbacks import LoggingCallback, Callback, CallbackList
+import pytest_check as check
+import pytest
 
+from learnrl.callbacks.logging_callback import LoggingCallback, Metric, MetricList
 
-class DummyPlayground():
+class TestMetric:
+    """ Metric """
 
-    def __init__(self, agents=[0]):
-        self.agents = agents
-
-    def run(self, callbacks, eps_end_func=None, verbose=0):
-
-        n_episodes = 10
-        steps_cycle_len = 3
-        episodes_cycle_len = 3
-
-        callbacks = CallbackList(callbacks)
-        callbacks.set_params({
-            'verbose':verbose,
-            'episodes': n_episodes,
-            'episodes_cycle_len':episodes_cycle_len,
-            'steps_cycle_len':steps_cycle_len,
-        })
-        callbacks.set_playground(self)
-
-        logs = {}
-        callbacks.on_run_begin(logs)
-
-        for episode in range(n_episodes):
-
-            agent_id = 0
-            logs.update({'agent_id': agent_id})
-
-            if episode % episodes_cycle_len == 0:
-
-                cycle_episode_seen = 0
-                cycle_tracker = {}
-
-                for metric_name in ('reward', 'loss'):
-
-                    cycle_tracker[metric_name] = {'sum_cycle_sum': 0, 'avg_cycle_sum': 0}
-
-                    logs.update({
-                        f'{metric_name}_sum_cycle_sum': None,
-                        f'{metric_name}_avg_cycle_sum': None,
-                        f'{metric_name}_sum_cycle_avg': None,
-                        f'{metric_name}_avg_cycle_avg': None
-                    })
-
-                callbacks.on_episodes_cycle_begin(episode, logs)
-
-            callbacks.on_episode_begin(episode, logs)
-
-            reward_sum = loss_sum = 0
-            n_valid_loss = n_valid_reward = 0
-            n_steps = 10
-
-            for step in range(n_steps):
-
-                if step % steps_cycle_len == 0:
-
-                    steps_cycle_seen = 0
-                    steps_cycle_tracker = {}
-
-                    for metric_name in ('reward', 'loss'):
-                        steps_cycle_tracker[metric_name] = 0
-                    
-                        logs.update({
-                            f'{metric_name}_steps_sum': None,
-                            f'{metric_name}_steps_avg': None
-                        })
-
-                    callbacks.on_steps_cycle_begin(step, logs)
-
-                callbacks.on_step_begin(step, logs)
-
-                ## Step ##
-
-                reward = 1 + step + 10 * episode
-                reward_sum += reward
-                n_valid_reward += 1
-
-                if step == 0 and episode == 0:
-                    loss = 'N/A'
-                else:
-                    n_valid_loss += 1
-                    loss = 1 / (reward + 1) ** 1.6
-                    loss_sum += loss
-
-                logs.update({'reward': reward})
-                logs.update({'agent_0':{'loss':loss}})
-
-                steps_cycle_tracker['reward'] += reward
-                if not isinstance(loss, str):
-                    steps_cycle_tracker['loss'] += loss
-                steps_cycle_seen += 1
-
-                callbacks.on_step_end(step, logs)
-
-                if (step + 1) % steps_cycle_len == 0 or step == n_steps - 1:
-                    for metric_name in ('reward', 'loss'):
-                        logs.update({
-                            f'{metric_name}_steps_sum': steps_cycle_tracker[metric_name],
-                            f'{metric_name}_steps_avg': steps_cycle_tracker[metric_name]/steps_cycle_seen,
-                        })
-                    callbacks.on_steps_cycle_end(step, logs)
-
-            reward_avg = reward_sum / n_valid_reward
-            loss_avg = loss_sum / n_valid_loss
-
-            for metric_name, metric_avg, metric_sum in zip(
-                ('reward', 'loss'),
-                (reward_avg, loss_avg),
-                (reward_sum, loss_sum), 
-            ):
-
-                logs.update({
-                    f'{metric_name}_episode_avg': metric_avg,
-                    f'{metric_name}_episode_sum': metric_sum,
-                    }
-                )
-
-                cycle_tracker[metric_name]['sum_cycle_sum'] += metric_sum
-                cycle_tracker[metric_name]['avg_cycle_sum'] += metric_avg
-
-            ## Done ##
-            callbacks.on_episode_end(episode, logs)
-            cycle_episode_seen += 1
-
-            if (episode + 1) % episodes_cycle_len == 0 or episode == n_episodes - 1:
-
-                for metric_name, metric_avg, metric_sum in zip(
-                        ('reward', 'loss'),
-                        (reward_avg, loss_avg),
-                        (reward_sum, loss_sum), 
-                    ):
-
-                    sum_cycle_avg = cycle_tracker[metric_name]['sum_cycle_sum'] / cycle_episode_seen
-                    avg_cycle_avg = cycle_tracker[metric_name]['avg_cycle_sum'] / cycle_episode_seen
-
-                    logs.update({
-                        f'{metric_name}_sum_cycle_sum': cycle_tracker[metric_name]['sum_cycle_sum'],
-                        f'{metric_name}_avg_cycle_sum': cycle_tracker[metric_name]['avg_cycle_sum'],
-                        f'{metric_name}_sum_cycle_avg': sum_cycle_avg,
-                        f'{metric_name}_avg_cycle_avg': avg_cycle_avg
-                    })
-
-                callbacks.on_episodes_cycle_end(episode, logs)
-
-            if eps_end_func is not None: eps_end_func(callbacks, logs)
-
-        callbacks.on_run_end(logs)
-
-
-def test_extract_from_logs():
-
-    extract_from_logs = LoggingCallback._extract_metric_from_logs
-
-    logs = {
-        'value': 0,
-        'step': 2,
-        'agent_0': {
-            'value': 1,
-        },
-        'agent_1': {
-            'value': 2,
-            'specific_value': 42,
-        }
-    }
-
-    # We should find values
-    value = extract_from_logs('value', logs)
-    assert value == 0
-
-    # Nothing should return N/A
-    nothing = extract_from_logs('nothing', logs)
-    assert nothing == 'N/A'
-
-    # If no agent is specified, it should find any specific_value in agent
-    specific_value = extract_from_logs('specific_value', logs)
-    assert specific_value == 42
-
-    # We should find specific agent values
-    value_0 = extract_from_logs('value', logs, agent_id=0)
-    assert value_0 == 1
-    value_1 = extract_from_logs('value', logs, agent_id=1)
-    assert value_1 == 2
-
-    # When agent is specified, it should return outer value
-    # if a specific value is not found
-    step = extract_from_logs('step', logs, agent_id=0)
-    assert step == 2
-
-
-def test_logging_steps_avg_sum():
-    for cycle_operator in ['avg', 'sum']:
-        print(cycle_operator, '\n')
-
-        logging_callback = LoggingCallback(
-            step_metrics=['reward', 'loss'],
-            steps_cycle_metrics=[f'reward.{cycle_operator}', f'loss.{cycle_operator}']
+    def test_init_full(self):
+        """ should instanciate correctly with a full metric code. """
+        metric = Metric('reward~rwd.sum')
+        check.equal(metric.name, 'reward',
+            f'Metric name should be reward and not {metric.name}'
+        )
+        check.equal(metric.surname, 'rwd',
+            f'Metric surname should be rwd and not {metric.surname}'
+        )
+        check.equal(metric.operator, 'sum',
+            f'Metric opertor should be sum and not {metric.operator}'
         )
 
-        def check_function(callbacks, logs):
-            callback_dict = callbacks.callbacks[0].__dict__
-            for metric_name in ('reward', 'loss'):
-                expected = logs.get(f'{metric_name}_steps_{cycle_operator}')
-                logged = callback_dict[f'steps_cycle_{metric_name}']
-                if expected is not None:
-                    print(metric_name, logged, expected)
-                    assert logged != 'N/A'
-                    assert np.isclose(logged, expected)
 
-        pg = DummyPlayground()
-        pg.run([logging_callback], eps_end_func=check_function, verbose=3)
-        print()
+    def test_init_no_op(self):
+        """ should instanciate correctly without an operator. """
+        metric = Metric('reward~rwd')
+        check.equal(metric.name, 'reward',
+            f'Metric name should be reward and not {metric.name}'
+        )
+        check.equal(metric.surname, 'rwd',
+            f'Metric surname should be rwd and not {metric.surname}'
+        )
+        check.equal(metric.operator, 'avg',
+            f'Metric opertor should be avg and not {metric.operator}'
+        )
+
+    def test_init_no_surname(self):
+        """ should instanciate correctly without a surname. """
+        metric = Metric('reward.sum')
+        check.equal(metric.name, 'reward',
+            f'Metric name should be reward and not {metric.name}'
+        )
+        check.equal(metric.surname, 'reward',
+            f'Metric surname should be reward and not {metric.surname}'
+        )
+        check.equal(metric.operator, 'sum',
+            f'Metric opertor should be sum and not {metric.operator}'
+        )
+
+    def test_init_name_only(self):
+        """ should instanciate correctly with a name only. """
+        metric = Metric('reward')
+        check.equal(metric.name, 'reward',
+            f'Metric name should be reward and not {metric.name}'
+        )
+        check.equal(metric.surname, 'reward',
+            f'Metric surname should be reward and not {metric.surname}'
+        )
+        check.equal(metric.operator, 'avg',
+            f'Metric opertor should be avg and not {metric.operator}'
+        )
+
+    def test_equal_str(self):
+        """ should be equal to a string equal to its name only. """
+        metric = Metric('reward~rwd.sum')
+        check.is_true(metric == 'reward')
+        check.is_false(metric == 'rewards')
+        check.is_false(metric == 'rwd')
+
+    def test_equal_metric(self):
+        """ should be equal to a metric with same name. """
+        metric_sum = Metric('reward~rwd.sum')
+        metric_avg = Metric('reward~R.avg')
+        check.is_true(metric_sum == metric_avg)
+
+    def test_str(self):
+        """ should be represented as name with str. """
+        metric = Metric('reward~rwd.sum')
+        check.is_true(str(metric) == 'reward')
+
+    def test_repr(self):
+        """ should be represented as full metric code with repr. """
+        metric = Metric('reward~rwd.sum')
+        check.is_true(repr(metric) == 'reward~rwd.sum')
 
 
-def test_logging_episodes_avg_sum():
+class TestMetricList:
+    """ MetricList """
 
-    for eps_operator in ['avg', 'sum']:
+    @pytest.fixture(autouse=True)
+    def setup_metrics(self):
+        """ Setup metrics for tests """
+        self.metric_codes = ['reward~rwd.sum', 'loss_1', 'loss_2.sum']
+        self.metrics = [Metric(code) for code in self.metric_codes]
 
-        for cycle_operator in ['avg', 'sum']:
+    def test_init_metrics(self):
+        """ should instanciate correclty with a list of Metric. """
+        metriclist = MetricList(self.metrics)
+        check.equal(metriclist.metric_list, self.metrics)
+        check.equal(metriclist.metric_names, [metric.name for metric in self.metrics])
 
-            print(eps_operator, cycle_operator, '\n')
+    def test_init_codes(self):
+        """ should instanciate correclty with a list of metric codes. """
+        metriclist = MetricList(self.metrics)
+        check.equal(metriclist.metric_list, self.metrics)
+        check.equal(metriclist.metric_names, [metric.name for metric in self.metrics])
 
-            logging_callback = LoggingCallback(
-                detailed_step_metrics=[],
-                step_metrics=['reward', 'loss'],
-                episode_only_metrics=[], 
-                episode_metrics=[f'reward.{eps_operator}', f'loss.{eps_operator}'],
-                episodes_cycle_only_metrics=[],
-                episodes_cycle_metrics=[f'reward.{cycle_operator}', f'loss.{cycle_operator}'],
+    def test_str(self):
+        """ should be represented correctly to str. """
+        metriclist = MetricList(self.metrics)
+        check.equal(str(metriclist), str(self.metrics))
+
+    def test_add_metric(self):
+        """ should add correclty a new metric. """
+        metriclist = MetricList(self.metrics)
+        metric = Metric('exploration~exp.last')
+        metriclist += metric
+        check.equal(metriclist.metric_names, self.metrics + [metric])
+        expected_metric_names = [metric.name for metric in self.metrics] + ['exploration']
+        check.equal(metriclist.metric_names, expected_metric_names)
+
+    def test_add_metric_code(self):
+        """ should add correclty a new metric code. """
+        metriclist = MetricList(self.metrics)
+        metric = Metric('exploration~exp.last')
+        metriclist += 'exploration~exp.last'
+        check.equal(metriclist.metric_names, self.metrics + [metric])
+        expected_metric_names = [metric.name for metric in self.metrics] + ['exploration']
+        check.equal(metriclist.metric_names, expected_metric_names)
+
+    def test_add_metric_list(self):
+        """ should add correclty a list of Metric. """
+        metriclist = MetricList(self.metrics)
+        exploration = Metric('exploration~exp.last')
+        decay = Metric('decay.last')
+        metriclist += [exploration, decay]
+        check.equal(metriclist.metric_names, self.metrics + [exploration, decay])
+        expected_metric_names = [metric.name for metric in self.metrics] + ['exploration', 'decay']
+        check.equal(metriclist.metric_names, expected_metric_names)
+
+    def test_add_metric_codes_list(self):
+        """ should add correclty a new list of metric codes. """
+        metriclist = MetricList(self.metrics)
+        exploration = Metric('exploration~exp.last')
+        decay = Metric('decay.last')
+        metriclist += ['exploration~exp.last', 'decay.last']
+        check.equal(metriclist.metric_names, self.metrics + [exploration, decay])
+        expected_metric_names = [metric.name for metric in self.metrics] + ['exploration', 'decay']
+        check.equal(metriclist.metric_names, expected_metric_names)
+
+    def test_add_metriclist(self):
+        """ should concatenate correclty two MetricList. """
+        metriclist = MetricList(self.metrics)
+        exploration = Metric('exploration~exp.last')
+        decay = Metric('decay.last')
+        metriclist += MetricList([exploration, decay])
+        check.equal(metriclist.metric_names, self.metrics + [exploration, decay])
+        expected_metric_names = [metric.name for metric in self.metrics] + ['exploration', 'decay']
+        check.equal(metriclist.metric_names, expected_metric_names)
+
+
+class TestLoggingCallback:
+    """ LoggingCallback """
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """ Setup fixtures. """
+        self.logging_callback_path = "learnrl.callbacks.logging_callback.LoggingCallback"
+
+    def test_init(self):
+        """ should instanciate correctly. """
+        LoggingCallback()
+
+    def test_reset_attr_avg(self):
+        """ should reset arguments correctly. """
+        logging_callback = LoggingCallback()
+        logging_callback.reward = 0
+        logging_callback._reset_attr('reward', 'avg')
+        check.equal(logging_callback.reward, 'N/A')
+        check.equal(logging_callback.reward_seen, 0)
+
+    def test_reset_attr_anyop(self):
+        """ should reset arguments correctly. """
+        logging_callback = LoggingCallback()
+        logging_callback.reward = 0
+        logging_callback._reset_attr('reward', 'x')
+        check.equal(logging_callback.reward, 'N/A')
+
+    def test_update_attr_avg(self):
+        """ should update arguments correctly with avg operator. """
+        logging_callback = LoggingCallback()
+        logging_callback.reward = 0
+        logging_callback.reward_seen = 2
+        logging_callback._update_attr('reward', 1, 'avg')
+        check.equal(logging_callback.reward, 1/3)
+        check.equal(logging_callback.reward_seen, 3)
+
+        # With N/A
+        logging_callback = LoggingCallback()
+        logging_callback.reward = 'N/A'
+        logging_callback.reward_seen = 0
+        logging_callback._update_attr('reward', 1, 'avg')
+        check.equal(logging_callback.reward, 1)
+        check.equal(logging_callback.reward_seen, 1)
+
+    def test_update_attr_sum(self):
+        """ should update arguments correctly with sum operator. """
+        logging_callback = LoggingCallback()
+        logging_callback.reward = 2
+        logging_callback._update_attr('reward', 1, 'sum')
+        check.equal(logging_callback.reward, 3)
+
+    def test_update_attr_last(self):
+        """ should update arguments correctly with last operator. """
+        logging_callback = LoggingCallback()
+        logging_callback.reward = 2
+        logging_callback._update_attr('reward', 1, 'last')
+        check.equal(logging_callback.reward, 1)
+
+    def test_update_attr_raise(self):
+        """ should raise ValueError if operator is unknowed. """
+        with pytest.raises(ValueError, match=r"Unknowed operator.*"):
+            logging_callback = LoggingCallback()
+            logging_callback.reward = 'N/A'
+            logging_callback._update_attr('reward', 1, 'x')
+
+    def test_on_run_begin(self, mocker):
+        """ should set n_agents on_run_begin. """
+        class DummyPlayground():
+            """DummyPlaygrounf"""
+            def __init__(self, n_agents):
+                self.agents = [None] * n_agents
+
+        n_agents = 5
+        mocker.patch(self.logging_callback_path + '', return_value=n_agents)
+        logging_callback = LoggingCallback()
+        logging_callback.playground = DummyPlayground(n_agents)
+        check.is_none(logging_callback.n_agents)
+        logging_callback.on_run_begin()
+        check.equal(logging_callback.n_agents, n_agents)
+
+    def test_on_episodes_cycle_begin(self, mocker):
+        """ should reset episodes_cycle_metrics on_episodes_cycle_begin. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_episodes_cycle_begin(episode=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'episodes_cycle')
+        check.is_true(kwargs.get('reset'))
+
+    def test_on_episode_begin(self, mocker):
+        """ should reset episode_metrics on_episode_begin. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_episode_begin(episode=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'episode')
+        check.is_true(kwargs.get('reset'))
+
+    def test_on_step_cycle_begin(self, mocker):
+        """ should reset steps_cycle_metrics on step_cycle_begin. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_steps_cycle_begin(step=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'steps_cycle')
+        check.is_true(kwargs.get('reset'))
+
+    def test_on_episode_end(self, mocker):
+        """ should update episodes_cycle_metrics on_episode_end from episode metrics. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        logging_callback = LoggingCallback()
+        logging_callback.on_episode_end(episode=7)
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'episodes_cycle')
+        check.is_false(kwargs.get('reset'))
+        check.equal(kwargs.get('source_prefix'), 'episode')
+
+    def test_on_step_end(self, mocker):
+        """ should update episode_metrics for the current agent and
+            steps_cycle_metrics for all agents on_step_end. """
+        mocker.patch(self.logging_callback_path + '._update_metrics_all_agents')
+        mocker.patch(self.logging_callback_path + '._update_metrics')
+
+        logging_callback = LoggingCallback()
+        logging_callback.n_agents = 1
+        logging_callback.on_step_end(step=7)
+
+        args, kwargs = logging_callback._update_metrics.call_args
+        check.equal(args[1], 'episode')
+        check.is_false(kwargs.get('reset'))
+        check.is_none(kwargs.get('agent_id'))
+
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'steps_cycle')
+        check.is_false(kwargs.get('reset'))
+
+        # Multi agents
+        logging_callback = LoggingCallback()
+        logging_callback.n_agents = 5
+        logging_callback.on_step_end(step=7, logs={'agent_id': 3})
+
+        args, kwargs = logging_callback._update_metrics.call_args
+        check.equal(args[1], 'episode')
+        check.is_false(kwargs.get('reset'))
+        check.equal(kwargs.get('agent_id'), 3)
+
+        args, kwargs = logging_callback._update_metrics_all_agents.call_args
+        check.equal(args[1], 'steps_cycle')
+        check.is_false(kwargs.get('reset'))
+
+
+class TestGetAttrName:
+    """ LoggingCallback._get_attr_name """
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """ Retrieve static function to test. """
+        self.get_attr_name = LoggingCallback._get_attr_name
+
+    def test_without_agent(self):
+        """ should name attrs correctly. """
+        metric = Metric('reward~rwd')
+        name = self.get_attr_name('prefix', metric, agent_id=None)
+        expected_name = 'prefix_reward'
+        check.equal(name, expected_name)
+
+    def test_with_specific_agent(self):
+        """ should name attrs correctly with specific agent. """
+        metric = Metric('reward~rwd')
+        name = self.get_attr_name('prefix', metric, agent_id=2)
+        expected_name = 'prefix_agent2_reward'
+        check.equal(name, expected_name)
+
+
+class TestExtractFromLogs:
+    """ LoggingCallback._extract_from_logs """
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """ Setup fake logs and retrieve function to test. """
+        self.extract_from_logs = LoggingCallback._extract_metric_from_logs
+        self.logs = {
+            'value': 0,
+            'step': 2,
+            'agent_0': {
+                'value': 1,
+            },
+            'agent_1': {
+                'value': 2,
+                'specific_value': 42,
+            }
+        }
+
+    def test_find_value(self):
+        """ should find value in logs. """
+        value = self.extract_from_logs('value', self.logs)
+        check.equal(value, 0)
+
+    def test_find_nothing(self):
+        """ should return N/A when there is no value. """
+        nothing = self.extract_from_logs('nothing', self.logs)
+        check.equal(nothing, 'N/A')
+
+    def test_find_any_specific_value(self):
+        """ should find any specific value in agent when no agent is specified. """
+        specific_value = self.extract_from_logs('specific_value', self.logs)
+        check.equal(specific_value, 42)
+
+    def test_find_agent_specific_value(self):
+        """ should find specific agent values. """
+        value_0 = self.extract_from_logs('value', self.logs, agent_id=0)
+        value_1 = self.extract_from_logs('value', self.logs, agent_id=1)
+
+        check.equal(value_0, 1)
+        check.equal(value_1, 2)
+
+    def test_return_outer_value_when_no_specific_agent_value(self):
+        """ should return outer value if no specific value is found when an agent is specified. """
+        step = self.extract_from_logs('step', self.logs, agent_id=0)
+        check.equal(step, 2)
+
+
+class TestLoggingCallbackExtractLists:
+    """ LoggingCallback._extract_lists """
+
+    @pytest.fixture(autouse=True)
+    def setup_logs(self):
+        """ Setup fake logs and retrieve function to test. """
+        self.extract_lists = LoggingCallback._extract_lists
+
+    def test_extract_lists_use_case(self):
+        """ should extract the correct metrics list. """
+
+        metrics = [
+            ('reward~rwd', {'steps': 'sum', 'episode': 'sum'}),
+            ('loss', {'episodes': 'last'}),
+            'exploration~exp.last',
+            'decay'
+        ]
+
+        metric_lists = self.extract_lists(metrics)
+
+        expected_metric_lists = [
+            ['reward~rwd', 'loss', 'exploration~exp', 'decay'],
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last', 'decay.avg'],
+            ['reward~rwd.sum', 'loss.avg', 'exploration~exp.last', 'decay.avg'],
+            ['reward~rwd.avg', 'loss.last', 'exploration~exp.last', 'decay.avg']
+        ]
+
+        metric_lists_names = [
+            'step_metrics',
+            'steps_cycle_metrics',
+            'episode_metrics',
+            'episodes_cycle_metrics'
+        ]
+
+        iterator = zip(metric_lists, expected_metric_lists, metric_lists_names)
+        for metric_list, expected_metric_list, metric_list_name in iterator:
+            check.equal(metric_list, expected_metric_list,
+                f'Unexpected metric list got {metric_list} ' \
+                f'instead of {expected_metric_list} for {metric_list_name}'
             )
 
-            def check_function(callbacks, logs):
-                callback_dict = callbacks.callbacks[0].__dict__
+    def test_extract_lists_wrong_format(self):
+        """ should raise ValueError on wrong metric nested format. """
+        metrics = ('reward')
 
-                for position in ('episode', 'episodes_cycle'):
-                    for metric_name in ('reward', 'loss'):
-
-                        if position == 'episode':
-                            expected = logs.get(f'{metric_name}_episode_{eps_operator}')
-                        elif position == 'episodes_cycle':
-                            expected = logs.get(f'{metric_name}_{eps_operator}_cycle_{cycle_operator}')
-
-                        logged = callback_dict[f'{position}_{metric_name}']
-                        if expected is not None:
-                            print(position.capitalize(), metric_name, logged, expected)
-                            assert logged != 'N/A'
-                            assert np.isclose(logged, expected)
-                        
-            pg = DummyPlayground()
-            pg.run([logging_callback], eps_end_func=check_function, verbose=1)
-            print()
+        with pytest.raises(ValueError, match=r".*metrics format.*"):
+            self.extract_lists(metrics)
 
 
-def test_display():
+class TestLoggingCallbackGetValue:
+    """ LoggingCallback._get_value """
 
-    from learnrl.callbacks import Logger
+    def test_get_value_with_prefix(self, mocker):
+        """ should return attr value when prefix is given. """
+        expected_value = 123
 
-    for titles_on_top in (False, True):
-        for verbose in range(4):
+        def _get_attr_name(*args):
+            return 'attribute'
 
-            logging_callback = Logger(
-                titles_on_top=titles_on_top
-            )
+        mocker.patch(
+            'learnrl.callbacks.logging_callback.LoggingCallback._get_attr_name',
+            _get_attr_name
+        )
 
-            print(f'Verbose {verbose}, Title_on_top {titles_on_top}\n')
+        logging_callback = LoggingCallback()
+        logging_callback.attribute = expected_value
 
-            pg = DummyPlayground()
-            pg.run([logging_callback], verbose=verbose)
+        metric = Metric('attribute')
+        value = logging_callback._get_value(metric, prefix='prefix')
 
-            print()
-            
-    assert True
+        check.equal(value, expected_value)
+
+    def test_get_value_no_prefix_logs(self, mocker):
+        """ should return value in logs when no prefix is given. """
+        expected_value = 123
+
+        def _extract_metric_from_logs(self, metric_name, logs, agent_id):
+            return logs[metric_name]
+
+        mocker.patch(
+            'learnrl.callbacks.logging_callback.LoggingCallback._extract_metric_from_logs',
+            _extract_metric_from_logs
+        )
+
+        logging_callback = LoggingCallback()
+        logs = {'attribute': 123}
+
+        metric = Metric('attribute')
+        value = logging_callback._get_value(metric, logs=logs)
+
+        check.equal(value, expected_value)
+
+    def test_get_value_no_prefix_no_logs(self, mocker):
+        """ should return N/A when nothing is found. """
+        expected_value = 'N/A'
+        logging_callback = LoggingCallback()
+        metric = Metric('attribute')
+        value = logging_callback._get_value(metric)
+        check.equal(value, expected_value)
+
+
+class TestLoggingCallbackUpdateMetrics:
+    """ LoggingCallback._update_metrics """
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.metric_list = MetricList([
+            Metric("metric_1"),
+            Metric("metric_2"),
+            Metric("metric_2")
+        ])
+
+        self.logging_callback = LoggingCallback()
+
+    def test_na_value(self, mocker):
+        """ should not update attr if value is N/A. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._get_attr_name', return_value="target_name")
+        mocker.patch(logging_callback_path + '._reset_attr')
+        mocker.patch(logging_callback_path + '._get_value', return_value='N/A')
+        mocker.patch(logging_callback_path + '._update_attr')
+
+        self.logging_callback._update_metrics(
+            self.metric_list,
+            'target_prefix',
+            source_prefix='source_prefix',
+            logs='logs',
+            agent_id='agent_id',
+            reset=False
+        )
+
+        for args, _ in self.logging_callback._get_attr_name.call_args_list:
+            check.equal(args[0], 'target_prefix')
+            check.equal(args[2], 'agent_id')
+
+        for args, _ in self.logging_callback._get_value.call_args_list:
+            check.equal(args[1], 'source_prefix')
+            check.equal(args[2], 'agent_id')
+            check.equal(args[3], 'logs')
+
+        check.is_false(self.logging_callback._reset_attr.called)
+        check.is_false(self.logging_callback._update_attr.called)
+
+    def test_update(self, mocker):
+        """ should update attr if value is not N/A. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._get_attr_name', return_value="target_name")
+        mocker.patch(logging_callback_path + '._reset_attr')
+        mocker.patch(logging_callback_path + '._get_value', return_value="value")
+        mocker.patch(logging_callback_path + '._update_attr')
+
+        self.logging_callback._update_metrics(
+            self.metric_list,
+            'target_prefix',
+            source_prefix='source_prefix',
+            logs='logs',
+            agent_id='agent_id',
+            reset=False
+        )
+
+        for args, _ in self.logging_callback._get_attr_name.call_args_list:
+            check.equal(args[0], 'target_prefix')
+            check.equal(args[2], 'agent_id')
+
+        for args, _ in self.logging_callback._get_value.call_args_list:
+            check.equal(args[1], 'source_prefix')
+            check.equal(args[2], 'agent_id')
+            check.equal(args[3], 'logs')
+
+        check.is_false(self.logging_callback._reset_attr.called)
+
+        for args, _ in self.logging_callback._update_attr.call_args_list:
+            check.equal(args[0], 'target_name')
+            check.equal(args[1], 'value')
+
+    def test_reset(self, mocker):
+        """ should reset attr if reset is True. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._get_attr_name', return_value="target_name")
+        mocker.patch(logging_callback_path + '._reset_attr')
+        mocker.patch(logging_callback_path + '._get_value', return_value="value")
+        mocker.patch(logging_callback_path + '._update_attr')
+
+        self.logging_callback._update_metrics(
+            self.metric_list,
+            'target_prefix',
+            source_prefix='source_prefix',
+            logs='logs',
+            agent_id='agent_id',
+            reset=True
+        )
+
+        for args, _ in self.logging_callback._get_attr_name.call_args_list:
+            check.equal(args[0], 'target_prefix')
+            check.equal(args[2], 'agent_id')
+
+        for args, _ in self.logging_callback._get_value.call_args_list:
+            check.equal(args[1], 'source_prefix')
+            check.equal(args[2], 'agent_id')
+            check.equal(args[3], 'logs')
+
+        for args, _ in self.logging_callback._reset_attr.call_args_list:
+            check.equal(args[0], 'target_name')
+
+        check.is_false(self.logging_callback._update_attr.called)
+
+    def test_all_agents(self, mocker):
+        """ should update all agents indepentently. """
+        logging_callback_path = 'learnrl.callbacks.logging_callback.LoggingCallback'
+        mocker.patch(logging_callback_path + '._update_metrics')
+
+        n_agents = 5
+        self.logging_callback.n_agents = n_agents
+        self.logging_callback._update_metrics_all_agents(
+            self.metric_list,
+            'target_prefix'
+        )
+
+        for i in range(n_agents):
+            _, kwargs = self.logging_callback._update_metrics.call_args_list[i]
+            check.equal(kwargs.get('agent_id'), i)

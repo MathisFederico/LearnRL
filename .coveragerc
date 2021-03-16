@@ -1,0 +1,6 @@
+[report]
+show_missing = True
+omit =
+    learnrl/callbacks/logger.py
+    learnrl/callbacks/tensorboard.py
+    learnrl/callbacks/wandb.py

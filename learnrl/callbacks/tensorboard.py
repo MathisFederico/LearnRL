@@ -1,7 +1,15 @@
 # LearnRL a python library to learn and use reinforcement learning
 # Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
+"""TensorboardCallback to log metrics into tensorboard
+
+https://www.tensorflow.org/tensorboard/get_started
+
+"""
+
 import os, datetime
+from typing import List, Tuple, Dict, Any, Union
+
 import tensorflow as tf
 
 from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
@@ -9,30 +17,30 @@ from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
 
 class TensorboardCallback(LoggingCallback):
 
-    """ Tensorboard logger if tensorflow is installed.
+    """Tensorboard logger will log metrics in tensorboard."""
 
-    Parameters
-    ---------
-        log_dir: :class:`str`
-            Directory to store runs logs.
-        run_name: :class:`str`
-            Specify a run name for Tensorboard, default is a datetime.
-        step_metrics: list(str)
-            Metrics to log on steps and to aggregate in episodes.
-        episode_metrics: list(str)
-            Metrics to log on episodes and to aggregate in episodes_cycles.
-        cycle_metrics: list(str)
-            Metrics to log on cycles (aggregated from episodes and/or steps).
-    """
+    def __init__(self,
+            log_dir: str,
+            run_name: str=None,
+            metrics: List[Union[str, tuple]]=None,
+            detailed_step_metrics: List[str]=None,
+            episode_only_metrics: List[str]=None
+        ):
+        
+        """Tensorboard logger will log metrics in tensorboard.
 
-    def __init__(self, log_dir, run_name=None,
-                 step_metrics=['reward', 'loss', 'exploration~exp', 'learning_rate~lr'],
-                 episode_metrics=['reward.sum', 'loss', 'exploration~exp.last', 'learning_rate~lr.last'],
-                 ):
+        Args:
+            log_dir: Directory to store runs logs.
+            run_name: Specify a run name for Tensorboard, default is a datetime.
+            metrics: Metrics to display and how to aggregate them.
+            detailed_step_metrics: Metrics to display only on detailed steps.
+            episode_only_metrics: Metrics to display only on episodes.
+        """
         
         super().__init__(
-            step_metrics=step_metrics,
-            episode_metrics=episode_metrics,
+            metrics=metrics,
+            detailed_step_metrics=detailed_step_metrics,
+            episode_only_metrics=episode_only_metrics
         )
 
         if run_name is None:
@@ -50,19 +58,20 @@ class TensorboardCallback(LoggingCallback):
         super().on_episode_end(episode, logs=logs)
         self._update_tensorboard(episode + 1, 'episode', self.episode_metrics)
 
-    def _update_tensorboard(self, step, prefix, metrics_list:MetricList, logs=None):
+    def _update_tensorboard(self,
+            step: int,
+            prefix: str,
+            metrics_list:MetricList,
+            logs: Dict[str, Any]=None
+        ):
         """ Helper function for writing new values to Tensorboard summary.
 
-        Parameters
-        ----------
-            step: :class:`int`
-                Step value for the Tensorboard summary.
-            prefix: :class:`str`
-                Prefix for metrics name.
-            metrics_list: :class:`~learnrl.callbacks.MetricList`
-                Metrics to write.
-            logs: :class:`dict` (default is None)
-                If set to None, metrics value will be searched in attributes, otherwise they will be searched in logs.
+        Args:
+            step: Step value for the Tensorboard summary.
+            prefix: Prefix for metrics name.
+            metrics_list: Metrics to write.
+            logs: If None, metrics value will be searched in attributes.
+                Otherwise they will be searched in logs.
 
             """
         with self.writer.as_default(): #pylint: disable=all
