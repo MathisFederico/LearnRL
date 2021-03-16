@@ -13,10 +13,6 @@ class TestAgent:
 
     """Agent"""
 
-    def test_init(self):
-        """ should instanciate correctly. """
-        Agent()
-
     def test_act(self):
         """ act should raise NotImplementedError. """
         agent = Agent()

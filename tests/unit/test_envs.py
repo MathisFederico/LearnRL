@@ -13,10 +13,6 @@ class TestTurnEnv:
 
     """ TurnEnv """
 
-    def test_init(self):
-        """ should instanciate correctly. """
-        TurnEnv()
-
     def test_step(self):
         """ step should raise NotImplementedError. """
         env = TurnEnv()
