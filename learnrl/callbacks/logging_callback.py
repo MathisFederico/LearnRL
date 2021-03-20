@@ -115,35 +115,6 @@ class LoggingCallback(Callback):
                 episodes_cycle_metrics.append('.'.join((metric_name, ops.get('episodes', 'avg'))))
         return step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics
 
-    @staticmethod
-    def _extract_lists(metrics):
-        """Extract the metric lists from a nested metrics argument"""
-        step_metrics = []
-        steps_cycle_metrics = []
-        episode_metrics = []
-        episodes_cycle_metrics = []
-
-        if metrics is not None:
-            if not isinstance(metrics, (tuple, list)):
-                raise ValueError('Wrong metrics format. See metrics codes in documentation.')
-
-            for metric in metrics:
-                if isinstance(metric, (tuple, list)):
-                    metric_name, ops = metric
-                elif isinstance(metric, str):
-                    metric_name = metric
-                    if '.' in metric_name:
-                        metric_name, opertor_for_all = metric_name.split('.')
-                        ops = {key:opertor_for_all for key in ('steps', 'episode', 'episodes')}
-                    else:
-                        ops = {}
-
-                step_metrics.append(metric_name)
-                steps_cycle_metrics.append('.'.join((metric_name, ops.get('steps', 'avg'))))
-                episode_metrics.append('.'.join((metric_name, ops.get('episode', 'avg'))))
-                episodes_cycle_metrics.append('.'.join((metric_name, ops.get('episodes', 'avg'))))
-        return step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics
-
     def _reset_attr(self, attr_name, operator):
         """Reset a metric attribute based on the metric operator"""
         setattr(self, attr_name, 'N/A')
