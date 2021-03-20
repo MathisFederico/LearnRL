@@ -24,7 +24,7 @@ author = 'Mathïs Fédérico'
 def get_version():
     version_file = open('../VERSION')
     return version_file.read().strip()
- 
+
 version = get_version()
 release = version
 
@@ -38,7 +38,7 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    'autoapi.sphinx'
+    'sphinx_autodoc_typehints',
 ]
 master_doc = 'index'
 autoapi_dirs = ['../learnrl']
@@ -48,6 +48,8 @@ autodoc_default_options = {
     'undoc-members': True,
 }
 add_module_names = False
+autoclass_content = 'both'
+napoleon_use_param = True
 # pygments_style = 'monokai'
 
 intersphinx_mapping = {
@@ -99,4 +101,3 @@ html_context = {
 html_static_path = ['_static']
 def setup(app):
     app.add_css_file('styles/custom.css')
- 

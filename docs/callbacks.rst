@@ -1,8 +1,7 @@
-.. _Callbacks:
-
 Callbacks
 =========
 
+.. _Callbacks:
 
 Callback API
 ------------

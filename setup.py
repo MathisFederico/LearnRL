@@ -8,12 +8,17 @@ from setuptools import setup, find_packages
 HERE = pathlib.Path(__file__).parent
 
 # The text of the README file
-README = (HERE / "README.rst").read_text()
+README = (HERE / "pypi-readme.rst").read_text()
 
 def get_version():
     version_file = open('VERSION')
     return version_file.read().strip()
 VERSION = get_version()
+
+def get_requirements():
+    requirements_file = open('requirements.txt')
+    return requirements_file.readlines()
+REQUIREMENTS = get_requirements()
 
 setup(
     name="learnrl",
@@ -26,10 +31,7 @@ setup(
     url="https://github.com/MathisFederico/LearnRL",
     packages=find_packages(exclude=("tests", "docs")),
     include_package_data=True,
-    install_requires=[
-        'numpy',
-        'gym',
-    ],
+    install_requires=REQUIREMENTS,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
