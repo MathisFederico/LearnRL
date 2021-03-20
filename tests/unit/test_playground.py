@@ -497,6 +497,7 @@ class TestPlaygroundRunStep:
         self.observation = 'observation'
         self.next_observation = 'next_observation'
         self.reward = 1.2
+        self.handled_reward = 1.7
         self.done = False
         self.info = {'env_info': 'env_info'}
 
@@ -517,7 +518,12 @@ class TestPlaygroundRunStep:
         self.agent_id = 0
         mocker.patch('learnrl.playground.Playground._get_next_agent',
             return_value=(self.agents[self.agent_id], self.agent_id))
-        mocker.patch('learnrl.playground.Playground._call_handlers')
+
+        def handler_mocker(cls, reward, done, experience, reward_handler, done_handler, logs):
+            experience['reward'] = self.handled_reward
+            logs['handled_reward'] = self.handled_reward
+
+        mocker.patch('learnrl.playground.Playground._call_handlers', handler_mocker)
         self.playground = Playground(self.env, self.agents)
 
         self.previous = [
@@ -538,8 +544,8 @@ class TestPlaygroundRunStep:
         check.equal(observation, self.next_observation)
         check.equal(done, self.done)
 
-        for log_name in ['reward', 'observation', 'next_observation',
-                            'info', 'done', 'agent_id', 'action']:
+        for log_name in ['reward', 'handled_reward', 'observation',
+                            'next_observation', 'info', 'done', 'agent_id', 'action']:
             expected = getattr(self, log_name)
             check.equal(logs[log_name], expected)
 

@@ -79,12 +79,10 @@ class LoggingCallback(Callback):
         self.episode_only_metrics = MetricList(episode_only_metrics)
 
         metric_lists = self._extract_lists(metrics)
-
-        step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics = metric_lists
-        self.step_metrics = MetricList(step_metrics)
-        self.steps_cycle_metrics = MetricList(steps_cycle_metrics)
-        self.episode_metrics = MetricList(episode_metrics)
-        self.episodes_cycle_metrics = MetricList(episodes_cycle_metrics)
+        self.step_metrics = MetricList(metric_lists[0])
+        self.steps_cycle_metrics = MetricList(metric_lists[1])
+        self.episode_metrics = MetricList(metric_lists[2])
+        self.episodes_cycle_metrics = MetricList(metric_lists[3])
 
         self.n_agents = None
 
