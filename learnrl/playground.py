@@ -227,16 +227,13 @@ class Playground():
             agent_logs = agent.learn()
             logs.update({f'agent_{agent_id}': agent_logs})
 
-        # Adds step informations to logs
-        logs.update({'agent_id':agent_id, 'observation':observation})
-
         # Ask action to agent
         action = agent.act(observation, greedy=not learn)
+
         # Perform environment step
         next_observation, reward, done, info = self.env.step(action)
-        logs.update(info)
 
-        # Compact experience
+        # Adds step informations to logs
         experience = {
             'observation': observation,
             'action': action,
@@ -245,6 +242,8 @@ class Playground():
             'next_observation': next_observation,
             'info': info
         }
+        logs.update({'agent_id':agent_id})
+        logs.update(experience)
 
         # Use Handlers
         self._call_handlers(reward, done, experience, reward_handler, done_handler, logs)
@@ -263,9 +262,6 @@ class Playground():
         # Do a last rendering if done
         if done and render:
             self.env.render(render_mode)
-
-        # Add experience to logs
-        logs.update(experience)
 
         return next_observation, done
 
