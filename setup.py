@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 HERE = pathlib.Path(__file__).parent
 
 # The text of the README file
-README = (HERE / "README.rst").read_text()
+README = (HERE / "pypi-readme.rst").read_text()
 
 def get_version():
     version_file = open('VERSION')
