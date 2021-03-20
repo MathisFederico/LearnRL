@@ -115,8 +115,6 @@ class LoggingCallback(Callback):
                 episodes_cycle_metrics.append('.'.join((metric_name, ops.get('episodes', 'avg'))))
         return step_metrics, steps_cycle_metrics, episode_metrics, episodes_cycle_metrics
 
-        self.n_agents = None
-
     @staticmethod
     def _extract_lists(metrics):
         """Extract the metric lists from a nested metrics argument"""
