@@ -50,11 +50,14 @@ class Logger(LoggingCallback):
         """
 
         if metrics is None:
-            metrics = [('reward', {'steps_cycles': 'sum', 'episode': 'sum'})]
+            metrics = [
+                ('reward', {'steps_cycles': 'sum', 'episode': 'sum'}),
+                'dt_step~'
+            ]
         if detailed_step_metrics is None:
             detailed_step_metrics = ['observation', 'action', 'next_observation']
         if episode_only_metrics is None:
-            episode_only_metrics = ('dt_episode~')
+            episode_only_metrics = ['dt_episode~']
 
         super().__init__(
             metrics=metrics,
@@ -62,12 +65,13 @@ class Logger(LoggingCallback):
             episode_only_metrics=episode_only_metrics,
         )
 
+        self.titles_on_top = titles_on_top
+        self.verbose = None
+
         self._bar_lenght = 100
         self._number_window = 9
-        self.titles_on_top = titles_on_top
-        self.step_start_cycle = None
-        self.verbose = None
-        self.n_digits_episodes = None
+        self._number_window_time = 5
+        self._n_digits_episodes = None
 
     def on_step_begin(self, step, logs=None):
         super().on_step_begin(step, logs=logs)
@@ -96,8 +100,6 @@ class Logger(LoggingCallback):
     def on_steps_cycle_begin(self, step, logs=None):
         super().on_steps_cycle_begin(step, logs=logs)
 
-        if self.verbose == 3:
-            self.step_start_cycle = step
         if self.verbose == 4 and self.titles_on_top:
             step_text = self._get_step_text(0)
             self._print_titles(self.step_metrics, offset=' ' * len(step_text) + ' |', end='\n')
@@ -193,7 +195,7 @@ class Logger(LoggingCallback):
 
     def on_run_begin(self, logs=None):
         super().on_run_begin(logs=logs)
-        self.n_digits_episodes = int(np.log10(self.params['episodes'])) + 1
+        self._n_digits_episodes = int(np.log10(self.params['episodes'])) + 1
         self.verbose = self.params['verbose']
 
         if self.verbose == 5:
@@ -253,10 +255,15 @@ class Logger(LoggingCallback):
         """ Print the titles of the metric list """
         print(prefix, end=offset)
         for metric in metric_list:
-            if not metric.name.startswith('dt'):
-                surname = metric.surname.capitalize()[:self._number_window]
-                display_name = self._text_in_middle(' ', surname, self._number_window+2)
-                print(display_name, end='|')
+            if not metric.name.startswith('dt_'):
+                capitalized_surname = metric.surname.capitalize()[0] + metric.surname[1:]
+                surname = capitalized_surname[:self._number_window]
+                title_lenght = self._number_window+2
+            else:
+                surname = metric.name[3:].capitalize() + ' time'
+                title_lenght = self._number_window_time + 9
+            display_name = self._text_in_middle(' ', surname, lenght=title_lenght)
+            print(display_name, end='|')
         print(end=end)
 
     def _print_bar(self, line, text=None, **kwargs):
@@ -275,7 +282,7 @@ class Logger(LoggingCallback):
     def _get_episode_text(self, episode):
         """ Get the display text for an episode """
         text = f"{episode+1}"
-        text = " " * (self.n_digits_episodes - len(text)) + text
+        text = " " * (self._n_digits_episodes - len(text)) + text
         text += f"/{self.params['episodes']}"
         return text
 
@@ -289,14 +296,15 @@ class Logger(LoggingCallback):
             text += ' ' * (13 - len(text))
         return text
 
-    @staticmethod
-    def _get_time_text(elapsed_time, unit):
+    def _get_time_text(self, elapsed_time, unit):
         """ Get the display text for a time mesurment """
-        if unit == 'episode':
-            unit = 'eps'
+        unit = unit[:4]
+        if isinstance(elapsed_time, str):
+            return elapsed_time
         if elapsed_time < 1e-9:
-            return '< 1ns      '
-        if elapsed_time < 1e-6:
+            time_display = '<1'
+            time_unit = 'ns'
+        elif elapsed_time < 1e-6:
             time_display = f'{elapsed_time/1e-9:.01f}'
             time_unit = 'ns'
         elif elapsed_time < 1e-3:
@@ -309,5 +317,5 @@ class Logger(LoggingCallback):
             time_display = f'{elapsed_time:.01f}'
             time_unit = 's '
 
-        margin = (5 - len(time_display)) * ' '
+        margin = (self._number_window_time - len(time_display)) * ' '
         return margin + f'{time_display}{time_unit}/{unit}'
