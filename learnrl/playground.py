@@ -28,19 +28,19 @@ class DoneHandler():
     """
 
     @abstractmethod
-    def done(self, previous_observation, action, reward,
-            done, info, observation, logs) -> bool:
+    def done(self, observation, action, reward,
+            done, info, next_observation, logs) -> bool:
         """Replace the environment done.
 
         Often used to make episodes shorter when the agent is stuck for example.
 
         Args:
-            previous_observation: Previous observation.
+            observation: Current observation.
             action: Current action.
             reward: Current reward.
             done: done given by the environment.
             info: Addition informations given by the environment.
-            observation: Current observation.
+            next_observation: Next observation.
 
         """
 
@@ -52,15 +52,15 @@ class DoneHandler():
 
         """
 
-    def _done(self, *args) -> bool:
-        done = self.done(*args)
+    def _done(self, **kwargs) -> bool:
+        done = self.done(**kwargs)
         if not isinstance(done, bool) and \
            not (isinstance(done, np.ndarray) and done.dtype == bool):
             raise ValueError(f"Done should be bool, got {done} of type {type(done)} instead")
         return done
 
-    def __call__(self, *args) -> bool:
-        return self._done(*args)
+    def __call__(self, **kwargs) -> bool:
+        return self._done(**kwargs)
 
 
 class RewardHandler():
@@ -75,19 +75,19 @@ class RewardHandler():
     """
 
     @abstractmethod
-    def reward(self, previous_observation, action, reward,
-            done, info, observation, logs)-> float:
+    def reward(self, observation, action, reward,
+            done, info, next_observation, logs)-> float:
         """Replace the environment reward.
 
         Often used to scale rewards or to do reward shaping.
 
         Args:
-            previous_observation: Previous observation.
+            observation: Current observation.
             action: Current action.
             reward: Current reward.
             done: done given by the environment.
             info: Addition informations given by the environment.
-            observation: Current observation.
+            next_observation: Next observation.
 
         """
 
@@ -99,8 +99,8 @@ class RewardHandler():
 
         """
 
-    def _reward(self, *args) -> float:
-        reward = self.reward(*args)
+    def _reward(self, **kwargs) -> float:
+        reward = self.reward(**kwargs)
         if not isinstance(reward, Number) and \
            not (isinstance(reward, np.ndarray) and np.issubdtype(reward.dtype, np.floating)):
             raise ValueError(
@@ -108,8 +108,8 @@ class RewardHandler():
             )
         return float(reward)
 
-    def __call__(self, *args) -> float:
-        return self._reward(*args)
+    def __call__(self, **kwargs) -> float:
+        return self._reward(**kwargs)
 
 
 class Playground():
@@ -190,13 +190,13 @@ class Playground():
 
         logs.update({'reward': reward})
         if reward_handler is not None:
-            handled_reward = reward_handler(*experience, logs)
+            handled_reward = reward_handler(**experience, logs=logs)
             experience['reward'] = handled_reward
             logs.update({'handled_reward': handled_reward})
 
         logs.update({'done': done})
         if done_handler is not None:
-            handled_done = done_handler(*experience, logs)
+            handled_done = done_handler(**experience, logs=logs)
             experience['done'] = handled_done
             logs.update({'handled_done': handled_done})
 
