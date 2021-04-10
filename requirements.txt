@@ -1,2 +1,2 @@
 numpy
-gym
+gym==0.17.3
