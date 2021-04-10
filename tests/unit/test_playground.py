@@ -437,7 +437,7 @@ class TestPlaygroundCallHandlers:
             self.done,
             self.experience,
             reward_handler=None,
-            done_handler=lambda *args: handled_done,
+            done_handler=lambda **kwargs: handled_done,
             logs=logs
         )
         check.equal(self.experience['done'], handled_done)
@@ -455,7 +455,7 @@ class TestPlaygroundCallHandlers:
             self.reward,
             self.done,
             self.experience,
-            reward_handler=lambda *args:handled_reward,
+            reward_handler=lambda **kwargs:handled_reward,
             done_handler=None,
             logs=logs
         )
@@ -475,8 +475,8 @@ class TestPlaygroundCallHandlers:
             self.reward,
             self.done,
             self.experience,
-            reward_handler=lambda *args: handled_reward,
-            done_handler=lambda *args: handled_done,
+            reward_handler=lambda **kwargs: handled_reward,
+            done_handler=lambda **kwargs: handled_done,
             logs=logs
         )
         check.equal(self.experience['done'], handled_done)
@@ -639,55 +639,94 @@ class TestDoneHandler:
 
     """DoneHandler"""
 
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """ Setup dummy variables """
+        self.experience = {
+            'observation': 'obs',
+            'action': 'act',
+            'reward': 1.2,
+            'done': True,
+            'next_observation': 'n_obs',
+            'info': {'info': 'env_info'}
+        }
+
     def test_done(self, mocker):
         """ should use `done` if the output of `done` is a bool or a bool numpy array. """
-        mocker.patch("learnrl.playground.DoneHandler.done", lambda *args: True)
+        mocker.patch("learnrl.playground.DoneHandler.done", return_value=True)
         handler = DoneHandler()
-        check.is_true(handler._done())
 
-        mocker.patch("learnrl.playground.DoneHandler.done", lambda *args: np.array(True))
+        check.is_true(handler._done(**self.experience, logs={}))
+        _, kwargs = handler.done.call_args
+        check.equal(
+            list(kwargs.keys()),
+            ['observation', 'action', 'reward',
+            'done', 'next_observation', 'info', 'logs']
+        )
+
+        mocker.patch("learnrl.playground.DoneHandler.done", return_value=np.array(True))
         handler = DoneHandler()
-        check.is_true(handler._done())
+        check.is_true(handler._done(**self.experience, logs={}))
 
     def test_not_bool_done(self, mocker):
         """ should raise ValueError if the output of `done` is not a bool. """
-        mocker.patch("learnrl.playground.DoneHandler.done", lambda *args: 'True')
+        mocker.patch("learnrl.playground.DoneHandler.done", return_value='True')
         handler = DoneHandler()
         with pytest.raises(ValueError, match=r"Done should be bool.*"):
-            handler._done()
+            handler._done(**self.experience, logs={})
 
     def test_call(self, mocker):
         """ should call done on class call. """
         mocker.patch("learnrl.playground.DoneHandler._done", return_value=True)
         handler = DoneHandler()
-        check.is_true(handler())
+        check.is_true(handler(**self.experience, logs={}))
         check.is_true(handler._done.called)
+
+
 
 
 class TestRewardHandler:
 
     """RewardHandler"""
 
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        """ Setup dummy variables """
+        self.experience = {
+            'observation': 'obs',
+            'action': 'act',
+            'reward': 1.2,
+            'done': True,
+            'next_observation': 'n_obs',
+            'info': {'info': 'env_info'}
+        }
+
     def test_reward(self, mocker):
         """ should use `reward` if the output of `reward` is a float or floating numpy array. """
-        mocker.patch("learnrl.playground.RewardHandler.reward", lambda *args: 1.2)
+        mocker.patch("learnrl.playground.RewardHandler.reward", return_value=1.2)
         handler = RewardHandler()
-        check.equal(handler._reward(), 1.2)
+        check.equal(handler._reward(**self.experience, logs={}), 1.2)
+        _, kwargs = handler.reward.call_args
+        check.equal(
+            list(kwargs.keys()),
+            ['observation', 'action', 'reward',
+            'done', 'next_observation', 'info', 'logs']
+        )
 
-        mocker.patch("learnrl.playground.RewardHandler.reward", lambda *args: np.array(1.2))
+        mocker.patch("learnrl.playground.RewardHandler.reward", return_value=np.array(1.2))
         handler = RewardHandler()
-        check.equal(handler._reward(), 1.2)
+        check.equal(handler._reward(**self.experience, logs={}), 1.2)
 
     def test_not_scalar_reward(self, mocker):
         """ should raise ValueError if the output of `reward` is not a float. """
-        mocker.patch("learnrl.playground.RewardHandler.reward", lambda *args: '1.2')
+        mocker.patch("learnrl.playground.RewardHandler.reward", return_value='1.2')
         handler = RewardHandler()
         with pytest.raises(ValueError, match=r"Rewards should be a float.*"):
-            handler._reward()
+            handler._reward(**self.experience, logs={})
 
     def test_call(self, mocker):
         """ should call reward on class call. """
         mocker.patch("learnrl.playground.RewardHandler._reward", return_value=True)
         handler = RewardHandler()
-        check.is_true(handler())
+        check.is_true(handler(**self.experience, logs={}))
         check.is_true(handler._reward.called)
