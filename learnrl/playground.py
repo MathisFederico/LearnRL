@@ -321,7 +321,7 @@ class Playground():
         # Start the run
         logs = {}
         logs.update(params)
-        logs.update({'cur_step': 0})
+        logs['cur_step'] = 0
 
         callbacks.on_run_begin(logs)
 
