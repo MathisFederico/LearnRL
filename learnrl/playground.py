@@ -265,6 +265,113 @@ class Playground():
 
         return next_observation, done
 
+    def _episodes_rollout(self, 
+            episodes, 
+            episodes_cycle_len,
+            callbacks,
+            logs,
+            reward_handler,
+            done_handler,
+            steps_cycle_len,
+            learn,
+            render,
+            render_mode
+            ):
+
+        for episode in range(episodes):
+
+            if episode % episodes_cycle_len == 0:
+                callbacks.on_episodes_cycle_begin(episode, logs)
+
+            observation, step, done, previous = self._reset(reward_handler, done_handler)
+
+            logs.update({'episode': episode})
+            callbacks.on_episode_begin(episode, logs)
+
+            while not done:
+
+                if step % steps_cycle_len == 0:
+                    callbacks.on_steps_cycle_begin(step, logs)
+
+                logs.update({'step': step})
+                callbacks.on_step_begin(step, logs)
+
+                observation, done = self._run_step(
+                    observation=observation,
+                    previous=previous,
+                    logs=logs,
+                    learn=learn,
+                    render=render,
+                    render_mode=render_mode,
+                    reward_handler=reward_handler,
+                    done_handler=done_handler,
+                )
+                callbacks.on_step_end(step, logs)
+
+                if (step + 1) % steps_cycle_len == 0 or done:
+                    callbacks.on_steps_cycle_end(step, logs)
+            
+            callbacks.on_episode_end(episode, logs)
+
+            if (episode + 1) % episodes_cycle_len == 0 or episode + 1 == episodes:
+                callbacks.on_episodes_cycle_end(episode, logs)
+            
+        callbacks.on_run_end(logs)
+
+    def _steps_rollout(self, 
+            episodes, 
+            episodes_cycle_len,
+            callbacks,
+            logs,
+            reward_handler,
+            done_handler,
+            steps_cycle_len,
+            learn,
+            render,
+            render_mode
+            ):
+
+        logs.update({'episode': episode})
+        for step in range(steps):
+
+            if episode % episodes_cycle_len == 0:
+                callbacks.on_episodes_cycle_begin(episode, logs)
+
+            observation, step, done, previous = self._reset(reward_handler, done_handler)
+
+            
+            callbacks.on_episode_begin(episode, logs)
+
+            while not done:
+
+                if step % steps_cycle_len == 0:
+                    callbacks.on_steps_cycle_begin(step, logs)
+
+                logs.update({'step': step})
+                callbacks.on_step_begin(step, logs)
+
+                observation, done = self._run_step(
+                    observation=observation,
+                    previous=previous,
+                    logs=logs,
+                    learn=learn,
+                    render=render,
+                    render_mode=render_mode,
+                    reward_handler=reward_handler,
+                    done_handler=done_handler,
+                )
+                callbacks.on_step_end(step, logs)
+
+                if (step + 1) % steps_cycle_len == 0 or done:
+                    callbacks.on_steps_cycle_end(step, logs)
+            
+            callbacks.on_episode_end(episode, logs)
+
+            if (episode + 1) % episodes_cycle_len == 0 or episode + 1 == episodes:
+                callbacks.on_episodes_cycle_end(episode, logs)
+            
+        callbacks.on_run_end(logs)
+
     def run(self,
             episodes: int,
             steps: int=-1,
@@ -287,6 +394,7 @@ class Playground():
 
         Args:
             episodes: Number of episodes to run.
+            steps: Number of steps to run.
             render: If True, call |gym.render| every step.
             render_mode: Rendering mode.
                 One of {'human', 'rgb_array', 'ansi'} (see |gym.render|).
@@ -325,58 +433,16 @@ class Playground():
 
         callbacks.on_run_begin(logs)
 
-        for episode in range(episodes):
-
-            if episode % episodes_cycle_len == 0:
-                callbacks.on_episodes_cycle_begin(episode, logs)
-
-            observation, step, done, previous = self._reset(reward_handler, done_handler)
-
-            logs.update({'episode': episode})
-            callbacks.on_episode_begin(episode, logs)
-
-            while not done:
-
-                if step % steps_cycle_len == 0:
-                    callbacks.on_steps_cycle_begin(step, logs)
-
-                logs.update({'step': step})
-                callbacks.on_step_begin(step, logs)
-
-                observation, done = self._run_step(
-                    observation=observation,
-                    previous=previous,
-                    logs=logs,
-                    learn=learn,
-                    render=render,
-                    render_mode=render_mode,
-                    reward_handler=reward_handler,
-                    done_handler=done_handler,
-                )
-                callbacks.on_step_end(step, logs)
-
-                if (step + 1) % steps_cycle_len == 0 or done:
-                    callbacks.on_steps_cycle_end(step, logs)
-
-                step += 1
-                logs['cur_step'] += 1
-                if steps >= 0 and logs['cur_step'] >= steps:
-                    break
-            
-            callbacks.on_episode_end(episode, logs)
-
-            if (episode + 1) % episodes_cycle_len == 0 or episode + 1 == episodes:
-                callbacks.on_episodes_cycle_end(episode, logs)
-
-            if steps >= 0 and logs['cur_step'] >= steps:
-                print("Training finished")
-                print("Total steps", logs['cur_step'])
-                break   
-            
-            
-
-        callbacks.on_run_end(logs)
-
+        self._episode_loop(episodes, 
+            episodes_cycle_len,
+            callbacks,
+            logs,
+            reward_handler,
+            done_handler,
+            steps_cycle_len,
+            learn,
+            render,
+            render_mode)
 
     def fit(self, episodes, **kwargs):
         """Train the agent(s) on the environement for a number of episodes."""
