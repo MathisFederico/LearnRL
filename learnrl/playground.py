@@ -267,6 +267,7 @@ class Playground():
 
     def run(self,
             episodes: int,
+            steps: int=-1,
             render: bool=True,
             render_mode: str='human',
             learn: bool=True,
@@ -306,6 +307,7 @@ class Playground():
 
         params = {
             'episodes': episodes,
+            'steps': steps,
             'episodes_cycle_len': episodes_cycle_len,
             'steps_cycle_len': steps_cycle_len,
             'verbose': verbose,
@@ -319,6 +321,7 @@ class Playground():
         # Start the run
         logs = {}
         logs.update(params)
+        logs.update({'cur_step': 0})
 
         callbacks.on_run_begin(logs)
 
@@ -356,11 +359,21 @@ class Playground():
                     callbacks.on_steps_cycle_end(step, logs)
 
                 step += 1
-
+                logs['cur_step'] += 1
+                if steps >= 0 and logs['cur_step'] >= steps:
+                    break
+            
             callbacks.on_episode_end(episode, logs)
 
             if (episode + 1) % episodes_cycle_len == 0 or episode + 1 == episodes:
                 callbacks.on_episodes_cycle_end(episode, logs)
+
+            if steps >= 0 and logs['cur_step'] >= steps:
+                print("Training finished")
+                print("Total steps", logs['cur_step'])
+                break   
+            
+            
 
         callbacks.on_run_end(logs)
 
@@ -369,6 +382,7 @@ class Playground():
         """Train the agent(s) on the environement for a number of episodes."""
         learn = kwargs.pop('learn', True)
         render = kwargs.pop('render', False)
+
         if not learn:
             warnings.warn(
                 "learn should be True in Playground.fit(), otherwise the agents will not improve",
