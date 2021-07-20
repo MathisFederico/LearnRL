@@ -514,7 +514,6 @@ class Playground():
                 learn, 
                 render, 
                 render_mode)
-            logger = logger if logger else Logger(**kwargs)   
 
     def fit(self, episodes, **kwargs):
         """Train the agent(s) on the environement for a number of episodes."""
