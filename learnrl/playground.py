@@ -310,6 +310,8 @@ class Playground():
 
                 if (step + 1) % steps_cycle_len == 0 or done:
                     callbacks.on_steps_cycle_end(step, logs)
+                    
+                step += 1
             
             callbacks.on_episode_end(episode, logs)
 
@@ -319,7 +321,7 @@ class Playground():
         callbacks.on_run_end(logs)
 
     def _steps_rollout(self, 
-            episodes, 
+            steps, 
             episodes_cycle_len,
             callbacks,
             logs,
@@ -328,19 +330,59 @@ class Playground():
             steps_cycle_len,
             learn,
             render,
-            render_mode
+            render_mode,
+            end_episode
             ):
+        
+        # Changed steps_cycle behavior so that it doesn't end when an episode ends
+        
+        logs.update({'episode': 0})
+        observation, _, done, previous = self._reset(reward_handler, done_handler)
+        if logs['episode'] % episodes_cycle_len == 0:
+            callbacks.on_episodes_cycle_begin(logs['episode'], logs)
+        callbacks.on_episode_begin(logs['episode'], logs)
 
-        logs.update({'episode': episode})
         for step in range(steps):
 
-            if episode % episodes_cycle_len == 0:
-                callbacks.on_episodes_cycle_begin(episode, logs)
+            if done:
 
-            observation, step, done, previous = self._reset(reward_handler, done_handler)
+                callbacks.on_episode_end(logs['episode'], logs)
 
-            
-            callbacks.on_episode_begin(episode, logs)
+                if (logs['episode'] + 1) % episodes_cycle_len == 0 or logs['episode'] + 1 == logs['episode']:
+                    callbacks.on_episodes_cycle_end(logs['episode'], logs)
+
+                logs['episode'] += 1
+
+                observation, _, done, previous = self._reset(reward_handler, done_handler)
+                if logs['episode'] % episodes_cycle_len == 0:
+                    callbacks.on_episodes_cycle_begin(logs['episode'], logs)
+                callbacks.on_episode_begin(logs['episode'], logs)
+
+            else:
+
+                if step % steps_cycle_len == 0:
+                    callbacks.on_steps_cycle_begin(step, logs)
+
+                logs.update({'step': step})
+                callbacks.on_step_begin(step, logs)
+
+                observation, done = self._run_step(
+                    observation=observation,
+                    previous=previous,
+                    logs=logs,
+                    learn=learn,
+                    render=render,
+                    render_mode=render_mode,
+                    reward_handler=reward_handler,
+                    done_handler=done_handler,
+                )
+                callbacks.on_step_end(step, logs)
+
+                if (step + 1) % steps_cycle_len == 0:
+                    callbacks.on_steps_cycle_end(step, logs)
+
+        step = steps
+        if end_episode:
 
             while not done:
 
@@ -362,14 +404,18 @@ class Playground():
                 )
                 callbacks.on_step_end(step, logs)
 
-                if (step + 1) % steps_cycle_len == 0 or done:
+                if (step + 1) % steps_cycle_len == 0:
                     callbacks.on_steps_cycle_end(step, logs)
-            
-            callbacks.on_episode_end(episode, logs)
 
-            if (episode + 1) % episodes_cycle_len == 0 or episode + 1 == episodes:
-                callbacks.on_episodes_cycle_end(episode, logs)
-            
+                step += 1
+            else:
+                callbacks.on_episode_end(logs['episode'], logs)
+
+                if (logs['episode'] + 1) % episodes_cycle_len == 0 or logs['episode'] + 1 == logs['episode']:
+                    callbacks.on_episodes_cycle_end(logs['episode'], logs)
+
+                logs['episode'] += 1
+
         callbacks.on_run_end(logs)
 
     def run(self,
@@ -385,6 +431,7 @@ class Playground():
             logger: Callback=None,
             reward_handler: Union[Callable, RewardHandler]=None,
             done_handler: Union[Callable, DoneHandler]=None,
+            end_episode: bool=False,
             **kwargs
         ):
 
@@ -423,26 +470,67 @@ class Playground():
             'learn': learn
         }
 
-        logger = logger if logger else Logger(**kwargs)
-        callbacks = self._build_callbacks(callbacks, logger, params)
-
         # Start the run
         logs = {}
         logs.update(params)
-        logs['cur_step'] = 0
 
-        callbacks.on_run_begin(logs)
+        if steps > 0: 
 
-        self._episode_loop(episodes, 
+            if verbose < 3:
+                warnings.warn(
+                    "training with a fixed number of steps is better explained with verbose>=3",
+                    UserWarning
+                )
+
+            logger = logger if logger else Logger(**kwargs)
+            callbacks = self._build_callbacks(callbacks, logger, params)
+            callbacks.on_run_begin(logs)
+
+            self._steps_rollout(steps, 
+                episodes_cycle_len,
+                callbacks,
+                logs,
+                reward_handler,
+                done_handler,
+                steps_cycle_len,
+                learn,
+                render,
+                render_mode,
+                end_episode)
+            
+        else:
+
+            logger = logger if logger else Logger(**kwargs)
+            callbacks = self._build_callbacks(callbacks, logger, params)
+            callbacks.on_run_begin(logs)
+
+            self._episodes_rollout(episodes, 
+                episodes_cycle_len, 
             episodes_cycle_len,
+                episodes_cycle_len, 
+                callbacks, 
             callbacks,
+                callbacks, 
+                logs, 
             logs,
+                logs, 
+                reward_handler, 
             reward_handler,
+                reward_handler, 
+                done_handler, 
             done_handler,
+                done_handler, 
+                steps_cycle_len, 
             steps_cycle_len,
+                steps_cycle_len, 
+                learn, 
             learn,
+                learn, 
+                render, 
             render,
-            render_mode)
+                render, 
+                render_mode)
+            logger = logger if logger else Logger(**kwargs)   
 
     def fit(self, episodes, **kwargs):
         """Train the agent(s) on the environement for a number of episodes."""
