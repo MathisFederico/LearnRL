@@ -122,7 +122,7 @@ class Logger(LoggingCallback):
         super().on_episode_begin(episode, logs=logs)
 
         if self.verbose >= 2:
-            text = "Episode " + self._get_episode_text(episode)
+            text = "Episode " + self._get_episode_text(episode, logs=logs)
             if self.verbose == 2:
                 print(text, end=' | ')
             else:
@@ -139,7 +139,7 @@ class Logger(LoggingCallback):
 
         if self.verbose >= 3:
             print()
-            print("Episode " + self._get_episode_text(episode), end=' | ')
+            print("Episode " + self._get_episode_text(episode, logs=logs), end=' | ')
 
         if self.verbose >= 2:
             if self.titles_on_top and self.n_agents > 1:
@@ -170,7 +170,7 @@ class Logger(LoggingCallback):
         super().on_episodes_cycle_begin(episode, logs=logs)
 
         if self.verbose == 2 and self.titles_on_top:
-            eps_text = "Episode " + self._get_episode_text(episode)
+            eps_text = "Episode " + self._get_episode_text(episode, logs=logs)
             self._print_titles(self.episode_metrics,
                                prefix='\n',
                                offset=len(eps_text) * ' ' + ' |',
@@ -180,7 +180,7 @@ class Logger(LoggingCallback):
         super().on_episodes_cycle_end(episode, logs=logs)
 
         if self.verbose == 1:
-            print("Episode " + self._get_episode_text(episode), end=' | ')
+            print("Episode " + self._get_episode_text(episode, logs=logs), end=' | ')
 
             if self.titles_on_top and self.n_agents > 1:
                 self._print_titles(self.episodes_cycle_metrics, prefix='\n', offset=' '*12 + '|')
@@ -202,7 +202,7 @@ class Logger(LoggingCallback):
             self.titles_on_top = False
 
         if self.titles_on_top and self.n_agents == 1 and self.verbose == 1:
-            offset_len = len("Episode " + self._get_episode_text(0))
+            offset_len = len("Episode " + self._get_episode_text(0, logs=logs))
             if self.verbose == 1:
                 metrics_to_print = self.episodes_cycle_metrics
             else:
@@ -279,11 +279,12 @@ class Logger(LoggingCallback):
         odd = (lenght - len(text)) % 2 == 1
         return line * semibar_lenght + f' {text} ' + line * (semibar_lenght + 1*odd)
 
-    def _get_episode_text(self, episode):
+    def _get_episode_text(self, episode, logs=None):
         """ Get the display text for an episode """
         text = f"{episode+1}"
         text = " " * (self._n_digits_episodes - len(text)) + text
-        text += f"/{self.params['episodes']}"
+        if logs['steps'] <= 0:
+            text += f"/{self.params['episodes']}"
         return text
 
     @staticmethod
