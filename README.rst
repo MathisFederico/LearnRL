@@ -115,21 +115,6 @@ Install LearnRL by running::
    pip install learnrl
 
 
-Get started
------------
-
-Create:
-   - TODO: Numpy tutorials
-   - TODO: Tensorflow tutorials
-   - TODO: Pytorch tutorials
-
-
-Visualize:
-   - TODO: Tensorboard visualisation tutorial
-   - TODO: Wandb visualisation tutorial
-   - TODO: Wandb sweeps tutorial
-
-
 Documentation
 -------------
 
