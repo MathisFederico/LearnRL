@@ -64,7 +64,7 @@ You can build and run your own Agent in a clear and sharable manner !
          """ How the Agent will remember experiences """
          ...
 
-   env = gym.make('FrozenLake-v0', is_slippery=True) # This could be any gym Environment !
+   env = gym.make('FrozenLake-v0', is_slippery=True) # This could be any gym-like Environment !
    agent = MyAgent(env.observation_space, env.action_space)
 
    pg = rl.Playground(env, agent)
@@ -104,7 +104,7 @@ The Playground will allow you to have clean logs adapted to your will with the v
    .. image:: docs\_static\images\logs-verbose-5.png
 
 
-The Playground also allows you to add Callbacks with ease, for example the WandbCallback to have a nice experiment tracking dashboard !
+The Playground also allows you to add Callbacks with ease, for example the WandbCallback to have a nice experiment tracking dashboard using `weights&biases <https://wandb.ai/site>`_!
 
 
 Installation
