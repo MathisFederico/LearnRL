@@ -4,11 +4,11 @@
 """ Module to get coverage score. """
 
 import sys
-from xml.dom import minidom
+from defusedxml.minidom import parse
 from utils import score_to_rgb_color
 
 if __name__ == '__main__':
-    file = minidom.parse('coverage.xml')
+    file = parse('coverage.xml')
     coverage = file.getElementsByTagName('coverage')
     coverage = float(coverage[0].attributes['line-rate'].value)
     coverage_min, coverage_max = 0, 1
