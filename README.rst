@@ -1,19 +1,30 @@
 Welcome to LearnRL's community !
 ================================
 
+
+.. image:: https://github.com/MathisFederico/LearnRL/actions/workflows/python-tests.yml/badge.svg?branch=dev
+   :alt: Pytest badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-tests.yml
+
+
+.. image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2FMathisFederico%2F00ce73155619a4544884ca6d251954b3%2Fraw%2Flearnrl_pylint_badge.json
+   :alt: Pylint badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-pylint.yml
+
+
+.. image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2FMathisFederico%2F00ce73155619a4544884ca6d251954b3%2Fraw%2Flearnrl_unit_coverage_badge.json
+   :alt: Unit coverage badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-coverage.yml
+
+
+.. image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2FMathisFederico%2F00ce73155619a4544884ca6d251954b3%2Fraw%2Flearnrl_integration_coverage_badge.json
+   :alt: Integration coverage badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-coverage.yml
+
+
 .. image:: https://img.shields.io/pypi/l/learnrl
    :alt: PyPI - License
    :target: https://www.gnu.org/licenses/
-
-
-.. image:: https://app.codacy.com/project/badge/Grade/b4c3818135484e8b9acae67b01526957
-   :alt: Codacy - Quality
-   :target: https://www.codacy.com/gh/MathisFederico/LearnRL/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MathisFederico/LearnRL&amp;utm_campaign=Badge_Grade
-
-
-.. image:: https://app.codacy.com/project/badge/Coverage/b4c3818135484e8b9acae67b01526957
-   :alt: Codacy - Coverage
-   :target: https://www.codacy.com/gh/MathisFederico/LearnRL/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MathisFederico/LearnRL&amp;utm_campaign=Badge_Coverage
 
 
 LearnRL is a library to use and learn reinforcement learning.
@@ -53,7 +64,7 @@ You can build and run your own Agent in a clear and sharable manner !
          """ How the Agent will remember experiences """
          ...
 
-   env = gym.make('FrozenLake-v0', is_slippery=True) # This could be any gym Environment !
+   env = gym.make('FrozenLake-v0', is_slippery=True) # This could be any gym-like Environment !
    agent = MyAgent(env.observation_space, env.action_space)
 
    pg = rl.Playground(env, agent)
@@ -93,7 +104,7 @@ The Playground will allow you to have clean logs adapted to your will with the v
    .. image:: docs\_static\images\logs-verbose-5.png
 
 
-The Playground also allows you to add Callbacks with ease, for example the WandbCallback to have a nice experiment tracking dashboard !
+The Playground also allows you to add Callbacks with ease, for example the WandbCallback to have a nice experiment tracking dashboard using `weights&biases <https://wandb.ai/site>`_!
 
 
 Installation
@@ -102,21 +113,6 @@ Installation
 Install LearnRL by running::
 
    pip install learnrl
-
-
-Get started
------------
-
-Create:
-   - TODO: Numpy tutorials
-   - TODO: Tensorflow tutorials
-   - TODO: Pytorch tutorials
-
-
-Visualize:
-   - TODO: Tensorboard visualisation tutorial
-   - TODO: Wandb visualisation tutorial
-   - TODO: Wandb sweeps tutorial
 
 
 Documentation
