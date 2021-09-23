@@ -1,7 +1,7 @@
-# This workflows will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+# LearnRL a python library to learn and use reinforcement learning
+# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
 
-name: Upload Python on PyPi
+name: PyPi
 
 on:
   push:
