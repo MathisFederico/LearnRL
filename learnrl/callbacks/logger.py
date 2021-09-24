@@ -34,11 +34,10 @@ class Logger(LoggingCallback):
     """
 
     def __init__(self,
-            metrics: List[Union[str, tuple]]=None,
-            detailed_step_metrics: List[str]=None,
-            episode_only_metrics: List[str]=None,
-            titles_on_top: bool=True):
-
+                 metrics: List[Union[str, tuple]] = None,
+                 detailed_step_metrics: List[str] = None,
+                 episode_only_metrics: List[str] = None,
+                 titles_on_top: bool = True):
         """Default logger in every :class:`~learnrl.playground.Playground` run.
 
         Args:
@@ -55,7 +54,8 @@ class Logger(LoggingCallback):
                 'dt_step~'
             ]
         if detailed_step_metrics is None:
-            detailed_step_metrics = ['observation', 'action', 'next_observation']
+            detailed_step_metrics = [
+                'observation', 'action', 'next_observation']
         if episode_only_metrics is None:
             episode_only_metrics = ['dt_episode~']
 
@@ -91,7 +91,7 @@ class Logger(LoggingCallback):
             if self.n_agents > 1:
                 print(f"Agent {agent_id}", end=sep)
             self._print_metrics(self.step_metrics,
-                agent_id=agent_id, logs=logs, sep=sep, end=end)
+                                agent_id=agent_id, logs=logs, sep=sep, end=end)
 
         if self.verbose == 5:
             self._print_metrics(self.detailed_step_metrics, logs=logs)
@@ -102,7 +102,8 @@ class Logger(LoggingCallback):
 
         if self.verbose == 4 and self.titles_on_top:
             step_text = self._get_step_text(0)
-            self._print_titles(self.step_metrics, offset=' ' * len(step_text) + ' |', end='\n')
+            self._print_titles(self.step_metrics, offset=' ' *
+                               len(step_text) + ' |', end='\n')
 
     def on_steps_cycle_end(self, step, logs=None):
         super().on_steps_cycle_end(step, logs=logs)
@@ -122,7 +123,7 @@ class Logger(LoggingCallback):
         super().on_episode_begin(episode, logs=logs)
 
         if self.verbose >= 2:
-            text = "Episode " + self._get_episode_text(episode)
+            text = "Episode " + self._get_episode_text(episode, logs=logs)
             if self.verbose == 2:
                 print(text, end=' | ')
             else:
@@ -139,11 +140,12 @@ class Logger(LoggingCallback):
 
         if self.verbose >= 3:
             print()
-            print("Episode " + self._get_episode_text(episode), end=' | ')
+            print("Episode " + self._get_episode_text(episode, logs=logs), end=' | ')
 
         if self.verbose >= 2:
             if self.titles_on_top and self.n_agents > 1:
-                self._print_titles(self.episode_metrics, prefix='\n', offset=' '*12 + '|')
+                self._print_titles(self.episode_metrics,
+                                   prefix='\n', offset=' '*12 + '|')
 
             for agent_id in range(self.n_agents):
                 if self.n_agents > 1:
@@ -152,8 +154,8 @@ class Logger(LoggingCallback):
                 titles_on_top = False if self.verbose >= 3 else None
 
                 self._print_metrics(self.episode_metrics, prefix='episode',
-                    agent_id=agent_id, sep=' | ', titles_on_top=titles_on_top
-                )
+                                    agent_id=agent_id, sep=' | ', titles_on_top=titles_on_top
+                                    )
 
             self._print_metrics(
                 self.episode_only_metrics,
@@ -170,7 +172,7 @@ class Logger(LoggingCallback):
         super().on_episodes_cycle_begin(episode, logs=logs)
 
         if self.verbose == 2 and self.titles_on_top:
-            eps_text = "Episode " + self._get_episode_text(episode)
+            eps_text = "Episode " + self._get_episode_text(episode, logs=logs)
             self._print_titles(self.episode_metrics,
                                prefix='\n',
                                offset=len(eps_text) * ' ' + ' |',
@@ -180,38 +182,44 @@ class Logger(LoggingCallback):
         super().on_episodes_cycle_end(episode, logs=logs)
 
         if self.verbose == 1:
-            print("Episode " + self._get_episode_text(episode), end=' | ')
+            print("Episode " + self._get_episode_text(episode, logs=logs), end=' | ')
 
             if self.titles_on_top and self.n_agents > 1:
-                self._print_titles(self.episodes_cycle_metrics, prefix='\n', offset=' '*12 + '|')
+                self._print_titles(self.episodes_cycle_metrics,
+                                   prefix='\n', offset=' '*12 + '|')
 
             for agent_id in range(self.n_agents):
                 if self.n_agents > 1:
                     print(end=f'\n    Agent {agent_id} | ')
                 self._print_metrics(self.episodes_cycle_metrics,
-                    prefix='episodes_cycle', agent_id=agent_id, sep=' | ')
+                                    prefix='episodes_cycle', agent_id=agent_id, sep=' | ')
 
             print()
 
     def on_run_begin(self, logs=None):
         super().on_run_begin(logs=logs)
-        self._n_digits_episodes = int(np.log10(self.params['episodes'])) + 1
+        if self.params['episodes'] <= 0:
+            self._n_digits_episodes = int(
+                np.log10(1)) + 1
+        else:
+            self._n_digits_episodes = int(
+                np.log10(self.params['episodes'])) + 1
         self.verbose = self.params['verbose']
 
         if self.verbose == 5:
             self.titles_on_top = False
 
         if self.titles_on_top and self.n_agents == 1 and self.verbose == 1:
-            offset_len = len("Episode " + self._get_episode_text(0))
+            offset_len = len("Episode " + self._get_episode_text(0, logs=logs))
             if self.verbose == 1:
                 metrics_to_print = self.episodes_cycle_metrics
             else:
                 metrics_to_print = self.episode_metrics
             self._print_titles(metrics_to_print,
-                prefix='', offset=' ' * offset_len + ' |', end='\n')
+                               prefix='', offset=' ' * offset_len + ' |', end='\n')
 
-    def _print_metrics(self, metric_list:MetricList, prefix=None, agent_id=None,
-                             logs=None, sep=None, end='', titles_on_top=None):
+    def _print_metrics(self, metric_list: MetricList, prefix=None, agent_id=None,
+                       logs=None, sep=None, end='', titles_on_top=None):
         """ Print a metric list """
         titles_on_top = titles_on_top if titles_on_top is not None else self.titles_on_top
         for metric in metric_list:
@@ -227,7 +235,7 @@ class Logger(LoggingCallback):
 
         print(end=end)
 
-    def _print_metric(self, metric:Metric, metric_value, titles_on_top, **kwargs):
+    def _print_metric(self, metric: Metric, metric_value, titles_on_top, **kwargs):
         """ Print a single metric based on the input type """
         if metric.name.startswith('dt_'):
             level = metric.name.split('_')[1]
@@ -246,23 +254,27 @@ class Logger(LoggingCallback):
             metric_display = str(metric_value)
 
         space = ' ' if len(metric.surname) > 0 else ''
-        prefix = '' if titles_on_top else f"{metric.surname.capitalize()}" + space
+        prefix = '' if titles_on_top else f"{metric.surname.capitalize()}" + \
+            space
 
-        metric_display = metric_display + (self._number_window - len(metric_display)) * ' '
+        metric_display = metric_display + \
+            (self._number_window - len(metric_display)) * ' '
         print(prefix + metric_display, **kwargs)
 
-    def _print_titles(self, metric_list:MetricList, prefix='', offset='', end=''):
+    def _print_titles(self, metric_list: MetricList, prefix='', offset='', end=''):
         """ Print the titles of the metric list """
         print(prefix, end=offset)
         for metric in metric_list:
             if not metric.name.startswith('dt_'):
-                capitalized_surname = metric.surname.capitalize()[0] + metric.surname[1:]
+                capitalized_surname = metric.surname.capitalize()[
+                    0] + metric.surname[1:]
                 surname = capitalized_surname[:self._number_window]
                 title_lenght = self._number_window+2
             else:
                 surname = metric.name[3:].capitalize() + ' time'
                 title_lenght = self._number_window_time + 9
-            display_name = self._text_in_middle(' ', surname, lenght=title_lenght)
+            display_name = self._text_in_middle(
+                ' ', surname, lenght=title_lenght)
             print(display_name, end='|')
         print(end=end)
 
@@ -279,11 +291,12 @@ class Logger(LoggingCallback):
         odd = (lenght - len(text)) % 2 == 1
         return line * semibar_lenght + f' {text} ' + line * (semibar_lenght + 1*odd)
 
-    def _get_episode_text(self, episode):
+    def _get_episode_text(self, episode, logs=None):
         """ Get the display text for an episode """
         text = f"{episode+1}"
         text = " " * (self._n_digits_episodes - len(text)) + text
-        text += f"/{self.params['episodes']}"
+        if logs['steps'] <= 0:
+            text += f"/{self.params['episodes']}"
         return text
 
     @staticmethod
