@@ -34,6 +34,7 @@ readme = { file = ["README.rst"] }
 dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools_scm]
+write_to = "src/benchmarks/__version__.py"
 
 [tool.pytest.ini_options]
 markers = [

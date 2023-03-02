@@ -13,22 +13,18 @@
 import os
 import sys
 
+from benchmarks.__version__ import version
+
+
 sys.path.insert(0, os.path.abspath("../"))
 
 
 # -- Project information -----------------------------------------------------
 
 project = "Benchmarks"
-copyright = "2020, Mathïs Fédérico"
+copyright = "2020-2023, Mathïs Fédérico"
 author = "Mathïs Fédérico"
 
-
-def get_version():
-    version_file = open("../VERSION")
-    return version_file.read().strip()
-
-
-version = get_version()
 release = version
 
 # -- General configuration ---------------------------------------------------

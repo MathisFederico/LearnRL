@@ -83,20 +83,27 @@ See the `metric codes <https://learnrl.readthedocs.io/en/latest/callbacks.html#m
    pg.fit(2000, verbose=1, metrics=metrics)
 
 The Playground will allow you to have clean logs adapted to your will with the verbose parameter:
-  - Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
-   .. image:: docs\_static\images\logs-verbose-1.png
 
-  - Verbose 2 : episode - To log each individual episode.
-   .. image:: docs\_static\images\logs-verbose-2.png
+- Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
+   .. image:: docs/_static/images/logs-verbose-1.png
 
-  - Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
-   .. image:: docs\_static\images\logs-verbose-3.png
 
-  - Verbose 4 : step - To log each individual step.
-   .. image:: docs\_static\images\logs-verbose-4.png
+- Verbose 2 : episode - To log each individual episode.
+   .. image:: docs/_static/images/logs-verbose-2.png
 
-  - Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
-   .. image:: docs\_static\images\logs-verbose-5.png
+
+- Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
+   .. image:: docs/_static/images/logs-verbose-3.png
+
+
+- Verbose 4 : step - To log each individual step.
+   .. image:: docs/_static/images/logs-verbose-4.png
+
+
+- Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
+   .. image:: docs/_static/images/logs-verbose-5.png
+
+
 
 
 The Playground also allows you to add Callbacks with ease, for example the WandbCallback to have a nice experiment tracking dashboard using `weights&biases <https://wandb.ai/site>`_!
@@ -112,10 +119,6 @@ Install Benchmarks by running::
 
 Documentation
 -------------
-
-.. image:: docs\_static\images\docs.png
-   :target: https://learnrl.readthedocs.io/en/latest/
-
 
 | See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details.
 | See the `development documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see what's coming !
@@ -142,4 +145,5 @@ License
 
 .. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
 .. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
+.. |gym.render| replace:: `space <https://www.gymlibrary.dev/api/core/#gym.Env.render>`__
 .. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__

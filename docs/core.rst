@@ -1,7 +1,7 @@
-LearnRL's Core
+Benchmarks's Core
 ==============
 
-LearnRL is based on those core objects: :ref:`Playground`,
+Benchmarks is based on those core objects: :ref:`Playground`,
 :ref:`Agent`, :ref:`TurnEnv`.
 
 They are all linked by the :ref:`Playground`, as showned by this:
@@ -15,7 +15,7 @@ They are all linked by the :ref:`Playground`, as showned by this:
 Playground
 ----------
 
-.. autoclass:: learnrl.playground.Playground
+.. autoclass:: benchmarks.playground.Playground
    :members:
 
 
@@ -24,7 +24,7 @@ Playground
 Agent
 -----
 
-.. autoclass:: learnrl.agent.Agent
+.. autoclass:: benchmarks.agent.Agent
    :members:
 
 
@@ -33,7 +33,7 @@ Agent
 TurnEnv
 -------
 
-.. autoclass:: learnrl.envs.TurnEnv
+.. autoclass:: benchmarks.envs.TurnEnv
    :members:
 
 Handlers
@@ -42,14 +42,14 @@ Handlers
 RewardHandler
 ~~~~~~~~~~~~~
 
-.. autoclass:: learnrl.playground.RewardHandler
+.. autoclass:: benchmarks.playground.RewardHandler
    :members:
 
 
 DoneHandler
 ~~~~~~~~~~~
 
-.. autoclass:: learnrl.playground.DoneHandler
+.. autoclass:: benchmarks.playground.DoneHandler
    :members:
 
 

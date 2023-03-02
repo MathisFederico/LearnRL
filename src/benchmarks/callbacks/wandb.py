@@ -65,7 +65,7 @@ def construct_panel_configs(metric_name: str, title: str = None):
 
     return {
         "userQuery": user_query,
-        "panelDefId": "mathisfederico/learnrl-chart",
+        "panelDefId": "mathisfederico/benchmarks-chart",
         "transform": {"name": "tableWithLeafColNames"},
         "fieldSettings": fields,
     }

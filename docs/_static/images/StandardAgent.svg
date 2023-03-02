@@ -268,7 +268,7 @@
      inkscape:label="StandardAgent"
      transform="matrix(1.3333333,0,0,-1.3333333,0,720)"><a
        id="a1083"
-       xlink:href="#learnrl.agents.StandardAgent"
+       xlink:href="#benchmarks.agents.StandardAgent"
        xlink:title="Agent"><path
          onmouseout="this.style.opacity=0.3"
          onmouseover="this.style.opacity=0.6"
@@ -281,7 +281,7 @@
        id="path24"
        inkscape:connector-curvature="0" /><a
        id="a4793"
-       xlink:href="#learnrl.agents.StandardAgent.learn"
+       xlink:href="#benchmarks.agents.StandardAgent.learn"
        xlink:title="learn"><path
          onmouseout="this.style.opacity=0.4"
          onmouseover="this.style.opacity=0.8"
@@ -320,7 +320,7 @@
 
 </g></g><a
        id="a4790"
-       xlink:href="#learnrl.agents.StandardAgent.act"
+       xlink:href="#benchmarks.agents.StandardAgent.act"
        xlink:title="act"><path
          onmouseout="this.style.opacity=0.4"
          onmouseover="this.style.opacity=0.8"
@@ -390,7 +390,7 @@
        style="fill:#ffc000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="path92"
        inkscape:connector-curvature="0" /><a
-       xlink:href="../agent_parts/control.html#learnrl.agent_parts.control.Ucb"
+       xlink:href="../agent_parts/control.html#benchmarks.agent_parts.control.Ucb"
        xlink:title="Upper Confidence Bound"
        id="a4814"><path
          inkscape:connector-curvature="0"
@@ -414,7 +414,7 @@
        style="fill:#ffc000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="path108"
        inkscape:connector-curvature="0" /><a
-       xlink:href="../agent_parts/control.html#learnrl.agent_parts.control.Greedy"
+       xlink:href="../agent_parts/control.html#benchmarks.agent_parts.control.Greedy"
        xlink:title="Greedy"
        id="a4811"><path
          inkscape:connector-curvature="0"
@@ -461,7 +461,7 @@
 
 </g></g><a
        id="a4805"
-       xlink:href="#learnrl.agents.StandardAgent.remember"
+       xlink:href="#benchmarks.agents.StandardAgent.remember"
        xlink:title="remember"><path
          onmouseout="this.style.opacity=0.4"
          onmouseover="this.style.opacity=1"
@@ -499,7 +499,7 @@
      id="tspan164">(O, A, R, O’, D, I)</tspan></text>
 
 </g></g><a
-       xlink:href="../core.html#learnrl.core.Memory.sample"
+       xlink:href="../core.html#benchmarks.core.Memory.sample"
        xlink:title="sample"
        id="a4802"><path
          onmouseout="this.style.opacity=0.4"
@@ -570,7 +570,7 @@
      id="tspan210">Evaluation</tspan></text>
 
 </g></g><a
-       xlink:href="../agent_parts/evaluation.html#learnrl.agent_parts.evaluation.TemporalDifference"
+       xlink:href="../agent_parts/evaluation.html#benchmarks.agent_parts.evaluation.TemporalDifference"
        xlink:title="TemporalDifference"
        id="a4826"><path
          inkscape:connector-curvature="0"
@@ -607,7 +607,7 @@
      id="tspan238">Difference</tspan></text>
 
 </g></g><a
-       xlink:href="../agent_parts/evaluation.html#learnrl.agent_parts.evaluation.MonteCarlo"
+       xlink:href="../agent_parts/evaluation.html#benchmarks.agent_parts.evaluation.MonteCarlo"
        xlink:title="MonteCarlo"
        id="a4823"><path
          inkscape:connector-curvature="0"
@@ -656,7 +656,7 @@
      id="tspan278">Carlo</tspan></text>
 
 </g></g><a
-       xlink:href="../agent_parts/evaluation.html#learnrl.agent_parts.evaluation.QLearning"
+       xlink:href="../agent_parts/evaluation.html#benchmarks.agent_parts.evaluation.QLearning"
        xlink:title="QLearning"
        id="a4829"><path
          inkscape:connector-curvature="0"

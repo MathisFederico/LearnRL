@@ -15,11 +15,11 @@ class TurnEnv(Env):
 
     The only add in TurnEnv is the method "turn",
     On top of the main API basic methodes (see |gym.Env|):
-        * step: take a step of the |gym.Env| given the action of the active player
-        * reset: reset the |gym.Env| and returns the first observation
-        * render
-        * close
-        * seed
+    * step: take a step of the |gym.Env| given the action of the active player
+    * reset: reset the |gym.Env| and returns the first observation
+    * render
+    * close
+    * seed
 
     Attributes:
         action_space (|gym.Space|): The Space object corresponding to actions.

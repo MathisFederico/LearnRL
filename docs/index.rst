@@ -1,5 +1,5 @@
-Welcome to LearnRL's community !
-================================
+Benchmarks
+==========
 
 
 .. image:: https://github.com/MathisFederico/LearnRL/actions/workflows/python-tests.yml/badge.svg?branch=dev
@@ -27,25 +27,20 @@ Welcome to LearnRL's community !
    :target: https://www.gnu.org/licenses/
 
 
-LearnRL is a library to use and learn reinforcement learning.
-It's also a community off supportive enthousiasts loving to share and build RL-based AI projects !
-We would love to help you make projects with LearnRL, so join us `on Discord <https://discord.gg/z9dd4s5>`_ !
 
-About LearnRL
--------------
+About Benchmarks
+----------------
 
-LearnRL is a tool to monitor and log reinforcement learning experiments.
-You build/find any compatible agent (only need an act method), you build/find a gym environment, and learnrl will make them interact together !
-LearnRL also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
-Also, LearnRL is cross platform compatible ! That's why no agents are built-in learnrl itself, but you can check:
-   - `LearnRL for Tensorflow <https://github.com/MathisFederico/LearnRL-Tensorflow>`_
-   - `LearnRL for Pytorch <https://github.com/MathisFederico/LearnRL-Pytorch>`_
+Benchmarks is a tool to monitor and log reinforcement learning experiments.
+You build/find any compatible agent (only need an act method), you build/find a gym environment, and benchmarks will make them interact together !
+Benchmarks also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
+Also, Benchmarks is cross platform compatible ! That's why no agents are built-in benchmarks itself.
 
 You can build and run your own Agent in a clear and sharable manner !
 
 .. code-block:: python
 
-   import learnrl as rl
+   import benchmarks as rl
    import gym
 
    class MyAgent(rl.Agent):
@@ -88,20 +83,27 @@ See the `metric codes <https://learnrl.readthedocs.io/en/latest/callbacks.html#m
    pg.fit(2000, verbose=1, metrics=metrics)
 
 The Playground will allow you to have clean logs adapted to your will with the verbose parameter:
-  - Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
-   .. image:: docs\_static\images\logs-verbose-1.png
 
-  - Verbose 2 : episode - To log each individual episode.
-   .. image:: docs\_static\images\logs-verbose-2.png
+- Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
+   .. image:: _static/images/logs-verbose-1.png
 
-  - Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
-   .. image:: docs\_static\images\logs-verbose-3.png
 
-  - Verbose 4 : step - To log each individual step.
-   .. image:: docs\_static\images\logs-verbose-4.png
+- Verbose 2 : episode - To log each individual episode.
+   .. image:: _static/images/logs-verbose-2.png
 
-  - Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
-   .. image:: docs\_static\images\logs-verbose-5.png
+
+- Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
+   .. image:: _static/images/logs-verbose-3.png
+
+
+- Verbose 4 : step - To log each individual step.
+   .. image:: _static/images/logs-verbose-4.png
+
+
+- Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
+   .. image:: _static/images/logs-verbose-5.png
+
+
 
 
 The Playground also allows you to add Callbacks with ease, for example the WandbCallback to have a nice experiment tracking dashboard using `weights&biases <https://wandb.ai/site>`_!
@@ -110,10 +112,41 @@ The Playground also allows you to add Callbacks with ease, for example the Wandb
 Installation
 ------------
 
-Install LearnRL by running::
+Install Benchmarks by running::
 
-   pip install learnrl
+   pip install benchmarks
 
+
+Documentation
+-------------
+
+| See the `latest complete documentation <https://learnrl.readthedocs.io/en/latest/>`_ for more details.
+| See the `development documentation <https://learnrl.readthedocs.io/en/dev/>`_ to see what's coming !
+
+
+Contribute
+----------
+
+- `Issue Tracker <https://github.com/MathisFederico/LearnRL/issues>`_.
+- `Projects <https://github.com/MathisFederico/LearnRL/projects>`_.
+
+
+Support
+-------
+
+If you are having issues, please contact us `on Discord <https://discord.gg/z9dd4s5>`_.
+
+
+License
+-------
+
+| The project is licensed under the GNU LGPLv3 license.
+| See LICENCE, COPYING and COPYING.LESSER for more details.
+
+.. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
+.. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
+.. |gym.render| replace:: `space <https://www.gymlibrary.dev/api/core/#gym.Env.render>`__
+.. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__
 
 Table Of Content
 ----------------
@@ -124,25 +157,3 @@ Table Of Content
 
    core
    callbacks
-
-
-Contribute
-----------
-
-- `Issue Tracker <https://github.com/MathisFederico/LearnRL/issues>`_.
-- `Projects <https://github.com/MathisFederico/LearnRL/projects>`_.
-
-Support
--------
-
-If you are having issues, please contact us `on Discord <https://discord.gg/z9dd4s5>`_.
-
-License
--------
-
-| The project is licensed under the GNU LGPLv3 license.
-| See LICENCE, COPYING and COPYING.LESSER for more details.
-
-.. |gym.Env| replace:: `environment <http://gym.openai.com/docs/#environments>`__
-.. |gym.Space| replace:: `space <http://gym.openai.com/docs/#spaces>`__
-.. |hash| replace:: `perfect hash functions <https://en.wikipedia.org/wiki/Perfect_hash_function>`__
