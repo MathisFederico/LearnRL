@@ -6,7 +6,7 @@
 
 import pytest
 
-from learnrl.envs import TurnEnv
+from benchmarks.envs import TurnEnv
 
 
 class TestTurnEnv:

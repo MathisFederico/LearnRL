@@ -10,7 +10,7 @@ https://wandb.ai/site
 from typing import List, Union
 
 import wandb
-from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
+from benchmarks.callbacks.logging_callback import LoggingCallback, MetricList
 
 
 def construct_panel_configs(metric_name:str, title:str=None):

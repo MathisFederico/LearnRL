@@ -10,10 +10,10 @@ import pytest_check as check
 import numpy as np
 
 from gym import Env
-from learnrl.agent import Agent
-from learnrl.envs import TurnEnv
-from learnrl.playground import Playground, RewardHandler, DoneHandler
-from learnrl.callbacks.callback import CallbackList, Callback
+from benchmarks.agent import Agent
+from benchmarks.envs import TurnEnv
+from benchmarks.playground import Playground, RewardHandler, DoneHandler
+from benchmarks.callbacks.callback import CallbackList, Callback
 
 class TestPlayground:
 

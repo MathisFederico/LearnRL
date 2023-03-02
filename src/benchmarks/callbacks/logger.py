@@ -6,7 +6,7 @@
 from typing import List, Union
 import numpy as np
 
-from learnrl.callbacks import LoggingCallback, MetricList, Metric
+from benchmarks.callbacks import LoggingCallback, MetricList, Metric
 
 
 class Logger(LoggingCallback):

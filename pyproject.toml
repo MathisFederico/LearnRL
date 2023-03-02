@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+
+[project]
+name = "benchmarks"
+description = "Lightweight environments to study hierarchical reasoning"
+
+dynamic = ["version", "readme", "dependencies"]
+license = { text = "GNU General Public License v3 or later (GPLv3+)" }
+requires-python = ">=3.7"
+authors = [
+    { name = "Mathïs Fédérico" },
+    { name = "Mathïs Fédérico", email = "mathfederico@gmail.com" },
+]
+keywords = [
+    "gym",
+    "crafting",
+    "minecraft",
+    "hierachical",
+    "reinforcement",
+    "learning",
+]
+
+
+[project.optional-dependencies]
+gym = ["gym >= 0.17.3"]
+gui = ["pygame >= 2.1.0", "pygame-menu >= 4.3.8"]
+all = ["gym >= 0.17.3", "pygame >= 2.1.0", "pygame-menu >= 4.3.8"]
+
+[project.urls]
+Source = "https://github.com/IRLL/Crafting"
+
+[tool.setuptools]
+license-files = ['LICEN[CS]E*', 'COPYING*', 'NOTICE*', 'AUTHORS*']
+
+[project.scripts]
+crafting = "crafting.__main__:main"
+
+[tool.setuptools.dynamic]
+readme = { file = ["README.md"] , content-type = "text/markdown"}
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+testpaths = ["tests"]
+log_level = "DEBUG"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.mypy]
+files = "src"
+plugins = "numpy.typing.mypy_plugin"
+check_untyped_defs = false
+disallow_any_generics = false
+disallow_incomplete_defs = true
+no_implicit_optional = false
+no_implicit_reexport = true
+strict_equality = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+ignore_missing_imports = true

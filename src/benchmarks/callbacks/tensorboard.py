@@ -12,7 +12,7 @@ from typing import List, Tuple, Dict, Any, Union
 
 import tensorflow as tf
 
-from learnrl.callbacks.logging_callback import LoggingCallback, MetricList
+from benchmarks.callbacks.logging_callback import LoggingCallback, MetricList
 
 
 class TensorboardCallback(LoggingCallback):

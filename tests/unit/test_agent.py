@@ -7,7 +7,7 @@
 import pytest
 import pytest_check as check
 
-from learnrl.agent import Agent
+from benchmarks.agent import Agent
 
 class TestAgent:
 

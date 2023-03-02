@@ -7,9 +7,9 @@
 import pytest
 import numpy as np
 
-from learnrl.callbacks.callback import CallbackList
-from learnrl.callbacks.logging_callback import LoggingCallback
-from learnrl.callbacks import Logger
+from benchmarks.callbacks.callback import CallbackList
+from benchmarks.callbacks.logging_callback import LoggingCallback
+from benchmarks.callbacks import Logger
 
 
 class DummyPlayground():

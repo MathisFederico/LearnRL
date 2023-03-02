@@ -7,7 +7,7 @@
 import pytest_check as check
 import pytest
 
-from learnrl.callbacks.logging_callback import LoggingCallback, Metric, MetricList
+from benchmarks.callbacks.logging_callback import LoggingCallback, Metric, MetricList
 
 class TestMetric:
     """ Metric """

@@ -6,7 +6,7 @@
 
 import pytest
 import pytest_check as check
-from learnrl.callbacks.callback import Callback, CallbackList
+from benchmarks.callbacks.callback import Callback, CallbackList
 
 class TestCallback:
 

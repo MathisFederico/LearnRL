@@ -4,7 +4,7 @@
 """LoggingCallback tracks aggregated metrics during runs"""
 
 from typing import List, Union
-from learnrl.callbacks.callback import Callback
+from benchmarks.callbacks.callback import Callback
 
 class Metric():
 

@@ -12,8 +12,8 @@ from numbers import Number
 import numpy as np
 from gym import Env
 
-from learnrl import Agent, TurnEnv
-from learnrl.callbacks import Callback, CallbackList, Logger
+from benchmarks import Agent, TurnEnv
+from benchmarks.callbacks import Callback, CallbackList, Logger
 
 
 class DoneHandler():

@@ -5,7 +5,7 @@
 
 __version__ = "1.0.2"
 
-from learnrl.agent import Agent
-from learnrl.envs import TurnEnv
-from learnrl.playground import Playground, DoneHandler, RewardHandler
-from learnrl.callbacks import Callback
+from benchmarks.agent import Agent
+from benchmarks.envs import TurnEnv
+from benchmarks.playground import Playground, DoneHandler, RewardHandler
+from benchmarks.callbacks import Callback
