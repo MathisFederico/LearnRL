@@ -28,9 +28,6 @@ Benchmarks
 
 
 
-About Benchmarks
-----------------
-
 Benchmarks is a tool to monitor and log reinforcement learning experiments.
 You build/find any compatible agent (only need an act method), you build/find a gym environment, and benchmarks will make them interact together !
 Benchmarks also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
@@ -84,23 +81,23 @@ See the `metric codes <https://learnrl.readthedocs.io/en/latest/callbacks.html#m
 
 The Playground will allow you to have clean logs adapted to your will with the verbose parameter:
 
-- Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
+* Verbose 1 : episodes cycles - If your environment makes a lot of quick episodes.
    .. image:: _static/images/logs-verbose-1.png
 
 
-- Verbose 2 : episode - To log each individual episode.
+* Verbose 2 : episode - To log each individual episode.
    .. image:: _static/images/logs-verbose-2.png
 
 
-- Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
+* Verbose 3 : steps cycles - If your environment makes a lot of quick steps but has long episodes.
    .. image:: _static/images/logs-verbose-3.png
 
 
-- Verbose 4 : step - To log each individual step.
+* Verbose 4 : step - To log each individual step.
    .. image:: _static/images/logs-verbose-4.png
 
 
-- Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
+* Verbose 5 : detailled step - To debug each individual step (with observations, actions, ...).
    .. image:: _static/images/logs-verbose-5.png
 
 
