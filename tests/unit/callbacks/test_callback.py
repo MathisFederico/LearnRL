@@ -55,7 +55,7 @@ class TestCallbackList:
         self.callback1 = Callback()
         self.callback2 = Callback()
         self.callbacks = [self.callback1, self.callback2]
-        self.callback_path = "learnrl.callbacks.callback.Callback"
+        self.callback_path = "benchmarks.callbacks.callback.Callback"
 
     def test_init(self):
         """should instanciate correctly."""
@@ -107,7 +107,7 @@ class TestCallbackList:
         hook_name = f"on_{timescale}_{hook}"
 
         mocker.patch("time.time", return_value=time)
-        mocker.patch("learnrl.callbacks.callback.Callback." + hook_name)
+        mocker.patch("benchmarks.callbacks.callback.Callback." + hook_name)
 
         callbacks = CallbackList(self.callbacks)
         if hook == "end":
@@ -126,7 +126,7 @@ class TestCallbackList:
         "timescale", ["step", "steps_cycle", "episode", "episodes_cycle", "run"]
     )
     def test_calls_all_callbacks_on_(self, timescale, hook, mocker):
-        mocker.patch("learnrl.callbacks.callback.CallbackList._call_key_hook")
+        mocker.patch("benchmarks.callbacks.callback.CallbackList._call_key_hook")
 
         callbacks = CallbackList(self.callbacks)
         callback_hook = getattr(callbacks, f"on_{timescale}_{hook}")

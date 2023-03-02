@@ -5,7 +5,7 @@ import time
 
 class Callback:
 
-    """An object to call functions while the :class:`~learnrl.playground.Playground` is running.
+    """An object to call functions while the :class:`~benchmarks.playground.Playground` is running.
     You can define the custom functions `on_{position}` where position can be :
 
     >>> run_begin
@@ -127,7 +127,7 @@ class Callback:
 class CallbackList(Callback):
     """An wrapper to use a list of :class:`Callback`.
 
-    Call all concerned callbacks While the :class:`~learnrl.playground.Playground` is running.
+    Call all concerned callbacks While the :class:`~benchmarks.playground.Playground` is running.
 
     """
 

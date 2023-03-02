@@ -198,7 +198,7 @@ class TestLoggingCallback:
     def setup(self):
         """Setup fixtures."""
         self.logging_callback_path = (
-            "learnrl.callbacks.logging_callback.LoggingCallback"
+            "benchmarks.callbacks.logging_callback.LoggingCallback"
         )
 
     def test_init(self):
@@ -479,7 +479,7 @@ class TestLoggingCallbackGetValue:
             return "attribute"
 
         mocker.patch(
-            "learnrl.callbacks.logging_callback.LoggingCallback._get_attr_name",
+            "benchmarks.callbacks.logging_callback.LoggingCallback._get_attr_name",
             _get_attr_name,
         )
 
@@ -499,7 +499,7 @@ class TestLoggingCallbackGetValue:
             return logs[metric_name]
 
         mocker.patch(
-            "learnrl.callbacks.logging_callback.LoggingCallback._extract_metric_from_logs",
+            "benchmarks.callbacks.logging_callback.LoggingCallback._extract_metric_from_logs",
             _extract_metric_from_logs,
         )
 
@@ -533,7 +533,7 @@ class TestLoggingCallbackUpdateMetrics:
 
     def test_na_value(self, mocker):
         """should not update attr if value is N/A."""
-        logging_callback_path = "learnrl.callbacks.logging_callback.LoggingCallback"
+        logging_callback_path = "benchmarks.callbacks.logging_callback.LoggingCallback"
         mocker.patch(
             logging_callback_path + "._get_attr_name", return_value="target_name"
         )
@@ -564,7 +564,7 @@ class TestLoggingCallbackUpdateMetrics:
 
     def test_update(self, mocker):
         """should update attr if value is not N/A."""
-        logging_callback_path = "learnrl.callbacks.logging_callback.LoggingCallback"
+        logging_callback_path = "benchmarks.callbacks.logging_callback.LoggingCallback"
         mocker.patch(
             logging_callback_path + "._get_attr_name", return_value="target_name"
         )
@@ -598,7 +598,7 @@ class TestLoggingCallbackUpdateMetrics:
 
     def test_reset(self, mocker):
         """should reset attr if reset is True."""
-        logging_callback_path = "learnrl.callbacks.logging_callback.LoggingCallback"
+        logging_callback_path = "benchmarks.callbacks.logging_callback.LoggingCallback"
         mocker.patch(
             logging_callback_path + "._get_attr_name", return_value="target_name"
         )
@@ -631,7 +631,7 @@ class TestLoggingCallbackUpdateMetrics:
 
     def test_all_agents(self, mocker):
         """should update all agents indepentently."""
-        logging_callback_path = "learnrl.callbacks.logging_callback.LoggingCallback"
+        logging_callback_path = "benchmarks.callbacks.logging_callback.LoggingCallback"
         mocker.patch(logging_callback_path + "._update_metrics")
 
         n_agents = 5

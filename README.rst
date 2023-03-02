@@ -1,5 +1,5 @@
-Welcome to LearnRL's community !
-================================
+Benchmarks
+==========
 
 
 .. image:: https://github.com/MathisFederico/LearnRL/actions/workflows/python-tests.yml/badge.svg?branch=dev
@@ -27,25 +27,20 @@ Welcome to LearnRL's community !
    :target: https://www.gnu.org/licenses/
 
 
-LearnRL is a library to use and learn reinforcement learning.
-It's also a community off supportive enthousiasts loving to share and build RL-based AI projects !
-We would love to help you make projects with LearnRL, so join us `on Discord <https://discord.gg/z9dd4s5>`_ !
 
-About LearnRL
--------------
+About Benchmarks
+----------------
 
-LearnRL is a tool to monitor and log reinforcement learning experiments.
-You build/find any compatible agent (only need an act method), you build/find a gym environment, and learnrl will make them interact together !
-LearnRL also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
-Also, LearnRL is cross platform compatible ! That's why no agents are built-in learnrl itself, but you can check:
-   - `LearnRL for Tensorflow <https://github.com/MathisFederico/LearnRL-Tensorflow>`_
-   - `LearnRL for Pytorch <https://github.com/MathisFederico/LearnRL-Pytorch>`_
+Benchmarks is a tool to monitor and log reinforcement learning experiments.
+You build/find any compatible agent (only need an act method), you build/find a gym environment, and benchmarks will make them interact together !
+Benchmarks also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
+Also, Benchmarks is cross platform compatible ! That's why no agents are built-in benchmarks itself.
 
 You can build and run your own Agent in a clear and sharable manner !
 
 .. code-block:: python
 
-   import learnrl as rl
+   import benchmarks as rl
    import gym
 
    class MyAgent(rl.Agent):
@@ -110,9 +105,9 @@ The Playground also allows you to add Callbacks with ease, for example the Wandb
 Installation
 ------------
 
-Install LearnRL by running::
+Install Benchmarks by running::
 
-   pip install learnrl
+   pip install benchmarks
 
 
 Documentation

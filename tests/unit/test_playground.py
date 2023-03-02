@@ -37,8 +37,8 @@ class TestPlayground:
             Playground("env", self.agents)
 
     def test_agent_typeerror(self):
-        "should raise a TypeError if any agent isn't a subclass of learnrl.Agent."
-        with pytest.raises(TypeError, match=r"agent.*learnrl.Agent"):
+        "should raise a TypeError if any agent isn't a subclass of benchmarks.Agent."
+        with pytest.raises(TypeError, match=r"agent.*benchmarks.Agent"):
             Playground(self.env, [Agent(), "agent"])
 
     def test_run(self, mocker):
@@ -91,17 +91,17 @@ class TestPlayground:
                 self.stored_key += "-|"
 
         mocker.patch(
-            "learnrl.playground.Playground._get_episodes_cycle_len", return_value=3
+            "benchmarks.playground.Playground._get_episodes_cycle_len", return_value=3
         )
         mocker.patch(
-            "learnrl.playground.Playground._reset",
+            "benchmarks.playground.Playground._reset",
             lambda *args: ("obs_0", 0, False, {}),
         )
         mocker.patch(
-            "learnrl.playground.Playground._build_callbacks",
+            "benchmarks.playground.Playground._build_callbacks",
             lambda self, callbacks, logger, params: callbacks[0],
         )
-        mocker.patch("learnrl.playground.Playground._run_step", dummy_run_step)
+        mocker.patch("benchmarks.playground.Playground._run_step", dummy_run_step)
 
         playground = Playground(self.env, self.agents)
         register_callback = RegisterCallback()
@@ -122,7 +122,7 @@ class TestPlayground:
 
     def test_fit(self, mocker):
         """fit should call run with learn=True and render=False."""
-        mocker.patch("learnrl.playground.Playground.run")
+        mocker.patch("benchmarks.playground.Playground.run")
         playground = Playground(self.env, self.agents)
         playground.fit(10)
         _, kwargs = playground.run.call_args
@@ -131,21 +131,21 @@ class TestPlayground:
 
     def test_fit_warn_learn(self, mocker):
         """fit should warn a UserWarning if learn=False."""
-        mocker.patch("learnrl.playground.Playground.run")
+        mocker.patch("benchmarks.playground.Playground.run")
         playground = Playground(self.env, self.agents)
         with pytest.warns(UserWarning, match=r".*agents will not improve.*"):
             playground.fit(10, learn=False)
 
     def test_fit_warn_render(self, mocker):
         """fit should warn a RuntimeWarning if render=True."""
-        mocker.patch("learnrl.playground.Playground.run")
+        mocker.patch("benchmarks.playground.Playground.run")
         playground = Playground(self.env, self.agents)
         with pytest.warns(RuntimeWarning, match=r".*computation speed.*"):
             playground.fit(10, render=True)
 
     def test_test(self, mocker):
         """test should call run with learn=False and render=True."""
-        mocker.patch("learnrl.playground.Playground.run")
+        mocker.patch("benchmarks.playground.Playground.run")
         playground = Playground(self.env, self.agents)
         playground.test(10)
         _, kwargs = playground.run.call_args
@@ -154,14 +154,14 @@ class TestPlayground:
 
     def test_test_warn_learn(self, mocker):
         """test should warn a UserWarning if learn=True."""
-        mocker.patch("learnrl.playground.Playground.run")
+        mocker.patch("benchmarks.playground.Playground.run")
         playground = Playground(self.env, self.agents)
         with pytest.warns(UserWarning, match=r".*not act greedy.*"):
             playground.test(10, learn=True)
 
     def test_test_warn_render(self, mocker):
         """test should warn a UserWarning if render=False."""
-        mocker.patch("learnrl.playground.Playground.run")
+        mocker.patch("benchmarks.playground.Playground.run")
         playground = Playground(self.env, self.agents)
         with pytest.warns(UserWarning, match=r".*render=True.*"):
             playground.test(10, render=False, verbose=0)
@@ -212,7 +212,7 @@ class TestPlaygroundBuildCallbacks:
     def test_build_callback(self, mocker):
         """should build a CallbackList from given callbacks and logger
         and set their params and playground."""
-        callback_path = "learnrl.callbacks.callback.Callback"
+        callback_path = "benchmarks.callbacks.callback.Callback"
         mocker.patch(callback_path + ".set_params")
         mocker.patch(callback_path + ".set_playground")
 
@@ -307,10 +307,10 @@ class TestPlaygroundReset:
 
         mocker.patch("gym.Env.reset", lambda self: "obs")
 
-        mocker.patch("learnrl.playground.RewardHandler.reset")
+        mocker.patch("benchmarks.playground.RewardHandler.reset")
         reward_handler = RewardHandler()
 
-        mocker.patch("learnrl.playground.DoneHandler.reset")
+        mocker.patch("benchmarks.playground.DoneHandler.reset")
         done_handler = DoneHandler()
 
         observation, step, done, previous = self.playground._reset(
@@ -408,7 +408,7 @@ class TestPlaygroundGetNextAgent:
 
     def test_turnenv(self, mocker):
         """should return the agent designed by agent_order and turn if env is a TurnEnv."""
-        mocker.patch("learnrl.envs.TurnEnv.turn", return_value=2)
+        mocker.patch("benchmarks.envs.TurnEnv.turn", return_value=2)
         playground = Playground(TurnEnv(), self.agents)
         playground.agents_order = [3, 2, 1, 0, 4]
         _, agent_id = playground._get_next_agent("observation")
@@ -416,7 +416,7 @@ class TestPlaygroundGetNextAgent:
 
     def test_turnenv_indexerror(self, mocker):
         """should raise ValueError if turn result is out of agent_order."""
-        mocker.patch("learnrl.envs.TurnEnv.turn", return_value=10)
+        mocker.patch("benchmarks.envs.TurnEnv.turn", return_value=10)
         playground = Playground(TurnEnv(), self.agents)
         with pytest.raises(ValueError, match=r"Not enough agents.*"):
             playground._get_next_agent("observation")
@@ -538,16 +538,16 @@ class TestPlaygroundRunStep:
         )
         self.env = Env()
 
-        mocker.patch("learnrl.agent.Agent.remember")
-        mocker.patch("learnrl.agent.Agent.learn")
+        mocker.patch("benchmarks.agent.Agent.remember")
+        mocker.patch("benchmarks.agent.Agent.learn")
         self.action = 3
-        mocker.patch("learnrl.agent.Agent.act", return_value=self.action)
+        mocker.patch("benchmarks.agent.Agent.act", return_value=self.action)
         self.n_agents = 5
         self.agents = [Agent() for _ in range(self.n_agents)]
 
         self.agent_id = 0
         mocker.patch(
-            "learnrl.playground.Playground._get_next_agent",
+            "benchmarks.playground.Playground._get_next_agent",
             return_value=(self.agents[self.agent_id], self.agent_id),
         )
 
@@ -557,7 +557,7 @@ class TestPlaygroundRunStep:
             experience["reward"] = self.handled_reward
             logs["handled_reward"] = self.handled_reward
 
-        mocker.patch("learnrl.playground.Playground._call_handlers", handler_mocker)
+        mocker.patch("benchmarks.playground.Playground._call_handlers", handler_mocker)
         self.playground = Playground(self.env, self.agents)
 
         self.previous = [
@@ -710,7 +710,7 @@ class TestDoneHandler:
 
     def test_done(self, mocker):
         """should use `done` if the output of `done` is a bool or a bool numpy array."""
-        mocker.patch("learnrl.playground.DoneHandler.done", return_value=True)
+        mocker.patch("benchmarks.playground.DoneHandler.done", return_value=True)
         handler = DoneHandler()
 
         check.is_true(handler._done(**self.experience, logs={}))
@@ -728,20 +728,22 @@ class TestDoneHandler:
             ],
         )
 
-        mocker.patch("learnrl.playground.DoneHandler.done", return_value=np.array(True))
+        mocker.patch(
+            "benchmarks.playground.DoneHandler.done", return_value=np.array(True)
+        )
         handler = DoneHandler()
         check.is_true(handler._done(**self.experience, logs={}))
 
     def test_not_bool_done(self, mocker):
         """should raise ValueError if the output of `done` is not a bool."""
-        mocker.patch("learnrl.playground.DoneHandler.done", return_value="True")
+        mocker.patch("benchmarks.playground.DoneHandler.done", return_value="True")
         handler = DoneHandler()
         with pytest.raises(ValueError, match=r"Done should be bool.*"):
             handler._done(**self.experience, logs={})
 
     def test_call(self, mocker):
         """should call done on class call."""
-        mocker.patch("learnrl.playground.DoneHandler._done", return_value=True)
+        mocker.patch("benchmarks.playground.DoneHandler._done", return_value=True)
         handler = DoneHandler()
         check.is_true(handler(**self.experience, logs={}))
         check.is_true(handler._done.called)
@@ -765,7 +767,7 @@ class TestRewardHandler:
 
     def test_reward(self, mocker):
         """should use `reward` if the output of `reward` is a float or floating numpy array."""
-        mocker.patch("learnrl.playground.RewardHandler.reward", return_value=1.2)
+        mocker.patch("benchmarks.playground.RewardHandler.reward", return_value=1.2)
         handler = RewardHandler()
         check.equal(handler._reward(**self.experience, logs={}), 1.2)
         _, kwargs = handler.reward.call_args
@@ -783,21 +785,21 @@ class TestRewardHandler:
         )
 
         mocker.patch(
-            "learnrl.playground.RewardHandler.reward", return_value=np.array(1.2)
+            "benchmarks.playground.RewardHandler.reward", return_value=np.array(1.2)
         )
         handler = RewardHandler()
         check.equal(handler._reward(**self.experience, logs={}), 1.2)
 
     def test_not_scalar_reward(self, mocker):
         """should raise ValueError if the output of `reward` is not a float."""
-        mocker.patch("learnrl.playground.RewardHandler.reward", return_value="1.2")
+        mocker.patch("benchmarks.playground.RewardHandler.reward", return_value="1.2")
         handler = RewardHandler()
         with pytest.raises(ValueError, match=r"Rewards should be a float.*"):
             handler._reward(**self.experience, logs={})
 
     def test_call(self, mocker):
         """should call reward on class call."""
-        mocker.patch("learnrl.playground.RewardHandler._reward", return_value=True)
+        mocker.patch("benchmarks.playground.RewardHandler._reward", return_value=True)
         handler = RewardHandler()
         check.is_true(handler(**self.experience, logs={}))
         check.is_true(handler._reward.called)

@@ -6,14 +6,14 @@ Callbacks
 Callback API
 ------------
 
-.. autoclass:: learnrl.callbacks.Callback
+.. autoclass:: benchmarks.callbacks.Callback
    :members:
 
 
 Logger
 ------
 
-.. autoclass:: learnrl.callbacks.Logger
+.. autoclass:: benchmarks.callbacks.Logger
    :members:
 
 

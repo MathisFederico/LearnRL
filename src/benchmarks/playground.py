@@ -121,7 +121,7 @@ class Playground:
 
     Attributes:
         env (gym.Env):  Environement in which the agent(s) will play.
-        agents (list of learnrl.Agent): List of agents to play.
+        agents (list of benchmarks.Agent): List of agents to play.
 
     """
 
@@ -141,7 +141,7 @@ class Playground:
             agents = [agents]
         for agent in agents:
             if not isinstance(agent, Agent):
-                raise TypeError("All agents should be a subclass of learnrl.Agent")
+                raise TypeError("All agents should be a subclass of benchmarks.Agent")
 
         self.env = environement
         self.agents = agents
@@ -316,11 +316,11 @@ class Playground:
                 If between 0 and 1, this in understood as a proportion.
             verbose: The verbosity level: 0 (silent), 1 (cycle), 2 (episode),
                 3 (step_cycle), 4 (step), 5 (detailed step).
-            callbacks: List of :class:`~learnrl.callbacks.Callback` to use in runs.
+            callbacks: List of :class:`~benchmarks.callbacks.Callback` to use in runs.
             reward_handler: A callable to redifine rewards of the environement.
             done_handler: A callable to redifine the environement end.
             logger: Logging callback to use.
-                If None use the default :class:`~learnrl.callbacks.logger.Logger`.
+                If None use the default :class:`~benchmarks.callbacks.logger.Logger`.
 
         """
         episodes_cycle_len = self._get_episodes_cycle_len(episodes_cycle_len, episodes)

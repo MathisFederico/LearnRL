@@ -35,8 +35,8 @@ class TurnEnv(Env):
             action: The action taken by the agent who's turn was given by :meth:`turn`.
 
         Returns:
-            observation: The observation to give to the :class:`~learnrl.agent.Agent`.
-            reward (float): The reward given to the :class:`~learnrl.agent.Agent` for this step.
+            observation: The observation to give to the :class:`~benchmarks.agent.Agent`.
+            reward (float): The reward given to the :class:`~benchmarks.agent.Agent` for this step.
             done (bool): True if the environement is done after this step.
             info (dict): Additional informations given by the |gym.Env|.
 

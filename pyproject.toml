@@ -3,7 +3,7 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
 
 [project]
 name = "benchmarks"
-description = "Lightweight environments to study hierarchical reasoning"
+description = "Evaluate agents and environments in reinforcement learning."
 
 dynamic = ["version", "readme", "dependencies"]
 license = { text = "GNU General Public License v3 or later (GPLv3+)" }
@@ -13,31 +13,24 @@ authors = [
     { name = "Mathïs Fédérico", email = "mathfederico@gmail.com" },
 ]
 keywords = [
-    "gym",
-    "crafting",
-    "minecraft",
-    "hierachical",
     "reinforcement",
     "learning",
+    "agents",
+    "environments",
+    "gym",
+    "logging",
 ]
 
 
-[project.optional-dependencies]
-gym = ["gym >= 0.17.3"]
-gui = ["pygame >= 2.1.0", "pygame-menu >= 4.3.8"]
-all = ["gym >= 0.17.3", "pygame >= 2.1.0", "pygame-menu >= 4.3.8"]
 
 [project.urls]
-Source = "https://github.com/IRLL/Crafting"
+Source = "https://github.com/MathisFederico/LearnRL"
 
 [tool.setuptools]
 license-files = ['LICEN[CS]E*', 'COPYING*', 'NOTICE*', 'AUTHORS*']
 
-[project.scripts]
-crafting = "crafting.__main__:main"
-
 [tool.setuptools.dynamic]
-readme = { file = ["README.md"] , content-type = "text/markdown"}
+readme = { file = ["README.rst"] }
 dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools_scm]

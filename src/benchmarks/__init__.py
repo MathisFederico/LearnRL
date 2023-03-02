@@ -1,6 +1,5 @@
-"""LearnRL a python library to learn and log reinforcement learning"""
-
-__version__ = "1.0.2"
+""" Benchmarks a python library to standarize interactions 
+between agents and environments in reinforcement learning """
 
 from benchmarks.agent import Agent
 from benchmarks.envs import TurnEnv

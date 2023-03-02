@@ -8,12 +8,12 @@ from benchmarks.callbacks import LoggingCallback, MetricList, Metric
 
 class Logger(LoggingCallback):
 
-    """Default logger in every :class:`~learnrl.playground.Playground` run.
+    """Default logger in every :class:`~benchmarks.playground.Playground` run.
 
     This will print relevant informations in console.
 
     You can regulate the flow of informations with the argument `verbose`
-    in :meth:`~learnrl.playground.Playground.run` directly :
+    in :meth:`~benchmarks.playground.Playground.run` directly :
      - 0 is silent (nothing will be printed)
      - 1 is cycles of episodes (aggregated metrics over multiple episodes)
      - 2 is every episode (aggregated metrics over all steps)
@@ -21,8 +21,8 @@ class Logger(LoggingCallback):
      - 4 is every step
      - 5 is every step detailed (all metrics of all steps)
 
-    You can also replace it with you own :class:`~learnrl.callbacks.Logger`,
-    with the argument `logger` in :meth:`~learnrl.playground.Playground.run`.
+    You can also replace it with you own :class:`~benchmarks.callbacks.Logger`,
+    with the argument `logger` in :meth:`~benchmarks.playground.Playground.run`.
 
     To build you own logger, you have to chose what metrics will be displayed
     and how will metrics be aggregated over steps/episodes/cycles.
@@ -37,7 +37,7 @@ class Logger(LoggingCallback):
         episode_only_metrics: List[str] = None,
         titles_on_top: bool = True,
     ):
-        """Default logger in every :class:`~learnrl.playground.Playground` run.
+        """Default logger in every :class:`~benchmarks.playground.Playground` run.
 
         Args:
             metrics: Metrics to display and how to aggregate them.

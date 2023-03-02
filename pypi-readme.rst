@@ -1,41 +1,44 @@
-Welcome to LearnRL's community !
-================================
+Benchmarks
+==========
+
+.. image:: https://github.com/MathisFederico/LearnRL/actions/workflows/python-tests.yml/badge.svg?branch=dev
+   :alt: Pytest badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-tests.yml
+
+
+.. image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2FMathisFederico%2F00ce73155619a4544884ca6d251954b3%2Fraw%2Flearnrl_pylint_badge.json
+   :alt: Pylint badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-pylint.yml
+
+
+.. image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2FMathisFederico%2F00ce73155619a4544884ca6d251954b3%2Fraw%2Flearnrl_unit_coverage_badge.json
+   :alt: Unit coverage badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-coverage.yml
+
+
+.. image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2FMathisFederico%2F00ce73155619a4544884ca6d251954b3%2Fraw%2Flearnrl_integration_coverage_badge.json
+   :alt: Integration coverage badge
+   :target: https://github.com/MathisFederico/LearnRL/actions/workflows/python-coverage.yml
+
 
 .. image:: https://img.shields.io/pypi/l/learnrl
    :alt: PyPI - License
    :target: https://www.gnu.org/licenses/
 
 
-.. image:: https://app.codacy.com/project/badge/Grade/b4c3818135484e8b9acae67b01526957
-   :alt: Codacy - Quality
-   :target: https://www.codacy.com/gh/MathisFederico/LearnRL/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MathisFederico/LearnRL&amp;utm_campaign=Badge_Grade
+About Benchmarks
+----------------
 
-
-.. image:: https://app.codacy.com/project/badge/Coverage/b4c3818135484e8b9acae67b01526957
-   :alt: Codacy - Coverage
-   :target: https://www.codacy.com/gh/MathisFederico/LearnRL/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MathisFederico/LearnRL&amp;utm_campaign=Badge_Coverage
-
-
-LearnRL is a library to use and learn reinforcement learning.
-It's also a community off supportive enthousiasts loving to share and build RL-based AI projects !
-We would love to help you make projects with LearnRL, so join us `on Discord <https://discord.gg/z9dd4s5>`_ !
-
-
-About LearnRL
--------------
-
-LearnRL is a tool to monitor and log reinforcement learning experiments.
-You build/find any compatible agent (only need an act method), you build/find a gym environment, and learnrl will make them interact together !
-LearnRL also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
-Also, LearnRL is cross platform compatible ! That's why no agents are built-in learnrl itself, but you can check:
-- `LearnRL for Tensorflow <https://github.com/MathisFederico/LearnRL-Tensorflow>`_
-- `LearnRL for Pytorch <https://github.com/MathisFederico/LearnRL-Pytorch>`_
+Benchmarks is a tool to monitor and log reinforcement learning experiments.
+You build/find any compatible agent (only need an act method), you build/find a gym environment, and benchmarks will make them interact together !
+Benchmarks also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
+Also, Benchmarks is cross platform compatible ! That's why no agents are built-in benchmarks itself.
 
 You can build and run your own Agent in a clear and sharable manner !
 
 .. code-block:: python
 
-   import learnrl as rl
+   import benchmarks as rl
    import gym
 
    class MyAgent(rl.Agent):
@@ -83,24 +86,9 @@ The Playground also allows you to add Callbacks with ease, for example the Wandb
 Installation
 ------------
 
-Install LearnRL by running::
+Install Benchmarks by running::
 
-   pip install learnrl
-
-
-Get started
------------
-
-Create:
-- TODO: Numpy tutorials
-- TODO: Tensorflow tutorials
-- TODO: Pytorch tutorials
-
-
-Visualize:
-- TODO: Tensorboard visualisation tutorial
-- TODO: Wandb visualisation tutorial
-- TODO: Wandb sweeps tutorial
+   pip install benchmarks
 
 
 Documentation
