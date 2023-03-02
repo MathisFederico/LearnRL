@@ -7,4 +7,4 @@ pylint
 pylint-pytest
 defusedxml == 0.7.1
 wandb >= 0.10.0
-tensorflow >= 2.10.0
+tensorflow >= 2.3.0
