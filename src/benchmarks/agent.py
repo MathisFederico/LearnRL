@@ -1,6 +1,3 @@
-# LearnRL a python library to learn and use reinforcement learning
-# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
-
 """Agent to represent any learning or static agent"""
 
 from typing import Dict, Union
@@ -9,12 +6,12 @@ from abc import abstractmethod
 import numpy as np
 
 
-class Agent():
+class Agent:
 
     """A general structure for any learning agent."""
 
     @abstractmethod
-    def act(self, observation, greedy: bool=False) -> Union[int, float, np.ndarray]:
+    def act(self, observation, greedy: bool = False) -> Union[int, float, np.ndarray]:
         """How the :ref:`Agent` act given an observation.
 
         Args:
@@ -22,7 +19,7 @@ class Agent():
             greedy: If True, act greedely (without exploration).
 
         """
-        raise NotImplementedError('Agent.act must be user-defined by subclassing.')
+        raise NotImplementedError("Agent.act must be user-defined by subclassing.")
 
     def learn(self) -> Dict[str, Union[int, float, np.ndarray]]:
         """How the :ref:`Agent` learns from his experiences.
@@ -33,15 +30,16 @@ class Agent():
         """
         return {}
 
-    def remember(self,
-            observation,
-            action,
-            reward,
-            done,
-            next_observation=None,
-            info=None,
-            **param
-        ):
+    def remember(
+        self,
+        observation,
+        action,
+        reward,
+        done,
+        next_observation=None,
+        info=None,
+        **param,
+    ):
         """How the :ref:`Agent` will remember experiences.
 
         Often, the agent will use a |hash| to store observations efficiently.

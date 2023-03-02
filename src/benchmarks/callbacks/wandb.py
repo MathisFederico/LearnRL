@@ -1,6 +1,3 @@
-# LearnRL a python library to learn and use reinforcement learning
-# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
-
 """WandbCallback to log metrics into weight&biases
 
 https://wandb.ai/site
@@ -13,25 +10,28 @@ import wandb
 from benchmarks.callbacks.logging_callback import LoggingCallback, MetricList
 
 
-def construct_panel_configs(metric_name:str, title:str=None):
+def construct_panel_configs(metric_name: str, title: str = None):
     """Construct a custom wandb query to build the custom graphs."""
 
     histories = [
         {
             "name": "history",
-            "args": [{"name": "keys",
-                        "value": [
-                            "step",
-                            "steps_cycle",
-                            "episode",
-                            "episodes_cycle",
-                            f"step_{metric_name}",
-                            f"steps_cycle_{metric_name}",
-                            f"episode_{metric_name}",
-                            f"episodes_cycle_{metric_name}",
-                        ]
-                    }],
-                "fields": [],
+            "args": [
+                {
+                    "name": "keys",
+                    "value": [
+                        "step",
+                        "steps_cycle",
+                        "episode",
+                        "episodes_cycle",
+                        f"step_{metric_name}",
+                        f"steps_cycle_{metric_name}",
+                        f"episode_{metric_name}",
+                        f"episodes_cycle_{metric_name}",
+                    ],
+                }
+            ],
+            "fields": [],
         }
     ]
 
@@ -43,8 +43,9 @@ def construct_panel_configs(metric_name:str, title:str=None):
                 "fields": [
                     {"name": "id", "fields": []},
                     {"name": "name", "fields": []},
-                    {"name": "_defaultColorIndex", "fields": []}
-                ] + histories,
+                    {"name": "_defaultColorIndex", "fields": []},
+                ]
+                + histories,
             }
         ],
     }
@@ -64,22 +65,24 @@ def construct_panel_configs(metric_name:str, title:str=None):
 
     return {
         "userQuery": user_query,
-        "panelDefId": 'mathisfederico/learnrl-chart',
+        "panelDefId": "mathisfederico/learnrl-chart",
         "transform": {"name": "tableWithLeafColNames"},
-        "fieldSettings": fields
+        "fieldSettings": fields,
     }
+
 
 class WandbCallback(LoggingCallback):
 
-    """ WandbCallback will log metrics to wandb."""
+    """WandbCallback will log metrics to wandb."""
 
-    def __init__(self, run,
-            metrics: List[Union[str, tuple]]=None,
-            detailed_step_metrics: List[str]=None,
-            episode_only_metrics: List[str]=None
-        ):
-
-        """ WandbCallback will log metrics to wandb.
+    def __init__(
+        self,
+        run,
+        metrics: List[Union[str, tuple]] = None,
+        detailed_step_metrics: List[str] = None,
+        episode_only_metrics: List[str] = None,
+    ):
+        """WandbCallback will log metrics to wandb.
 
         See https://wandb.ai.
 
@@ -95,7 +98,7 @@ class WandbCallback(LoggingCallback):
         super().__init__(
             metrics=metrics,
             detailed_step_metrics=detailed_step_metrics,
-            episode_only_metrics=episode_only_metrics
+            episode_only_metrics=episode_only_metrics,
         )
 
         self.metrics = metrics
@@ -118,17 +121,19 @@ class WandbCallback(LoggingCallback):
             self._init_charts()
             self.chart_is_init = True
 
-        self._update_wandb('step', self.step_metrics, logs)
-        self._update_wandb('steps_cycle', self.steps_cycle_metrics, logs)
-        self._update_wandb('episode', self.episode_metrics, logs)
-        self._update_wandb('episode', self.episode_only_metrics, logs)
-        self._update_wandb('episodes_cycle', self.episodes_cycle_metrics, logs)
-        wandb.log({
-            'step':self.step,
-            'episode': self.episode,
-            'steps_cycle': self.steps_cycle,
-            'episodes_cycle': self.episodes_cycle,
-        })
+        self._update_wandb("step", self.step_metrics, logs)
+        self._update_wandb("steps_cycle", self.steps_cycle_metrics, logs)
+        self._update_wandb("episode", self.episode_metrics, logs)
+        self._update_wandb("episode", self.episode_only_metrics, logs)
+        self._update_wandb("episodes_cycle", self.episodes_cycle_metrics, logs)
+        wandb.log(
+            {
+                "step": self.step,
+                "episode": self.episode,
+                "steps_cycle": self.steps_cycle,
+                "episodes_cycle": self.episodes_cycle,
+            }
+        )
         self.step += 1
 
     def on_steps_cycle_end(self, step, logs=None):
@@ -145,22 +150,28 @@ class WandbCallback(LoggingCallback):
 
     def _init_charts(self):
         metrics_with_chart = []
-        allmetrics = self.step_metrics + self.steps_cycle_metrics + \
-            self.episode_metrics + self.episodes_cycle_metrics
+        allmetrics = (
+            self.step_metrics
+            + self.steps_cycle_metrics
+            + self.episode_metrics
+            + self.episodes_cycle_metrics
+        )
         for metric in allmetrics:
             metric_name = metric.name
             if not metric_name in metrics_with_chart:
-                title = f'{metric_name.capitalize()} ({metric.surname.capitalize()})'
+                title = f"{metric_name.capitalize()} ({metric.surname.capitalize()})"
                 panel_config = construct_panel_configs(metric_name, title)
-                panel_name = metric_name + '_panel'
-                self.run._add_panel(panel_name, 'Vega2', panel_config) # pylint: disable=protected-access
+                panel_name = metric_name + "_panel"
+                self.run._add_panel(
+                    panel_name, "Vega2", panel_config
+                )  # pylint: disable=protected-access
                 metrics_with_chart.append(metric_name)
 
-    def _update_wandb(self, prefix, metrics_list:MetricList, logs=None):
+    def _update_wandb(self, prefix, metrics_list: MetricList, logs=None):
         for agent_id in range(self.n_agents):
             for metric in metrics_list:
                 name = self._get_attr_name(prefix, metric, agent_id)
                 value = self._get_value(metric, prefix, agent_id, logs)
-                if value != 'N/A':
+                if value != "N/A":
                     wandb.log({name: value}, commit=False)
-        wandb.log({ 'episode': self.episode })
+        wandb.log({"episode": self.episode})

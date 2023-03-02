@@ -1,13 +1,10 @@
-# LearnRL a python library to learn and use reinforcement learning
-# Copyright (C) 2020 Mathïs FEDERICO <https://www.gnu.org/licenses/>
-
 """Environment types, extentions from the classic gym.Env"""
 
 from abc import abstractmethod
 from gym import Env
 
-class TurnEnv(Env):
 
+class TurnEnv(Env):
     r"""Turn based multi-agents gym environment.
 
     A layer over the gym |gym.Env| class able to handle
@@ -44,7 +41,7 @@ class TurnEnv(Env):
             info (dict): Additional informations given by the |gym.Env|.
 
         """
-        raise NotImplementedError('TurnEnv.step must be user-defined by subclassing.')
+        raise NotImplementedError("TurnEnv.step must be user-defined by subclassing.")
 
     @abstractmethod
     def turn(self, state) -> int:
@@ -61,7 +58,7 @@ class TurnEnv(Env):
             agent_id (int): The next player id
 
         """
-        raise NotImplementedError('TurnEnv.turn must be user-defined by subclassing.')
+        raise NotImplementedError("TurnEnv.turn must be user-defined by subclassing.")
 
     @abstractmethod
     def reset(self):
@@ -71,4 +68,4 @@ class TurnEnv(Env):
             observation: The observation for the first :class:`Agent` to play
 
         """
-        raise NotImplementedError('TurnEnv.reset must be user-defined by subclassing.')
+        raise NotImplementedError("TurnEnv.reset must be user-defined by subclassing.")
