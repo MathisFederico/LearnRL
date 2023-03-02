@@ -1,4 +1,4 @@
-""" Benchmarks a python library to standarize interactions 
+""" Benchmarks a python library to standardize interactions 
 between agents and environments in reinforcement learning """
 
 from benchmarks.agent import Agent
