@@ -1,5 +1,5 @@
-Benchmarks
-==========
+LearnRL
+=======
 
 
 .. image:: https://github.com/MathisFederico/LearnRL/actions/workflows/python-tests.yml/badge.svg?branch=dev
@@ -28,10 +28,10 @@ Benchmarks
 
 
 
-About Benchmarks
-----------------
+About LearnRL
+-------------
 
-Benchmarks is a tool to monitor and log reinforcement learning experiments.
+LearnRL is a tool to monitor and log reinforcement learning experiments.
 You build/find any compatible agent (only need an act method), you build/find a gym environment, and benchmarks will make them interact together !
 Benchmarks also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
 Also, Benchmarks is cross platform compatible ! That's why no agents are built-in benchmarks itself.
@@ -114,7 +114,7 @@ Installation
 
 Install Benchmarks by running::
 
-   pip install benchmarks
+   pip install learnrl
 
 
 Documentation
