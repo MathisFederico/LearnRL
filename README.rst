@@ -32,15 +32,15 @@ About LearnRL
 -------------
 
 LearnRL is a tool to monitor and log reinforcement learning experiments.
-You build/find any compatible agent (only need an act method), you build/find a gym environment, and benchmarks will make them interact together !
-Benchmarks also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
-Also, Benchmarks is cross platform compatible ! That's why no agents are built-in benchmarks itself.
+You build/find any compatible agent (only need an act method), you build/find a gym environment, and LearnRL will make them interact together !
+LearnRL also contains both tensorboard and weights&biases integrations for a beautiful and sharable experiment tracking !  
+Also, LearnRL is cross platform compatible ! That's why no agents are built-in LearnRL itself.
 
 You can build and run your own Agent in a clear and sharable manner !
 
 .. code-block:: python
 
-   import benchmarks as rl
+   import learnrl as rl
    import gym
 
    class MyAgent(rl.Agent):
@@ -112,7 +112,7 @@ The Playground also allows you to add Callbacks with ease, for example the Wandb
 Installation
 ------------
 
-Install Benchmarks by running::
+Install LearnRL by running::
 
    pip install learnrl
 
